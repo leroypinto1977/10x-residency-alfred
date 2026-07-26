@@ -48,3 +48,17 @@ model ClientIntake {
 
   createdAt        DateTime @default(now())
 }
+
+// Fixed-window request counter backing the /api/client-intake rate limit.
+// Vercel's WAF rate_limit action is Pro-only, so the throttle lives in the
+// app instead. One row per (key, minute); only the current window is ever
+// read, so stale rows are harmless and get swept opportunistically.
+model RateLimit {
+  id          Int      @id @default(autoincrement())
+  key         String
+  windowStart DateTime
+  count       Int      @default(1)
+
+  @@unique([key, windowStart])
+  @@index([windowStart])
+}

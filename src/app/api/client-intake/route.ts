@@ -1,6 +1,22 @@
 import { NextResponse } from "next/server";
 import { saveClientIntake, getAllClientIntakes } from "../../../service/client_intake_service";
 import { getAgeCategory, calculateAge } from "@/lib/age";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+// Generous for a human filling in one application, including retries after a
+// validation error. Tight enough that scripted submissions stop being free.
+const SUBMIT_LIMIT_PER_MINUTE = 10;
+
+// The export is guarded by a shared secret in the query string, so this is
+// also the brute-force ceiling on guessing it.
+const EXPORT_LIMIT_PER_MINUTE = 20;
+
+function tooManyRequests(retryAfter: number) {
+  return NextResponse.json(
+    { success: false, message: "Too many requests. Please try again shortly." },
+    { status: 429, headers: { "Retry-After": String(retryAfter) } }
+  );
+}
 
 const REQUIRED_FIELDS = [
   "name",
@@ -18,6 +34,12 @@ const REQUIRED_FIELDS = [
 ] as const;
 
 export async function GET(request: Request) {
+  const limit = await checkRateLimit(
+    `intake:export:${getClientIp(request)}`,
+    EXPORT_LIMIT_PER_MINUTE
+  );
+  if (!limit.allowed) return tooManyRequests(limit.retryAfter);
+
   const secret = process.env.ADMIN_EXPORT_SECRET;
   const key = new URL(request.url).searchParams.get("key");
 
@@ -42,6 +64,13 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  // Checked before parsing the body so malformed spam is cheap to reject.
+  const limit = await checkRateLimit(
+    `intake:submit:${getClientIp(request)}`,
+    SUBMIT_LIMIT_PER_MINUTE
+  );
+  if (!limit.allowed) return tooManyRequests(limit.retryAfter);
+
   try {
     const body = await request.json();
 
