@@ -10,6 +10,7 @@ import Outcomes from "@/components/sections/Outcomes";
 import SocialProof from "@/components/sections/SocialProof";
 import FinalCTA from "@/components/sections/FinalCTA";
 import UrgencySection from "@/components/sections/urgency";
+import AdminLead from "@/components/sections/AdminLead";
 
 export default function Home() {
   return (
