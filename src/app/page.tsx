@@ -11,6 +11,7 @@ import SocialProof from "@/components/sections/SocialProof";
 import FinalCTA from "@/components/sections/FinalCTA";
 import UrgencySection from "@/components/sections/urgency";
 import AdminLead from "@/components/sections/AdminLead";
+import alfredPortrait from "../../public/alfred.jpg";
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
       <main className="relative z-[1]">
         <Hero />
         <Transformation />
-        <Mentor portraitSrc="/alfred.jpg" />
+        <Mentor portraitSrc={alfredPortrait} />
         <Outcomes />
         <Features />
         <SocialProof />

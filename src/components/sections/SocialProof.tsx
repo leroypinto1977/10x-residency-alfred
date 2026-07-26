@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Image, { type StaticImageData } from "next/image";
 import { Play, Star, User, X, Quote } from "lucide-react";
+import pavanImg from "../../../public/pavan_img.jpg";
+import pushpaImg from "../../../public/Pushpa_img.jpg";
+import oviyaImg from "../../../public/oviya.jpg";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import styles from "./SocialProof.module.css"
@@ -10,7 +14,7 @@ interface Testimonial {
   name: string;
   role: string;
   videoUrl?: string;
-  posterUrl?: string;
+  posterUrl?: StaticImageData;
   posterPosition?: string;
   title?: string;
   description?: string;
@@ -22,19 +26,19 @@ const TESTIMONIALS: Testimonial[] = [
     name: "PAVAN",
     role: "Career Consultant",
     videoUrl: "https://www.youtube.com/shorts/8WpYPLZ7TzE",
-    posterUrl: "/pavan_img.jpg",
+    posterUrl: pavanImg,
   },
   {
     name: "PUSHPALATHA",
     role: "Makeup Artist & Trainer",
     videoUrl: "https://www.youtube.com/watch?v=qjVYETJP1HA",
-    posterUrl: "/Pushpa_img.jpg",
+    posterUrl: pushpaImg,
   },
   {
     name: "OVYA VIGNESH",
     role: "Founder Of Malola Foods ",
     videoUrl: "https://www.youtube.com/shorts/E9KQ3CQzDhA",
-    posterUrl: "/oviya.jpg",
+    posterUrl: oviyaImg,
   }
 ];
 
@@ -115,14 +119,13 @@ export default function SocialProof() {
                   ) : (
                     <>
                       {t.posterUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={t.posterUrl}
                           alt=""
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 33vw"
                           className={styles.posterImg}
                           style={t.posterPosition ? { objectPosition: t.posterPosition } : undefined}
-                          loading="lazy"
-                          decoding="async"
                         />
                       ) : (
                         <div className={styles.avatarFallback}>

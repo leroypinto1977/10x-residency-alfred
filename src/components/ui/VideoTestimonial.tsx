@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Play, User } from "lucide-react";
 import styles from "./VideoTestimonial.module.css";
 
@@ -70,8 +71,13 @@ export default function VideoTestimonial({ name, role, videoUrl, posterUrl }: Vi
         ) : (
           <>
             {posterUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={posterUrl} alt="" className={styles.posterImg} />
+              <Image
+                src={posterUrl}
+                alt=""
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                className={styles.posterImg}
+              />
             ) : (
               <div className={styles.avatarFallback}>
                 <User size={26} aria-hidden="true" />

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { User, PenLine } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
@@ -20,7 +20,7 @@ interface MentorProps {
   quote?: string;
   quoteSign?: string;
   badgeLabel?: string;
-  portraitSrc?: string;
+  portraitSrc?: string | StaticImageData;
   portraitAlt?: string;
   primaryCtaLabel?: string;
   secondaryCtaLabel?: string;
