@@ -64,6 +64,13 @@
   animation: shake 320ms ease;
 }
 
+.fieldErrorMessage {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--danger);
+  line-height: 1.4;
+}
+
 @keyframes shake {
   0%,
   100% {

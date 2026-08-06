@@ -4,12 +4,16 @@ import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { isValidPhoneNumber, parsePhoneNumberFromString } from "libphonenumber-js/min";
+import type { CountryCode } from "libphonenumber-js/min";
 import Button from "@/components/ui/Button";
 import FloatingField from "@/components/ui/FloatingField";
 import RadioGroup from "@/components/ui/RadioGroup";
 import CheckboxGroup from "@/components/ui/CheckboxGroup";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import styles from "./BookCallForm.module.css";
+import { DEFAULT_PHONE_COUNTRY } from "@/lib/phoneCountries";
+import PhoneField from "./ui/PhoneField";
 
 const INDUSTRY_DURATION_OPTIONS = [
   { value: "0-3 years", label: "0-3 years" },
@@ -42,6 +46,7 @@ const INITIAL_FORM = {
   name: "",
   email: "",
   dob: "",
+  phoneCountry: DEFAULT_PHONE_COUNTRY as CountryCode,
   phone: "",
   businessType: "",
   industryDuration: "",
@@ -82,6 +87,16 @@ export default function BookCallForm() {
     if (formError) setFormError("");
   };
 
+  const handlePhoneChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, phone: value }));
+    if (formError) setFormError("");
+  };
+
+  const handlePhoneCountryChange = (country: CountryCode) => {
+    setFormData((prev) => ({ ...prev, phoneCountry: country }));
+    if (formError) setFormError("");
+  };
+
   const handleRadioChange = (name: string) => (value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (formError) setFormError("");
@@ -104,17 +119,26 @@ export default function BookCallForm() {
     const missingText = REQUIRED_TEXT_FIELDS.some((field) => !formData[field]);
     const missingChoices = formData.foundUs.length === 0;
     const missingOtherDetail = formData.foundUs.includes("Others") && !formData.foundUsOther.trim();
+    const invalidPhone = !!formData.phone && !isValidPhoneNumber(formData.phone, formData.phoneCountry);
+
+    if (invalidPhone) {
+      setFormError("Please enter a valid mobile number for the selected country.");
+      return;
+    }
 
     if (missingText || missingChoices || missingOtherDetail) {
       setFormError("Please fill in all required fields to submit your application.");
       return;
     }
 
+    const fullPhone =
+      parsePhoneNumberFromString(formData.phone, formData.phoneCountry)?.number ?? formData.phone;
+
     try {
       const response = await fetch("/api/client-intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, phone: fullPhone }),
       });
 
       const data = await response.json();
@@ -211,15 +235,24 @@ export default function BookCallForm() {
             error={!!formError && !formData.dob}
           />
 
-          <FloatingField
+          <PhoneField
             label="What is your phone number? *"
             name="phone"
-            type="tel"
+            country={formData.phoneCountry}
             value={formData.phone}
-            onChange={handleInputChange}
-            placeholder="e.g. +91 98765 43210"
+            onCountryChange={handlePhoneCountryChange}
+            onChange={handlePhoneChange}
+            placeholder="98765 43210"
             required
-            error={!!formError && !formData.phone}
+            error={
+              !!formError &&
+              (!formData.phone || !isValidPhoneNumber(formData.phone, formData.phoneCountry))
+            }
+            errorMessage={
+              formData.phone && !isValidPhoneNumber(formData.phone, formData.phoneCountry)
+                ? "Enter a valid mobile number for the selected country."
+                : undefined
+            }
           />
 
           <FloatingField
