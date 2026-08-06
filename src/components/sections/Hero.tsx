@@ -1,4 +1,4 @@
-import { MapPin, Clock, Users } from "lucide-react";
+import { MapPin, Clock, Users, CalendarDays } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import Button from "@/components/ui/Button";
@@ -8,9 +8,11 @@ import styles from "./Hero.module.css";
 
 const TRUST_INDICATORS = [
   { label: "Geography", sub: "Founders and Creators" },
-  { label: "Age ", sub: "Under 27 years old." },
+  { label: "Event Format ", sub: "3-day residential intensive." },
   { label: "Composition", sub: "80% Founders , 20% Creators " }
 ];
+
+// 3-day residential intensive
 
 export default function Hero() {
   return (
@@ -37,8 +39,8 @@ export default function Hero() {
                 Athirapalli, Kerala
               </span>
               <span className={styles.metaItem}>
-                <Clock size={14} className={styles.metaIcon} aria-hidden="true" />
-                3-day residential intensive
+                <CalendarDays size={14} className={styles.metaIcon} aria-hidden="true" />
+                From Oct 2nd to 5th, 2026 
               </span>
               <span className={styles.metaItem}>
                 <Users size={14} className={styles.metaIcon} aria-hidden="true" />
@@ -93,4 +95,3 @@ export default function Hero() {
     </section>
   );
 }
- // GOAT Color--->c69f64 
