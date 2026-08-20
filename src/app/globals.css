@@ -39,14 +39,35 @@
   --border: var(--border-subtle);
   --border-hover: var(--border-strong);
 
+  /* Light surface — the third tone, so the page is not black-and-gold for
+     its whole length. Warm bone, pulled from the same family as the accent
+     rather than a neutral grey, so the two sit together instead of
+     fighting. Used as a deliberate colour block for one or two sections;
+     the rest of the page stays dark. */
+  --surface-light: #f2eee5;
+  --surface-light-2: #e7e0d1;
+  --on-light: #17140f;
+  --on-light-muted: #5c5548;
+  /* Kept at 4.6:1 on the bone surface so even the quietest tier
+     clears WCAG AA for body text. */
+  --on-light-faint: #726a5d;
+  /* The mid accent is too pale to read on bone, so light sections get a
+     deeper cut of the same gold. */
+  --accent-on-light: #6e613c;
+  --border-on-light: rgba(23, 20, 15, 0.14);
+
   /* Status (used sparingly, e.g. before/after contrast) */
   --danger: #ef4444;
 
-  /* Fonts */
-  --font-heading: var(--font-manrope), -apple-system, BlinkMacSystemFont,
+  /* Fonts — shared with the "Become an Authority" residency site so both
+     GOAT Mastermind programmes read as one family. `--font-display` and
+     `--font-body` are the names both codebases use; `--font-heading` stays
+     as an alias because existing modules already reference it. */
+  --font-display: var(--font-space-grotesk), -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: var(--font-manrope), -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: var(--font-display);
 
   /* Shadows */
   --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.45);
@@ -76,20 +97,17 @@ body {
   overflow-x: hidden;
 }
 
-@media (max-width: 767px) {
-  body {
-    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-heading);
-  font-weight: 800;
+  font-family: var(--font-display);
+  /* Space Grotesk tops out at 700 — the old 800 silently synthesised a
+     faux-bold, which read heavier here than the same headings do on the
+     sibling residency site. */
+  font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text);
 }
@@ -154,4 +172,75 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+
+/* ---------- shared section rhythm ---------- */
+/* These mirror the "Become an Authority" residency site so the two
+   programmes share a layout language, not just a typeface. Palette stays
+   Founder 10X's own gold. */
+
+:root {
+  --section-py: clamp(4.5rem, 9vw, 7.5rem);
+  --section-max: 1120px;
+  --section-px: clamp(1.25rem, 4vw, 2.5rem);
+  --radius-panel: 1.75rem;
+}
+
+/* Small uppercase label that opens a section. */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Opt-in for a section painted with the light surface.
+   Needed because the global h1-h6 rule sets the dark-theme text colour
+   explicitly, so headings inside a light block stay near-white and vanish
+   unless something overrides them. Put `onLight` on the section element
+   and its headings inherit the dark ink instead. */
+.onLight,
+.onLight h1,
+.onLight h2,
+.onLight h3,
+.onLight h4,
+.onLight h5,
+.onLight h6 {
+  color: var(--on-light);
+}
+
+/* Kicker sitting on a light section. */
+.kickerOnLight {
+  color: var(--accent-on-light);
+}
+
+.kicker::before {
+  content: "";
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Display headline scale, matched to the sibling site's clamp curve. */
+.displayXl {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8.5vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+}
+
+.displayLg {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 6vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
 }

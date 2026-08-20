@@ -1,42 +1,35 @@
+/* Light block. See Outcomes and FAQ for the other two. */
 .section {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding-block: clamp(4rem, 3rem + 4vw, 6rem);
-  padding-inline: clamp(16px, 12px + 1.6vw, 32px);
   position: relative;
   z-index: 1;
+  padding-block: var(--section-py);
+  padding-inline: var(--section-px);
+  background: var(--surface-light);
+  color: var(--on-light);
+}
+
+.inner {
+  max-width: var(--section-max);
+  margin: 0 auto;
 }
 
 .sectionHeader {
-  text-align: center;
-  max-width: 750px;
-  margin: 0 auto clamp(2.75rem, 2rem + 3vw, 4.5rem) auto;
-}
-
-.sectionTag {
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  background: linear-gradient(135deg, #8a6c38 0%, #ba9a63 25%, #e6cb95 45%, #c2a36b 55%, #a6844d 75%, #664d24 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  text-transform: uppercase;
-  display: inline-block;
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 46rem;
+  margin-bottom: clamp(3rem, 2.25rem + 3vw, 5rem);
 }
 
 .sectionHeader h2 {
-  font-size: clamp(1.75rem, 1.35rem + 2vw, 2.5rem);
-  margin-bottom: 1rem;
-  line-height: 1.2;
-  color: var(--text-primary);
+  text-wrap: balance;
 }
 
-.sectionHeader p {
-  color: var(--text-muted);
-  font-size: clamp(0.95rem, 0.87rem + 0.4vw, 1.05rem);
+.sectionHeader .lede {
+  max-width: 46ch;
+  color: var(--on-light-muted);
+  font-size: 1.0625rem;
   line-height: 1.7;
 }
 
@@ -56,8 +49,8 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(var(--accent-rgb), 0.28) 10%,
-    rgba(var(--accent-rgb), 0.28) 90%,
+    var(--border-on-light) 10%,
+    var(--border-on-light) 90%,
     transparent
   );
 }
@@ -79,54 +72,42 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--bg-surface);
-  border: 1px solid rgba(var(--accent-rgb), 0.4);
-  color: var(--accent-400);
+  background: var(--surface-light);
+  border: 1px solid var(--border-on-light);
+  color: var(--accent-on-light);
   margin-bottom: 1.25rem;
-  box-shadow: 0 0 0 6px var(--bg-void), inset 0 1px 2px rgba(0, 0, 0, 0.35);
-  transition: border-color 200ms ease, color 200ms ease;
-}
-
-.node::before {
-  content: "";
-  position: absolute;
-  inset: -14px;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.28) 0%, transparent 72%);
-  filter: blur(10px);
-  opacity: 0.65;
-  transition: opacity 200ms ease;
+  /* The ring masks the connector line behind the circle, so it has to be
+     the section's own background colour, not the page's dark one. */
+  box-shadow: 0 0 0 6px var(--surface-light);
+  transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
 }
 
 .step:hover .node {
-  border-color: rgba(var(--accent-rgb), 0.65);
-  color: var(--accent-300);
-}
-
-.step:hover .node::before {
-  opacity: 1;
+  border-color: var(--accent-on-light);
+  background: var(--surface-light-2);
 }
 
 .num {
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  color: var(--accent-on-light);
   margin-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .step h3 {
-  font-size: 1.1rem;
+  font-size: 1.0625rem;
   margin-bottom: 0.5rem;
   line-height: 1.3;
-  color: var(--text-primary);
+  letter-spacing: -0.015em;
+  color: var(--on-light);
 }
 
 .step p {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.55;
+  font-size: 0.875rem;
+  color: var(--on-light-muted);
+  line-height: 1.6;
   max-width: 240px;
 }
 
@@ -175,8 +156,8 @@
     background: linear-gradient(
       180deg,
       transparent,
-      rgba(var(--accent-rgb), 0.28) 8%,
-      rgba(var(--accent-rgb), 0.28) 92%,
+      var(--border-on-light) 8%,
+      var(--border-on-light) 92%,
       transparent
     );
   }

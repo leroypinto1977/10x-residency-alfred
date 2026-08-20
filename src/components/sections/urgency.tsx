@@ -1,13 +1,7 @@
 import styles from "./Urgency.module.css";
- 
+import { EVENT } from "@/lib/event";
 
 export default function UrgencySection() {
-  const stats = [
-    { value: "71 Day to go", label: "Until Application Close" },
-    { value: "45+ Applications", label: "Already Waiting" },
-    { value: "25 seats", label: "Available This Residency" },
-  ];
-
   const ifYouWait = [
     "Keep building without an outside read on your plan",
     "Stay stuck making every decision alone",
@@ -17,7 +11,7 @@ export default function UrgencySection() {
 
   const ifYouApply = [
     "Leave with a 12-month roadmap and 90-day plan",
-    "Join a room of 25 founders at your stage",
+    `Join a room of ${EVENT.seats} founders at your stage`,
     "Get your plan reviewed directly by Alfred",
     "Start executing the Monday you're back",
   ];
@@ -26,30 +20,13 @@ export default function UrgencySection() {
     <section className={styles.section}>
       <div className={styles.container}>
         {/* Eyebrow */}
-        <p className={styles.eyebrow}>DON&apos;T MISS YOUR CHANCE</p>
+        <p className={`kicker ${styles.eyebrow}`}>Don&apos;t miss your chance</p>
 
         {/* Headline */}
-        <h2 className={styles.headline}>
+        <h2 className={`displayLg ${styles.headline}`}>
           This is your opportunity to join India&apos;s most exclusive founder
           residency.
         </h2>
-
-        {/* Placeholder deadline banner */}
-        {/* <div className={styles.placeholderBanner}>
-          <p className={styles.placeholderText}>
-            PLACEHOLDER — INSERT YOUR REAL APPLICATION DEADLINE AND SEAT COUNT
-          </p>
-        </div> */}
-
-        {/* Stat cards */}
-        <div className={styles.statsGrid}>
-          {stats.map((stat) => (
-            <div key={stat.label} className={styles.statCard}>
-              <p className={styles.statValue}>{stat.value}</p>
-              <p className={styles.statLabel}>{stat.label}</p>
-            </div>
-          ))}
-        </div>
 
         {/* Comparison panel */}
         <div className={styles.panel}>

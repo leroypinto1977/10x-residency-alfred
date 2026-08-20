@@ -1,15 +1,66 @@
+import BookCallButton from "@/components/BookCallButton";
+import Reveal from "@/components/Reveal";
+import RevealItem from "@/components/RevealItem";
+import { EVENT } from "@/lib/event";
 import styles from "./Footer.module.css";
+
+// Same structure as the "Become an Authority" footer: the programme name
+// set oversized as a sign-off, then a three-column row, then a thin
+// bottom bar. Keeps the two residency sites ending the same way.
+const LINKS: [string, string][] = [
+  ["The film", "#film"],
+  ["What changes", "#transformation"],
+  ["The location", "#location"],
+  ["Your host", "#mentor"],
+  ["What you build", "#outcomes"],
+  ["FAQ", "#faq"],
+];
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <div className={styles.content}>
-        <div className={styles.brand}>
-          <h3>10X FOUNDER</h3>
-          <p>Strategy partner for &#8377;3&ndash;4 Cr founders building businesses that run without them.</p>
-        </div>
-        <div className={styles.meta}>
-          <p>&copy; {new Date().getFullYear()} 10X Founder. All rights reserved.</p>
+      <div className={styles.inner}>
+        <Reveal>
+          <p className={styles.wordmark}>
+            Founder{" "}
+            <span className={styles.accent}>10X.</span>
+          </p>
+        </Reveal>
+
+        <Reveal stagger className={styles.row}>
+          <RevealItem className={styles.brandCol}>
+            <p className={styles.brand}>
+              GOAT<span className={styles.accent}>.</span>Media
+            </p>
+            <p className={styles.blurb}>
+              A {EVENT.durationDays}-day founder residency in {EVENT.venue}, hosted by Alfred
+              Joshua and {EVENT.host}.
+            </p>
+          </RevealItem>
+
+          <RevealItem>
+            <nav className={styles.nav} aria-label="Page sections">
+              {LINKS.map(([label, href]) => (
+                <a key={href} href={href} className={styles.navLink}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </RevealItem>
+
+          <RevealItem className={styles.ctaCol}>
+            <BookCallButton showArrow>Join The Wait List</BookCallButton>
+            <p className={styles.ctaNote}>
+              No payment. We personally contact everyone on the list.
+            </p>
+          </RevealItem>
+        </Reveal>
+
+        <div className={styles.bottom}>
+          <p>&copy; {new Date().getFullYear()} {EVENT.host}. All rights reserved.</p>
+          <p>
+            {EVENT.name} · {EVENT.venue}
+          </p>
         </div>
       </div>
     </footer>

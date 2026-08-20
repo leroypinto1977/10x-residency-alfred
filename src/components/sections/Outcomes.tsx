@@ -1,101 +1,85 @@
-import {
-  Target,
-  Compass,
-  Calendar,
-  Rocket,
-  Workflow,
-  Wrench,
-  Brain,
-  CheckCircle,
-  Crown,
-} from "lucide-react";
+import Reveal from "@/components/Reveal";
+import RevealItem from "@/components/RevealItem";
+import { EVENT } from "@/lib/event";
 import styles from "./Outcomes.module.css";
-import { number } from "framer-motion";
 
+// Ten items is too many for a card grid — ten identical boxes read as a
+// wall and nothing inside them gets weight. Set as a numbered ledger
+// instead: the numeral carries the rhythm, the title carries the scan,
+// and the line underneath is there for whoever slows down.
 const OUTCOMES = [
   {
-    number: "01",
-    icon: Target,
-    title: "The Business Diagnostic",
-    desc: "Map exactly where your business stands today revenue, margin, and the bottlenecks only you can see.",
+    title: "The business diagnostic",
+    desc: "Map exactly where your business stands today: revenue, margin, and the bottlenecks only you can see.",
   },
   {
-    number: "02",
-    icon: Compass,
-    title: "The 3-5 Year Vision Lock ",
-    desc: "Define the specific company you're building towards writen down, not an aspiration.",
+    title: "The 3-5 year vision lock",
+    desc: "Define the specific company you are building towards, written down, not an aspiration.",
   },
   {
-    number: "03",
-    icon: Calendar,
-    title: "Decision Frameworks For Pricing and Hiring",
-    desc: "The Specific model that stop decisions from taking days.",
+    title: "Decision frameworks for pricing and hiring",
+    desc: "The specific models that stop decisions from taking days.",
   },
   {
-    number: "04",
-    icon: Rocket,
-    title: "Predictable Growth Systems",
-    desc: "Build a sales and marketing engine that doesn't depend on your personal hustle.",
+    title: "Predictable growth systems",
+    desc: "A sales and marketing engine that does not depend on your personal hustle.",
   },
   {
-    number: "05",
-    icon: Workflow,
-    title: "AI Framework For Founders",
-    desc: "The specific AI tools and workflows that compress work founders usually take years to learn.",
+    title: "An AI framework for founders",
+    desc: "The tools and workflows that compress work founders usually take years to learn.",
   },
   {
-    number: "06",
-    icon: Wrench,
     title: "The 12-month strategic roadmap",
     desc: "Milestone by milestone, reviewed by Alfred and the room before you leave.",
   },
   {
-    number: "07",
-    icon: Brain,
     title: "The 90-day execution plan",
-    desc: "Convert the roadmap into the specific, dated actions for your first quarter.",
+    desc: "The roadmap converted into specific, dated actions for your first quarter.",
   },
   {
-    number: "08",
-    icon: CheckCircle,
     title: "Team and leadership systems",
-    desc: "What to hire for, when, and how to lead people who aren't you.",
+    desc: "What to hire for, when, and how to lead people who are not you.",
   },
   {
-    number: "09",
-    icon: Crown,
     title: "Founder habits and operating rhythm",
-    desc: "The daily principles that compound — built around your business, not generic advice.",
+    desc: "The daily principles that compound, built around your business rather than generic advice.",
   },
   {
-    number:"10",
-    icon:Crown,
-    title:"The commitment round",
-    desc:"Say your 90-day plan out loud to the room. 25 founders now know what you said you'd do."
-  }
+    title: "The commitment round",
+    desc: `Say your 90-day plan out loud to the room. ${EVENT.seats} founders now know what you said you would do.`,
+  },
 ];
 
 export default function Outcomes() {
   return (
-    <section id="outcomes" className={styles.section}>
-      <div className={styles.header}>
-        <h2>10 Things Every Founder Builds In The Room.</h2>
-        <p>
-          Not talks to sit through, frameworks you apply to your own business before you leave.
-        </p>
-      </div>
+    <section id="outcomes" className={`${styles.section} onLight`}>
+      <div className={styles.inner}>
+        <Reveal className={styles.header}>
+          <p className={`kicker kickerOnLight ${styles.kicker}`}>What you build</p>
+          <p className={styles.count}>10</p>
+          <h2 className={`displayLg ${styles.headline}`}>
+            things every founder
+            <br />
+            builds in the room.
+          </h2>
+          <p className={styles.lede}>
+            Not talks to sit through. Frameworks you apply to your own business before you leave.
+          </p>
+        </Reveal>
 
-      <div className={styles.grid}>
-        {OUTCOMES.map((item) => (
-          <div className={styles.card} key={item.number}>
-            {/* <span className={styles.number}>{item.number}</span> */}
-            <div className={styles.iconWrap}>
-              <item.icon size={22} aria-hidden="true" />
-            </div>
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
-          </div>
-        ))}
+        <Reveal stagger className={styles.ledger}>
+          {OUTCOMES.map((item, idx) => (
+            <RevealItem className={styles.row} key={item.title}>
+              <span className={styles.num} aria-hidden="true">
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <div className={styles.rowText}>
+                <h3 className={styles.rowTitle}>{item.title}</h3>
+                <p className={styles.rowDesc}>{item.desc}</p>
+              </div>
+            </RevealItem>
+          ))}
+        </Reveal>
       </div>
     </section>
   );

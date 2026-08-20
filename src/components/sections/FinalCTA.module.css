@@ -31,15 +31,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1.25rem;
 }
 
+/* Scale comes from the shared .displayLg so it can't drift from the other
+   section headings. */
 .content h2 {
-  font-size: clamp(2rem, 1.4rem + 2.2vw, 3rem);
-  line-height: 1.15;
-  margin-bottom: 1.25rem;
+  text-wrap: balance;
 }
 
-.content p {
+.content .lede {
   color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 1.6;

@@ -1,96 +1,85 @@
+import Image from "next/image";
 import { MapPin, Clock, Users } from "lucide-react";
 import Reveal from "@/components/Reveal";
-import RevealItem from "@/components/RevealItem";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
-import HeroVisual from "./HeroVisual";
+import { EVENT } from "@/lib/event";
+import fallsImg from "../../../public/athirappilly-falls.jpg";
 import styles from "./Hero.module.css";
 
-const TRUST_INDICATORS = [
-  { label: "Geography", sub: "Founders and Creators" },
-  { label: "Age ", sub: "Under 27 years old." },
-  { label: "Composition", sub: "80% Founders , 20% Creators " }
+const META = [
+  { Icon: MapPin, label: EVENT.venue },
+  { Icon: Clock, label: EVENT.format },
+  { Icon: Users, label: `${EVENT.seats} founders, ${EVENT.admission.toLowerCase()}` },
 ];
 
 export default function Hero() {
   return (
     <section className={styles.hero}>
-      <div className={styles.grid}>
-        <div className={styles.content}>
+      {/* The venue carries the hero rather than a gradient. This is the
+          actual place the residency runs, shot wide and pushed behind a
+          left-weighted scrim so the type stays legible over it. */}
+      <div className={styles.backdrop} aria-hidden="true">
+        <Image
+          src={fallsImg}
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          className={styles.backdropImg}
+        />
+        <div className={styles.scrim} />
+      </div>
 
+      {/* Three bands: brand, message, detail. The whole frame used to be one
+          bottom-left block, which left a third of the viewport empty at the
+          top and gave the composition nothing to sit against. */}
+      <div className={styles.inner}>
+        <header className={styles.brandBar}>
+          <p className={styles.wordmark}>
+            Founder <span className={styles.accent}>10X.</span>
+          </p>
+          <p className={styles.edition}>{EVENT.edition}</p>
+        </header>
+
+        <div className={styles.content}>
           <Reveal delay={0.1}>
             <h1 className={styles.title}>
-              <span className={styles.titleLine}>Build Your Million Dollar Company</span><br className={styles.lineBreak} /> <span className={styles.hightlight}>Before 30</span>
+              Build your million dollar company
+              <span className={styles.highlight}>before 30.</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.2}>
             <p className={styles.subtitle}>
-              Most founders in their 20s are working harder than anyone in the room and still can’t tell if they’re building the right thing. Founder 10x is where that gets answered.
+              Most founders in their 20s work harder than anyone in the room, and still can&apos;t
+              tell if they are building the right thing.
             </p>
-          </Reveal>
-
-          <Reveal delay={0.25}>
-            <div className={styles.metaRow}>
-              <span className={styles.metaItem}>
-                <MapPin size={14} className={styles.metaIcon} aria-hidden="true" />
-                Athirapalli, Kerala
-              </span>
-              <span className={styles.metaItem}>
-                <Clock size={14} className={styles.metaIcon} aria-hidden="true" />
-                3-day residential intensive
-              </span>
-              <span className={styles.metaItem}>
-                <Users size={14} className={styles.metaIcon} aria-hidden="true" />
-                25 founders, by application
-              </span>
-            </div>
-          </Reveal>
-
-          {/* <Reveal delay={0.3}>
-            <div className={styles.actions}>
-              <BookCallButton  showArrow>
-                Register Now
-              </BookCallButton>
-              <Button href="#transformation" variant="secondary">
-                See How It Works
-              </Button>
-            </div>
-          </Reveal> */}
-
-          <Reveal stagger delay={0.4} className={styles.trustRow}>
-            {TRUST_INDICATORS.map((item, idx) => (
-              <div className={styles.trustGroup} key={item.label}>
-                <RevealItem className={styles.trustItem}>
-                  <h3>{item.label}</h3>
-                  <p>{item.sub}</p>
-                </RevealItem>
-                {idx < TRUST_INDICATORS.length - 1 && <div className={styles.divider} />}
-              </div>
-            ))}
           </Reveal>
 
           <Reveal delay={0.3}>
             <div className={styles.actions}>
-              <BookCallButton  showArrow>
-                Join The Wait List 
-              </BookCallButton>
-              <Button href="#transformation" variant="secondary">
-                See How It Works
+              <BookCallButton showArrow>Join The Wait List</BookCallButton>
+              <Button href="#film" variant="secondary">
+                Watch the film
               </Button>
             </div>
-          </Reveal>   
-
-          
+          </Reveal>
         </div>
 
-        {/* <HeroVisual /> */}
+        {/* Spans the full frame so its rule reads as the base of the
+            composition rather than a line that stops halfway. */}
+        <Reveal delay={0.45}>
+          <ul className={styles.metaRow}>
+            {META.map(({ Icon, label }) => (
+              <li className={styles.metaItem} key={label}>
+                <Icon size={15} className={styles.metaIcon} aria-hidden="true" />
+                {label}
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
-
-      <Reveal delay={0.2} className={styles.taglineSection}>
-        <p className={styles.para}>Build Clarity - Lead the Company - Become the Founder.</p>
-      </Reveal>
     </section>
   );
 }
- // GOAT Color--->c69f64 

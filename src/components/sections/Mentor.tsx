@@ -6,19 +6,11 @@ import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
 import styles from "./Mentor.module.css";
 
-interface Stat {
-  value: string;
-  label: string;
-}
-
 interface MentorProps {
   eyebrow?: string;
   name?: string;
   subhead?: string;
   bio?: string[];
-  stats?: Stat[];
-  quote?: string;
-  quoteSign?: string;
   badgeLabel?: string;
   portraitSrc?: string | StaticImageData;
   portraitAlt?: string;
@@ -29,14 +21,7 @@ interface MentorProps {
 
 const DEFAULT_BIO = [
   "Alfred built The GOAT Media on a simple bet: most founders don't fail from lack of effort, they fail from lack of a plan they actually execute. He's known for taking businesses that feel complicated and breaking them down into the three or four moves that actually matter.",
-  "Founder 10X runs on the same principle — three days, no borrowed frameworks, a plan built specifically for the business you're already running."
-];
-
-const DEFAULT_STATS: Stat[] = [
-  { value: "[X]+", label: "Years Experience" },
-  { value: "[X]+", label: "Founders Advised" },
-  { value: "[X] Cr+", label: "Revenue Scaled" },
-  { value: "[X]%", label: "Success Rating" },
+  "Founder 10X runs on the same principle: three days, no borrowed frameworks, a plan built specifically for the business you're already running."
 ];
 
 export default function Mentor({
@@ -44,9 +29,6 @@ export default function Mentor({
   name = "Alfred Joshua",
   subhead = "CEO,The GOAT Media.",
   bio = DEFAULT_BIO,
-  stats = DEFAULT_STATS,
-  quote = "Founder 10X runs on the same principle — three days, no borrowed frameworks, a plan built specifically for the business you're already running.",
-  quoteSign = "— [Mentor Name]",
   badgeLabel = "Founder & Mentor",
   portraitSrc,
   portraitAlt = name,
@@ -83,10 +65,15 @@ export default function Mentor({
         </Reveal>
 
         <Reveal delay={0.1} className={styles.contentCol}>
-         <h2 className={styles.greeting}>Hosted By <span className={styles.name}>{name}</span></h2>
-          <h2>
-            {subhead && <span className={styles.subhead}>{subhead}</span>}
+          {/* `eyebrow` was accepted as a prop but never rendered. It now
+              carries the same kicker as every other section header, and the
+              stray empty <h2> that wrapped the subhead is gone: it emitted a
+              headless heading whenever `subhead` was undefined. */}
+          <p className="kicker">{eyebrow}</p>
+          <h2 className={`displayLg ${styles.greeting}`}>
+            Hosted By <span className={styles.name}>{name}</span>
           </h2>
+          {subhead && <p className={styles.subhead}>{subhead}</p>}
 
           <div className={styles.bio}>
             {bio.map((paragraph) => (

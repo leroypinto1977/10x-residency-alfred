@@ -44,33 +44,43 @@ export default function Transformation() {
   const isMobile = useIsMobile();
 
   return (
-    <section id="transformation" className={styles.section}>
-      <Reveal className={styles.sectionHeader}>
-        <span className={styles.sectionTag}>The Transformation</span>
-        <h2>Why Just Run A Business, when you can Build One That Outlasts You ? </h2>
-        <p>From working alone to leading with clarity.From reacting daily to executing a plan you actually wrote down.</p>
-      </Reveal>
+    <section id="transformation" className={`${styles.section} onLight`}>
+      {/* Full-bleed wrapper + inner max-width column. The section element
+          used to be the max-width box itself, so it had nothing to paint a
+          background onto and the fixed particle layer showed through. */}
+      <div className={styles.inner}>
+        <Reveal className={styles.sectionHeader}>
+          <p className="kicker kickerOnLight">The transformation</p>
+          <h2 className="displayLg">
+            Why just run a business, when you can build one that outlasts you?
+          </h2>
+          <p className={styles.lede}>
+            From working alone to leading with clarity. From reacting daily to executing a plan you
+            actually wrote down.
+          </p>
+        </Reveal>
 
-      <Reveal stagger className={styles.timeline}>
-        <motion.div
-          className={styles.line}
-          aria-hidden="true"
-          variants={lineVariants(isMobile)}
-          style={{ transformOrigin: isMobile ? "top" : "left" }}
-        />
-        {STEPS.map((step, idx) => (
-          <RevealItem className={styles.step} key={step.title}>
-            <div className={styles.node}>
-              <step.icon size={22} aria-hidden="true" />
-            </div>
-            <div className={styles.stepText}>
-              <span className={styles.num}>{String(idx + 1).padStart(2, "0")}</span>
-              <h3>{step.title}</h3>
-              <p>{step.line}</p>
-            </div>
-          </RevealItem>
-        ))}
-      </Reveal>
+        <Reveal stagger className={styles.timeline}>
+          <motion.div
+            className={styles.line}
+            aria-hidden="true"
+            variants={lineVariants(isMobile)}
+            style={{ transformOrigin: isMobile ? "top" : "left" }}
+          />
+          {STEPS.map((step, idx) => (
+            <RevealItem className={styles.step} key={step.title}>
+              <div className={styles.node}>
+                <step.icon size={22} aria-hidden="true" />
+              </div>
+              <div className={styles.stepText}>
+                <span className={styles.num}>{String(idx + 1).padStart(2, "0")}</span>
+                <h3>{step.title}</h3>
+                <p>{step.line}</p>
+              </div>
+            </RevealItem>
+          ))}
+        </Reveal>
+      </div>
     </section>
   );
 }

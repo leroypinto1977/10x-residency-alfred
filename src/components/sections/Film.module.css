@@ -1,0 +1,272 @@
+.section {
+  padding: var(--section-py) var(--section-px);
+  background: var(--bg-2);
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: var(--section-max);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 44rem;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.lede {
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+/* ---------- stage ---------- */
+
+.stageWrap {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  margin-top: 3rem;
+  padding: 0 0.75rem 0.75rem 0;
+}
+
+.offsetFrame {
+  position: absolute;
+  inset: 0;
+  transform: translate(0.75rem, 0.75rem);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  pointer-events: none;
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--bg-void);
+  box-shadow: var(--shadow-soft);
+}
+
+.player,
+.poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+
+.poster {
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+  background: var(--bg-void);
+}
+
+.posterImg {
+  object-fit: cover;
+  /* The posters are portrait stills pulled from vertical footage — a
+     centred 16:9 crop cuts the subject's face off at the forehead. */
+  object-position: center 22%;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.poster:hover .posterImg {
+  transform: scale(1.05);
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(8, 8, 10, 0.85) 0%,
+    rgba(8, 8, 10, 0.15) 45%,
+    rgba(8, 8, 10, 0.35) 100%
+  );
+}
+
+.playBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg-void);
+  padding-left: 4px; /* optically centres the triangle */
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: pulse-ring 2.6s ease-out infinite;
+}
+
+.poster:hover .playBtn {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 22px rgba(var(--accent-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0);
+  }
+}
+
+.posterMeta {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.posterName {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.posterRole {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.caption {
+  margin-top: 1.75rem;
+  max-width: 38rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+/* ---------- chapter rail ---------- */
+
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.35s ease, color 0.35s ease, transform 0.35s ease;
+}
+
+.chip:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.chipActive {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.chipThumb {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.chipImg {
+  object-fit: cover;
+}
+
+.chipText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.25;
+}
+
+.chipName {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.chipRole {
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+}
+
+/* ---------- cta ---------- */
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 2.75rem;
+}
+
+.ctaNote {
+  font-size: 0.875rem;
+  color: var(--text-faint);
+}
+
+@media (max-width: 640px) {
+  .stageWrap {
+    padding: 0 0.5rem 0.5rem 0;
+  }
+
+  .offsetFrame {
+    transform: translate(0.5rem, 0.5rem);
+  }
+
+  .playBtn {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .posterMeta {
+    left: 1rem;
+    bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playBtn {
+    animation: none;
+  }
+
+  .poster:hover .posterImg {
+    transform: none;
+  }
+}

@@ -10,8 +10,11 @@ export default function FinalCTA() {
       <div className={styles.glow} aria-hidden="true" />
 
       <Reveal className={styles.content}>
-        <h2>Ready to build a business that runs without you?</h2>
-        <p>Book your strategy call — 60 minutes, no pitch, just clarity on your next move.</p>
+        <p className="kicker">The next step</p>
+        <h2 className="displayLg">Ready to build a business that runs without you?</h2>
+        <p className={styles.lede}>
+          Book your strategy call. 60 minutes, no pitch, just clarity on your next move.
+        </p>
 
         <BookCallButton variant="primary" className={styles.cta} showArrow>
           Join The Wait List

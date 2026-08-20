@@ -1,0 +1,107 @@
+/* Light block. Long-form reading is the one place the bone surface earns
+   its keep twice over: it breaks the dark run and it is easier to read. */
+.section {
+  padding: var(--section-py) var(--section-px);
+  background: var(--surface-light);
+  color: var(--on-light);
+}
+
+.container {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  align-items: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  border-top: 1px solid var(--border-on-light);
+}
+
+.item:last-child {
+  border-bottom: 1px solid var(--border-on-light);
+}
+
+.questionHeading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.375rem 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: var(--on-light);
+  transition: color 0.3s ease;
+}
+
+.question:hover {
+  color: var(--accent-on-light);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--accent-on-light);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.iconOpen {
+  transform: rotate(45deg);
+}
+
+.answerWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.answerOpen {
+  grid-template-rows: 1fr;
+}
+
+.answerInner {
+  overflow: hidden;
+}
+
+.answer {
+  padding-bottom: 1.5rem;
+  padding-right: 2.5rem;
+  color: var(--on-light-muted);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+@media (max-width: 640px) {
+  .question {
+    font-size: 1rem;
+  }
+
+  .answer {
+    padding-right: 0;
+  }
+}

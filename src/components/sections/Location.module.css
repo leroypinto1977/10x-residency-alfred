@@ -1,0 +1,73 @@
+.section {
+  padding: var(--section-py) var(--section-px);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(1000px 500px at 85% 0%, rgba(var(--accent-rgb), 0.1), transparent 62%),
+    var(--bg-void);
+}
+
+.inner {
+  max-width: var(--section-max);
+  margin: 0 auto;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 52rem;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.lede {
+  max-width: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* Three practical details as columns under a rule, not as boxes. */
+.grid {
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+  padding-top: 2.25rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 760px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+  }
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.icon {
+  color: var(--accent);
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.body {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}

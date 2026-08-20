@@ -1,148 +1,157 @@
+/* Sits directly after Outcomes, which is one of the three light blocks, so
+   this one stays dark to keep the light/dark rhythm alternating. */
 .section {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding-block: clamp(4rem, 3rem + 4vw, 6rem);
-  padding-inline: clamp(16px, 12px + 1.6vw, 32px);
+  padding: var(--section-py) var(--section-px);
   position: relative;
   z-index: 1;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 480px at 12% 0%, rgba(var(--accent-rgb), 0.08), transparent 60%),
+    var(--bg-void);
 }
 
-.sectionHeader {
-  text-align: center;
-  max-width: 750px;
-  margin: 0 auto clamp(3rem, 2.2rem + 3.5vw, 5rem) auto;
+.inner {
+  max-width: var(--section-max);
+  margin: 0 auto;
 }
 
-.sectionTag {
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  background: linear-gradient(135deg, #8a6c38 0%, #ba9a63 25%, #e6cb95 45%, #c2a36b 55%, #a6844d 75%, #664d24 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  text-transform: uppercase;
-  display: inline-block;
-  margin-bottom: 1rem;
-}
+/* ---------- header ---------- */
 
-.sectionHeader h2 {
-  font-size: clamp(1.75rem, 1.35rem + 2vw, 2.5rem);
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-.sectionHeader p {
-  color: var(--text-muted);
-  font-size: clamp(0.95rem, 0.87rem + 0.4vw, 1.05rem);
-  line-height: 1.7;
-}
-
-.rows {
+.header {
   display: flex;
   flex-direction: column;
-  gap: clamp(3.75rem, 3.3rem + 2vw, 5rem);
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 46rem;
+  margin-bottom: clamp(3rem, 2.25rem + 3vw, 5rem);
+}
+
+.lede {
+  max-width: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* ---------- artefacts ---------- */
+
+.list {
+  display: grid;
+  border-top: 1px solid var(--border);
 }
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2.5rem;
   align-items: center;
-  gap: clamp(2rem, 1.2rem + 4vw, 3.5rem);
+  padding-block: clamp(1.75rem, 1.4rem + 1.4vw, 2.75rem);
+  border-bottom: 1px solid var(--border);
 }
 
-.row.reversed {
-  grid-template-columns: 1fr 1fr;
+@media (min-width: 760px) {
+  .row {
+    grid-template-columns: minmax(9rem, 12rem) 1fr;
+    gap: 3.5rem;
+  }
 }
 
-.row.reversed .text {
-  order: 2;
+.horizonWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  white-space: nowrap;
 }
 
-.row.reversed .visual {
-  order: 1;
+/* Outlined numerals: the one place on the page type is drawn rather than
+   filled, which keeps the horizon legible at this size without three
+   slabs of solid gold competing with the headline. */
+.horizon {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 2.2rem + 4vw, 5.5rem);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent);
+  font-variant-numeric: tabular-nums;
 }
 
-.text {
+/* Older engines without text-stroke would render the numeral invisible. */
+@supports not ((-webkit-text-stroke: 1px currentColor) or (text-stroke: 1px currentColor)) {
+  .horizon {
+    color: var(--accent);
+    -webkit-text-stroke: 0;
+  }
+}
+
+.unit {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.rowText {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: justify;
+  gap: 0.5rem;
 }
 
-.iconWrap {
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  color: var(--accent-400);
-  margin-bottom: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.text h3 {
-  font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.6rem);
-  margin-bottom: 0.75rem;
+.rowTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  font-weight: 700;
   line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
-.text p {
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.65;
-  max-width: 420px;
+.rowDesc {
+  max-width: 54ch;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
 }
 
-.accentLine {
-  display: block;
-  width: 24px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--accent-500);
-  margin-top: 1.5rem;
+/* ---------- footnote ---------- */
+
+.footnote {
+  margin-top: clamp(2rem, 1.75rem + 1vw, 3rem);
+  max-width: 44ch;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
 }
 
-.visual {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: clamp(200px, 160px + 8vw, 260px);
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
 }
 
-.visualPanel {
-  position: relative;
-  width: 100%;
-  max-width: 340px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  border-radius: 24px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  color: var(--accent-400);
-}
-
-@media (max-width: 900px) {
-  .row,
-  .row.reversed {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+/* Wide screens split the title and the description into their own columns
+   so each row spans the full measure instead of trailing off into empty
+   space on the right. Declared last: `.rowText` sets `display: flex` above
+   at the same specificity, so this has to come after it to win. */
+@media (min-width: 1080px) {
+  .row {
+    grid-template-columns: minmax(9rem, 11rem) minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 3rem;
+    align-items: start;
   }
 
-  .row.reversed .text,
-  .row.reversed .visual {
-    order: initial;
+  .rowText {
+    display: contents;
   }
 
-  .text p {
+  .rowTitle {
+    padding-top: 0.2rem;
+  }
+
+  .rowDesc {
     max-width: none;
   }
 }
