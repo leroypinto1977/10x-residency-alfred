@@ -7,7 +7,7 @@
   padding: 14px 28px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--fs-base);
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;

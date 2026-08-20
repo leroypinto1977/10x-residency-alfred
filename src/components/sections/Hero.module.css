@@ -65,7 +65,7 @@
 
 .wordmark {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.1875rem);
+  font-size: var(--fs-h3);
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -76,7 +76,7 @@
 }
 
 .edition {
-  font-size: 0.6875rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -96,8 +96,8 @@
 
 .title {
   max-width: 15ch;
-  font-size: clamp(2.75rem, 1.6rem + 5.2vw, 5.25rem);
-  line-height: 0.98;
+  font-size: var(--fs-h1);
+  line-height: 1;
   letter-spacing: -0.035em;
   font-weight: 700;
   color: var(--text-primary);
@@ -111,7 +111,7 @@
 .subtitle {
   margin-top: 1.5rem;
   max-width: 44ch;
-  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  font-size: var(--fs-lede);
   line-height: 1.6;
   color: var(--text-secondary);
 }
@@ -147,7 +147,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.8125rem;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--text-secondary);
@@ -156,6 +156,27 @@
 .metaIcon {
   color: var(--accent);
   flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  /* The base scrim is weighted to the left, which is right on desktop where
+     the copy occupies the left third. On a phone the copy runs the full
+     width and sits over the lit rock face, so the wash has to be vertical
+     and heavier or the subtitle drops below AA against the brightest part
+     of the photograph. The falls end up reading as texture rather than as
+     a clear photograph here, which is the deliberate trade: the venue gets
+     its proper showing at desktop width, and on a phone the copy has to be
+     readable in sunlight. */
+  .scrim {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(8, 8, 10, 0.86) 0%,
+        rgba(8, 8, 10, 0.7) 34%,
+        rgba(8, 8, 10, 0.78) 70%,
+        var(--bg-void) 100%
+      );
+  }
 }
 
 @media (max-width: 640px) {

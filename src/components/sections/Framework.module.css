@@ -42,7 +42,7 @@
 
 .sectionHeader p {
   color: var(--text-muted);
-  font-size: 1.05rem;
+  font-size: var(--fs-base);
   line-height: 1.7;
 }
 
@@ -80,7 +80,7 @@
 
 .tagline {
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   margin-bottom: 1.25rem;
   line-height: 1.4;
@@ -88,7 +88,7 @@
 
 .body {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
   line-height: 1.7;
 }
 

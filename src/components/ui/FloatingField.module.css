@@ -5,7 +5,7 @@
 }
 
 .label {
-  font-size: 0.7rem;
+  font-size: var(--fs-2xs);
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -37,7 +37,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
   line-height: 1.4;
   transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease, transform 200ms ease;
   resize: vertical;

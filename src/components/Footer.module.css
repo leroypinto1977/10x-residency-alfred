@@ -16,7 +16,7 @@
 /* Oversized sign-off. The programme name gets the last word. */
 .wordmark {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 8.5vw, 6.5rem);
+  font-size: clamp(2rem, 1.1rem + 4.6vw, 6.5rem);
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: -0.04em;
@@ -52,14 +52,14 @@
 
 .brand {
   font-family: var(--font-display);
-  font-size: 1.125rem;
+  font-size: var(--fs-h3);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .blurb {
   margin-top: 0.75rem;
-  font-size: 0.875rem;
+  font-size: var(--fs-sm);
   line-height: 1.65;
   color: var(--text-secondary);
 }
@@ -68,7 +68,7 @@
   display: grid;
   grid-template-columns: repeat(2, auto);
   gap: 0.625rem 2.5rem;
-  font-size: 0.875rem;
+  font-size: var(--fs-sm);
 }
 
 .navLink {
@@ -101,7 +101,7 @@
 }
 
 .ctaNote {
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   line-height: 1.5;
   color: var(--text-faint);
   max-width: 20rem;
@@ -116,7 +116,7 @@
   margin-top: 3rem;
   padding-block: 1.75rem;
   border-top: 1px solid var(--border);
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
   text-align: center;
 }

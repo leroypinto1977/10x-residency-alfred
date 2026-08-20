@@ -67,7 +67,7 @@
 
 .header p {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   line-height: 1.5;
 }
 

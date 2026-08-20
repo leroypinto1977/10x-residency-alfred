@@ -26,7 +26,7 @@
 
 .gateForm p {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   margin-bottom: 0.5rem;
 }
 
@@ -37,7 +37,7 @@
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
 }
 
 .gateForm input:focus {
@@ -58,7 +58,7 @@
 
 .gateError {
   color: var(--danger);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
 }
 
 .page {
@@ -84,7 +84,7 @@
 
 .header p {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
 }
 
 .filters {
@@ -94,7 +94,7 @@
 }
 
 .filters label {
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -107,7 +107,7 @@
   border: 1px solid var(--border);
   background: var(--bg-surface);
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
 }
 
 .errorBanner {
@@ -116,7 +116,7 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.08);
   color: var(--danger);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   margin-bottom: 1rem;
 }
 
@@ -130,7 +130,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   white-space: nowrap;
 }
 
@@ -143,7 +143,7 @@
 
 .table th {
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: var(--fs-2xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background: rgba(255, 255, 255, 0.02);
@@ -173,7 +173,7 @@
   border-radius: 999px;
   background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent-400);
-  font-size: 0.7rem;
+  font-size: var(--fs-2xs);
 }
 
 .empty {

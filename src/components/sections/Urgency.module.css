@@ -42,7 +42,7 @@
 
 .panelTitle {
   text-align: center;
-  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  font-size: var(--fs-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -62,7 +62,7 @@
 }
 
 .columnTitle1 {
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   letter-spacing: 0.02em;
   color: #ba240a;
@@ -70,7 +70,7 @@
 }
 
 .columnTitle2 {
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   letter-spacing: 0.02em;
   background: linear-gradient(135deg, #8a6c38 0%, #ba9a63 25%, #e6cb95 45%, #c2a36b 55%, #a6844d 75%, #664d24 100%);
@@ -93,7 +93,7 @@
 .listItem {
   display: flex;
   gap: 0.75rem;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: var(--text-muted);
 }

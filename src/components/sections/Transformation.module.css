@@ -29,7 +29,7 @@
 .sectionHeader .lede {
   max-width: 46ch;
   color: var(--on-light-muted);
-  font-size: 1.0625rem;
+  font-size: var(--fs-lede);
   line-height: 1.7;
 }
 
@@ -88,7 +88,7 @@
 }
 
 .num {
-  font-size: 0.6875rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.18em;
   color: var(--accent-on-light);
@@ -97,7 +97,7 @@
 }
 
 .step h3 {
-  font-size: 1.0625rem;
+  font-size: var(--fs-lede);
   margin-bottom: 0.5rem;
   line-height: 1.3;
   letter-spacing: -0.015em;
@@ -105,7 +105,7 @@
 }
 
 .step p {
-  font-size: 0.875rem;
+  font-size: var(--fs-sm);
   color: var(--on-light-muted);
   line-height: 1.6;
   max-width: 240px;
@@ -129,11 +129,11 @@
   }
 
   .step h3 {
-    font-size: 1rem;
+    font-size: var(--fs-base);
   }
 
   .step p {
-    font-size: 0.82rem;
+    font-size: var(--fs-xs);
     max-width: 200px;
   }
 }

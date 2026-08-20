@@ -28,7 +28,7 @@
 
 .lede {
   max-width: 46ch;
-  font-size: 1.0625rem;
+  font-size: var(--fs-lede);
   line-height: 1.7;
   color: var(--text-secondary);
 }
@@ -67,7 +67,7 @@
    slabs of solid gold competing with the headline. */
 .horizon {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 2.2rem + 4vw, 5.5rem);
+  font-size: clamp(2.5rem, 1.9rem + 2.6vw, 5.5rem);
   font-weight: 700;
   line-height: 0.85;
   letter-spacing: -0.05em;
@@ -85,7 +85,7 @@
 }
 
 .unit {
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -100,7 +100,7 @@
 
 .rowTitle {
   font-family: var(--font-display);
-  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  font-size: var(--fs-h3);
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -109,7 +109,7 @@
 
 .rowDesc {
   max-width: 54ch;
-  font-size: 0.9375rem;
+  font-size: var(--fs-md);
   line-height: 1.7;
   color: var(--text-secondary);
 }
@@ -121,7 +121,7 @@
   max-width: 44ch;
   padding-left: 1.25rem;
   border-left: 2px solid var(--accent);
-  font-size: 0.9375rem;
+  font-size: var(--fs-md);
   line-height: 1.7;
   color: var(--text-secondary);
 }

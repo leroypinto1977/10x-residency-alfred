@@ -5,7 +5,7 @@
 }
 
 .label {
-  font-size: 0.7rem;
+  font-size: var(--fs-2xs);
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -45,7 +45,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   cursor: pointer;
   transition: border-color 200ms ease, background 200ms ease, transform 150ms ease;
 }

@@ -42,14 +42,14 @@
 
 .content .lede {
   color: var(--text-muted);
-  font-size: 1.05rem;
+  font-size: var(--fs-base);
   line-height: 1.6;
   margin-bottom: 2.5rem;
 }
 
 .cta {
   padding: 1rem 2.75rem;
-  font-size: 1.05rem;
+  font-size: var(--fs-base);
   margin-bottom: 2.5rem;
 }
 

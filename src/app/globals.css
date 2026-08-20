@@ -69,6 +69,23 @@
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-heading: var(--font-display);
 
+  /* ---- Type scale ----
+     Every fluid step pairs a rem base with a vw term. A pure-vw middle
+     term is inert on phones: the old `clamp(1.9rem, 6vw, 3.2rem)` only
+     cleared its 1.9rem floor at a 507px viewport, so every section heading
+     was frozen at 30.4px from 320px all the way up, and nothing below that
+     width scaled at all. 0.75rem is the floor for anything on the page:
+     below ~12px, small caps stop being readable on a phone. */
+  --fs-2xs: 0.75rem;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 0.9375rem;
+  --fs-base: 1rem;
+  --fs-lede: clamp(1rem, 0.94rem + 0.26vw, 1.1875rem);
+  --fs-h3: clamp(1.0625rem, 1.02rem + 0.2vw, 1.1875rem);
+  --fs-h2: clamp(1.5rem, 0.97rem + 2.79vw, 3.2rem);
+  --fs-h1: clamp(2rem, 1rem + 5.3vw, 5.25rem);
+
   /* Shadows */
   --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.45);
   --shadow-accent: 0 8px 30px rgba(var(--accent-rgb), 0.2);
@@ -193,9 +210,9 @@ select {
   align-items: center;
   gap: 0.75rem;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: var(--fs-2xs);
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -231,7 +248,7 @@ select {
 /* Display headline scale, matched to the sibling site's clamp curve. */
 .displayXl {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 8.5vw, 4.6rem);
+  font-size: var(--fs-h1);
   font-weight: 700;
   line-height: 1.03;
   letter-spacing: -0.02em;
@@ -239,8 +256,8 @@ select {
 
 .displayLg {
   font-family: var(--font-display);
-  font-size: clamp(1.9rem, 6vw, 3.2rem);
+  font-size: var(--fs-h2);
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.02em;
 }

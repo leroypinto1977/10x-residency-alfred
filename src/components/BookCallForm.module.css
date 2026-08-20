@@ -8,12 +8,12 @@
   width: 100%;
   min-height: 48px;
   margin-top: 0.75rem;
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
   letter-spacing: 0.01em;
 }
 
 .formNotice {
-  font-size: 0.8rem;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   text-align: center;
   margin-top: 0.25rem;
@@ -25,7 +25,7 @@
   border: 1px solid rgba(239, 68, 68, 0.16);
   border-radius: 14px;
   color: #ef4444;
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.5;
   backdrop-filter: blur(10px);
@@ -68,7 +68,7 @@
   border-top: 1px solid var(--border);
   padding-top: 1.1rem;
   margin-top: 1.1rem;
-  font-size: 0.82rem;
+  font-size: var(--fs-xs);
   line-height: 1.6;
   color: var(--text-muted);
 }
@@ -85,6 +85,6 @@
   .formNotice,
   .errorAlert,
   .successNext {
-    font-size: 0.875rem;
+    font-size: var(--fs-sm);
   }
 }

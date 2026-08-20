@@ -51,7 +51,7 @@
   border-radius: 50%;
   background: rgba(212, 162, 78, 0.08);
   color: #d4a24e;
-  font-size: 18px;
+  font-size: var(--fs-h3);
 }
 
 .cardText {
@@ -81,6 +81,6 @@
 
 @media (min-width: 768px) {
   .cardText {
-    font-size: 18px;
+    font-size: var(--fs-h3);
   }
 }

@@ -84,11 +84,11 @@
 
 .name {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 
 .role {
-  font-size: 0.8rem;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
