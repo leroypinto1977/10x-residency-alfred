@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MapPin, Clock, Users } from "lucide-react";
+import { MapPin, CalendarDays, Clock, Users } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
@@ -9,6 +9,7 @@ import styles from "./Hero.module.css";
 
 const META = [
   { Icon: MapPin, label: EVENT.venue },
+  { Icon: CalendarDays, label: EVENT.dateLabel },
   { Icon: Clock, label: EVENT.format },
   { Icon: Users, label: `${EVENT.seats} founders, ${EVENT.admission.toLowerCase()}` },
 ];

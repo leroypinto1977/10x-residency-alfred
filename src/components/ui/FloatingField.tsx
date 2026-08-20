@@ -16,7 +16,10 @@ interface FloatingFieldProps {
   rows?: number;
   min?: string | number;
   max?: string | number;
+  maxLength?: number;
+  inputMode?: "text" | "tel" | "email" | "numeric" | "decimal" | "search" | "none" | "url";
   error?: boolean;
+  errorMessage?: string;
 }
 
 export default function FloatingField({
@@ -31,9 +34,13 @@ export default function FloatingField({
   rows,
   min,
   max,
+  maxLength,
+  inputMode,
   error,
+  errorMessage,
 }: FloatingFieldProps) {
   const id = useId();
+  const errorId = `${id}-error`;
   const [focused, setFocused] = useState(false);
 
   const sharedProps = {
@@ -47,6 +54,8 @@ export default function FloatingField({
     placeholder,
     required,
     "aria-required": required,
+    "aria-invalid": error || undefined,
+    "aria-describedby": error && errorMessage ? errorId : undefined,
   };
 
   return (
@@ -57,7 +66,12 @@ export default function FloatingField({
       {as === "textarea" ? (
         <textarea {...sharedProps} rows={rows ?? 3} />
       ) : (
-        <input {...sharedProps} type={type} min={min} max={max} />
+        <input {...sharedProps} type={type} min={min} max={max} maxLength={maxLength} inputMode={inputMode} />
+      )}
+      {error && errorMessage && (
+        <p id={errorId} className={styles.fieldErrorMessage} role="alert">
+          {errorMessage}
+        </p>
       )}
     </div>
   );

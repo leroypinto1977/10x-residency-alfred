@@ -28,10 +28,14 @@ export const EVENT = {
   admission: "By application",
 
   /**
-   * The first day of the residency, ISO `YYYY-MM-DD`.
-   * TODO(content): replace with the confirmed residency start date.
+   * The residency dates, ISO `YYYY-MM-DD`. Confirmed by the team and first
+   * published in the hero.
    */
-  startDate: null as string | null,
+  startDate: "2026-10-02" as string | null,
+  endDate: "2026-10-05" as string | null,
+
+  /** How the dates are written wherever they appear on the page. */
+  dateLabel: "Oct 2 to 5, 2026",
 
   /**
    * When applications close, ISO `YYYY-MM-DD`. Drives the countdown in the
