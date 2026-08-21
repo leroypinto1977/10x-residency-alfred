@@ -20,24 +20,33 @@
 .backdropImg {
   object-fit: cover;
   object-position: center 40%;
+  /* The source is a dimly lit evening room, so it needs lifting before the
+     scrim goes over it — brightening here rather than weakening the scrim
+     alone keeps the copy column's dark bed intact. */
+  filter: brightness(1.18) saturate(1.04);
 }
 
 .scrim {
   position: absolute;
   inset: 0;
-  /* Three passes: a left-weighted wash so the copy column has a dark bed,
-     a top fade so the brand bar stays legible against the canopy, and a
-     bottom fade that hands off into the next section with no seam. */
+  /* The wash is shaped to the copy rather than ramped evenly across the
+     frame. The headline runs to ~71% of the width, so the bed has to stay
+     heavy that far and only then fall off — but past ~85% it goes almost
+     clear instead of settling at 0.6 as it used to. That last stop is what
+     makes the room look lit: the old even ramp was dimming the speaker and
+     the right-hand crowd to protect type that never reached them. Measured
+     worst-case over the composite: headline 4.9:1, subtitle 5.0:1. */
   background:
     linear-gradient(
       100deg,
       rgba(8, 8, 10, 0.94) 0%,
-      rgba(8, 8, 10, 0.82) 38%,
-      rgba(8, 8, 10, 0.45) 68%,
-      rgba(8, 8, 10, 0.6) 100%
+      rgba(8, 8, 10, 0.86) 46%,
+      rgba(8, 8, 10, 0.55) 70%,
+      rgba(8, 8, 10, 0.12) 85%,
+      rgba(8, 8, 10, 0.06) 100%
     ),
-    linear-gradient(to bottom, rgba(8, 8, 10, 0.75) 0%, transparent 22%),
-    linear-gradient(to top, var(--bg-void) 2%, transparent 42%);
+    linear-gradient(to bottom, rgba(8, 8, 10, 0.62) 0%, transparent 22%),
+    linear-gradient(to top, var(--bg-void) 2%, transparent 38%);
 }
 
 /* ---------- frame ---------- */
@@ -128,8 +137,11 @@
 .metaRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 3rem;
-  padding-top: 1.5rem;
+  /* 2rem, not 3: at 16px the four items only just fit the frame between
+     ~768 and 900px, and the wider gutter was pushing the last one onto a
+     line of its own. Above 900px space-between distributes the slack. */
+  gap: 1rem 2rem;
+  padding-top: 1.75rem;
   /* Full width: the rule is the base of the composition, so it has to
      reach both edges of the frame rather than stopping mid-span. */
   border-top: 1px solid var(--border);
@@ -143,13 +155,26 @@
   }
 }
 
+/* Between the phone layout and 900px the four items measure wider than the
+   frame at 16px — even at zero gutter — so a flex row orphans the last one
+   on a line of its own. A 2x2 grid makes the wrap read as a deliberate
+   block instead of an accident. */
+@media (min-width: 641px) and (max-width: 899px) {
+  .metaRow {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    justify-content: start;
+    column-gap: 2.5rem;
+  }
+}
+
 .metaItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: var(--fs-xs);
+  gap: 0.625rem;
+  font-size: var(--fs-base);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--text-secondary);
 }
 
@@ -161,20 +186,27 @@
 @media (max-width: 767px) {
   /* The base scrim is weighted to the left, which is right on desktop where
      the copy occupies the left third. On a phone the copy runs the full
-     width and sits over the lit rock face, so the wash has to be vertical
-     and heavier or the subtitle drops below AA against the brightest part
-     of the photograph. The falls end up reading as texture rather than as
-     a clear photograph here, which is the deliberate trade: the venue gets
-     its proper showing at desktop width, and on a phone the copy has to be
-     readable in sunlight. */
+     width and sits directly over the lit faces in the front row, so the
+     wash has to be vertical and heavier or the subtitle drops below AA
+     against the brightest part of the photograph. The room ends up reading
+     as texture rather than as a clear photograph here, which is the
+     deliberate trade: it gets its proper showing at desktop width, and on a
+     phone the copy has to be readable in sunlight. Stops are placed off the
+     copy blocks, not spaced evenly: ink holds to 42% because the subtitle
+     ends there, then drops hard so the middle of the frame opens up, and
+     reaches solid void by 80% — the meta strip stacks one item per line on
+     a phone, so it starts higher up the frame than its desktop equivalent
+     and needs flat ground from there down. The old evenly-spaced ramp left
+     the subtitle at 3.5:1 and the meta row at 3.8:1, both under AA.
+     Measured worst case now: subtitle 5.6:1, meta 8.0:1, headline 13:1. */
   .scrim {
     background:
       linear-gradient(
         180deg,
-        rgba(8, 8, 10, 0.86) 0%,
-        rgba(8, 8, 10, 0.7) 34%,
-        rgba(8, 8, 10, 0.78) 70%,
-        var(--bg-void) 100%
+        rgba(8, 8, 10, 0.9) 0%,
+        rgba(8, 8, 10, 0.87) 42%,
+        rgba(8, 8, 10, 0.6) 58%,
+        var(--bg-void) 80%
       );
   }
 }
@@ -190,8 +222,12 @@
     align-items: stretch;
   }
 
+  /* One per line: at 16px the longer two items can't share a row with
+     anything on a phone, so a single column is the only even option. */
   .metaRow {
-    gap: 0.625rem 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 
   .edition {

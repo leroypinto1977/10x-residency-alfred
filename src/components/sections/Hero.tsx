@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
 import { EVENT } from "@/lib/event";
-import fallsImg from "../../../public/athirappilly-falls.jpg";
+import sessionImg from "../../../public/founders-session.jpg";
 import styles from "./Hero.module.css";
 
 const META = [
@@ -17,12 +17,12 @@ const META = [
 export default function Hero() {
   return (
     <section className={styles.hero}>
-      {/* The venue carries the hero rather than a gradient. This is the
-          actual place the residency runs, shot wide and pushed behind a
-          left-weighted scrim so the type stays legible over it. */}
+      {/* The room carries the hero rather than a gradient: an actual
+          session, founders taking notes. The scrim is left-weighted so the
+          copy column has a dark bed while the faces stay readable. */}
       <div className={styles.backdrop} aria-hidden="true">
         <Image
-          src={fallsImg}
+          src={sessionImg}
           alt=""
           fill
           sizes="100vw"
@@ -74,7 +74,7 @@ export default function Hero() {
           <ul className={styles.metaRow}>
             {META.map(({ Icon, label }) => (
               <li className={styles.metaItem} key={label}>
-                <Icon size={15} className={styles.metaIcon} aria-hidden="true" />
+                <Icon size={18} className={styles.metaIcon} aria-hidden="true" />
                 {label}
               </li>
             ))}
