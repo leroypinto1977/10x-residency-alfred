@@ -37,7 +37,10 @@ export default function Mentor({
   secondaryCtaHref,
 }: MentorProps) {
   return (
-    <section id="mentor" className={styles.section}>
+    // `onLight` is global (globals.css), not a module class: it re-colours
+    // the headings, which the global h1-h6 rule would otherwise keep at the
+    // dark-theme near-white.
+    <section id="mentor" className={`onLight ${styles.section}`}>
       <div className={styles.grid}>
         <Reveal className={styles.portraitCol}>
           <div className={styles.portraitCard}>
@@ -69,7 +72,7 @@ export default function Mentor({
               carries the same kicker as every other section header, and the
               stray empty <h2> that wrapped the subhead is gone: it emitted a
               headless heading whenever `subhead` was undefined. */}
-          <p className="kicker">{eyebrow}</p>
+          <p className="kicker kickerOnLight">{eyebrow}</p>
           <h2 className={`displayLg ${styles.greeting}`}>
             Hosted By <span className={styles.name}>{name}</span>
           </h2>

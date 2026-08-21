@@ -1,22 +1,35 @@
 .section {
-  /* Component-scoped tokens per spec, aliased to the site's existing design
-     system so this section's gold/background matches every other section
-     rather than introducing a second, slightly different palette. */
-  --mentor-bg: var(--bg);
-  --mentor-card: rgba(255, 255, 255, 0.05);
-  --mentor-gold: var(--accent);
-  --mentor-text: var(--text);
-  --mentor-text-secondary: var(--text-muted);
+  /* This is the page's light block — the one section painted on bone
+     instead of near-black, so the run of dark sections has somewhere to
+     breathe. The component-scoped tokens below are the entire mechanism:
+     everything downstream already reads through them, so flipping the
+     surface is five declarations rather than a rewrite.
+     Whoever changes these: the `onLight` global class on the section
+     element is load-bearing too. The global h1-h6 rule sets the dark-theme
+     colour explicitly, so headings ignore inherited ink without it. */
+  --mentor-bg: var(--surface-light);
+  --mentor-card: rgba(23, 20, 15, 0.04);
+  --mentor-gold: var(--accent-on-light);
+  --mentor-text: var(--on-light);
+  --mentor-text-secondary: var(--on-light-muted);
+  --mentor-border: var(--border-on-light);
+  /* Shadows on bone have to be warm and shallow. --shadow-soft is tuned
+     for a black page and reads as grey smudge here. */
+  --mentor-shadow: 0 18px 40px -24px rgba(23, 20, 15, 0.35);
 
-  max-width: 1280px;
-  margin: 0 auto;
-  padding-block: clamp(4rem, 3rem + 4vw, 6rem);
+  background: var(--mentor-bg);
+  /* Full-bleed: the max-width moved down to .grid. Left on the section it
+     painted a 1280px light card with dark either side of it, which reads as
+     a mistake rather than as a colour block. */
+  padding-block: clamp(4.5rem, 3.5rem + 4vw, 7rem);
   padding-inline: clamp(24px, 16px + 1.6vw, 40px);
   position: relative;
   z-index: 1;
 }
 
 .grid {
+  max-width: 1280px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1.05fr 1.1fr;
   gap: clamp(2rem, 1rem + 4vw, 4rem);
@@ -64,8 +77,8 @@
   position: absolute;
   inset: -45%;
   border-radius: 24px;
-  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.12) 0%, transparent 60%);
-  filter: blur(80px);
+  background: radial-gradient(circle, rgba(23, 20, 15, 0.14) 0%, transparent 60%);
+  filter: blur(70px);
   z-index: -1;
 }
 
@@ -112,7 +125,7 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--mentor-gold);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--mentor-shadow);
 }
 
 .founder {
@@ -131,7 +144,7 @@
   font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 0.15em;
-  color: var(--accent-400);
+  color: var(--mentor-gold);
   text-transform: uppercase;
   display: inline-block;
   margin-bottom: 1rem;
@@ -153,7 +166,10 @@
 }
 
 .name {
-  background: linear-gradient(135deg, #8a6c38 0%, #ba9a63 25%, #e6cb95 45%, #c2a36b 55%, #a6844d 75%, #664d24 100%);
+  /* Deeper cut of the same ramp than the dark-section version. The old
+     ramp peaked at #e6cb95, which is 1.4:1 on bone — invisible. Every stop
+     here clears 3:1 (large text); the peak is the binding one at 3.4:1. */
+  background: linear-gradient(135deg, #5c4a22 0%, #8a6c38 28%, #9c7b45 48%, #8a6c38 68%, #5c4a22 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -199,9 +215,9 @@
   padding: 1rem 1.1rem;
   border-radius: 14px;
   background: var(--mentor-card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--mentor-border);
   overflow: hidden;
-  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  transition: transform var(--dur-quick) var(--ease-soft), border-color var(--dur-quick) var(--ease-soft), box-shadow var(--dur-quick) var(--ease-soft);
 }
 
 .statCard::before {
@@ -217,8 +233,8 @@
 
 .statCard:hover {
   transform: translateY(-4px);
-  border-color: rgba(var(--accent-rgb), 0.45);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(var(--accent-rgb), 0.12);
+  border-color: rgba(110, 97, 60, 0.45);
+  box-shadow: var(--mentor-shadow);
 }
 
 .statValue {
@@ -244,7 +260,7 @@
   padding: 1.25rem 1.75rem;
   border-radius: 0 16px 16px 0;
   background: var(--mentor-card);
-  border-left: 4px solid var(--accent-500);
+  border-left: 4px solid var(--mentor-gold);
   margin-bottom: 2rem;
   text-align: left;
 }
