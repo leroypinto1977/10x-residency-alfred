@@ -3,7 +3,14 @@
   /* dvh, not vh — vh jumps when the mobile address bar collapses. */
   min-height: 100dvh;
   display: flex;
-  padding-block: clamp(1.5rem, 1.25rem + 1vw, 2.25rem) clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
+  /* Vertical rhythm is keyed to vh, not vw. Sizing the gaps off width is
+     what put the detail strip below the fold on a 1280x720 laptop: the
+     frame is wide, so every vw-driven gap resolved near its maximum while
+     the height available for them was the smallest of any desktop size.
+     Keying them to height instead means they shrink exactly when height is
+     scarce. At tall sizes this costs nothing visually — .inner is
+     space-between, so it redistributes whatever the gaps give back. */
+  padding-block: clamp(1rem, 0.5rem + 2vh, 2.25rem) clamp(1rem, 0.5rem + 2.5vh, 2.5rem);
   padding-inline: var(--section-px);
   overflow: hidden;
   isolation: isolate;
@@ -11,10 +18,31 @@
 
 /* ---------- backdrop ---------- */
 
+/* Oversized by 8% top and bottom so the parallax has somewhere to travel:
+   this wrapper moves down as the page scrolls up, and without the overscan
+   it would drag its own top edge into frame. */
 .backdrop {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: -8%;
+  bottom: -8%;
   z-index: -1;
+  will-change: transform;
+}
+
+/* Separate element from .backdrop purely so the entrance scale and the
+   scroll parallax live on different nodes. Sharing one node means the
+   scroll handler and the entrance tween write the same transform and the
+   last writer wins — the settle visibly stutters on any scroll during it. */
+.backdropInner {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  /* The photograph settles out of an overscale rather than simply being
+     there. 2.6s is slow enough that it never reads as a zoom — it reads as
+     the frame coming to rest, which is the point. */
+  animation: hero-settle 2.6s var(--ease-entrance) both;
 }
 
 .backdropImg {
@@ -24,27 +52,17 @@
      scrim goes over it — brightening here rather than weakening the scrim
      alone keeps the copy column's dark bed intact. */
   filter: brightness(1.18) saturate(1.04);
-  /* A slow drift, not a Ken Burns. Thirty seconds end to end and never
-     more than 5% — at that rate the photograph reads as alive rather than
-     as animated, and the eye never catches it moving. Transform only, so
-     it stays on the compositor and never touches layout. */
-  animation: hero-drift 30s ease-in-out infinite alternate;
-  transform-origin: 60% 45%;
 }
 
-@keyframes hero-drift {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.05);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .backdropImg {
-    animation: none;
-  }
+/* Sits over the photograph and under the copy, so the headline rises
+   through it rather than waiting for it to clear. */
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-void);
+  pointer-events: none;
+  animation: hero-veil 1.25s ease-out both;
 }
 
 .scrim {
@@ -81,7 +99,10 @@
   flex-direction: column;
   /* Brand at the top, message in the middle, detail at the foot. */
   justify-content: space-between;
-  gap: clamp(2.5rem, 2rem + 3vw, 4rem);
+  /* A floor, not the operating value: at any comfortable height the free
+     space exceeds it and space-between sets the real spacing. It only
+     binds on short viewports, which is where it needs to be small. */
+  gap: clamp(1.5rem, 0.5rem + 3.5vh, 4rem);
 }
 
 /* ---------- brand bar ---------- */
@@ -121,25 +142,63 @@
   align-items: flex-start;
   /* Optical centre sits slightly above true centre. */
   margin-block: auto;
-  padding-block: clamp(1rem, 0.5rem + 2vw, 3rem);
+  padding-block: clamp(0.5rem, 0.25rem + 1.75vh, 3rem);
 }
 
 .title {
-  max-width: 15ch;
-  font-size: var(--fs-h1);
+  /* --fs-h1 is a width clamp, which is the wrong axis on its own: a phone
+     held landscape is 800px wide and 375px tall, so the width rule asks for
+     a 59px headline in a viewport barely six lines deep and pushes the
+     buttons off the bottom. Capping against height costs nothing anywhere
+     the height is adequate — at every portrait and desktop size below,
+     --fs-h1 is already the smaller of the two and min() picks it. */
+  font-size: min(var(--fs-h1), 12vh);
   line-height: 1;
   letter-spacing: -0.035em;
   font-weight: 700;
   color: var(--text-primary);
+  /* Cancels the padding the line masks add at the two outer ends. .title
+     is a flex item, so it establishes a block formatting context and the
+     first line's negative margin-top and the last line's margin-bottom
+     cannot collapse out of it on their own — without this the headline
+     block is ~0.28em taller than the text it contains, which on a 720px
+     laptop is enough to push the detail strip below the fold. */
+  margin-block: -0.12em -0.16em;
+}
+
+/* Each headline line is its own clip mask, and the span inside rises out
+   of it. This is why the copy is set as explicit lines: a browser gives
+   you no handle on an automatically wrapped line box, so there is nothing
+   to mask. On a phone a line may wrap inside its own mask and reveal two
+   rows together — acceptable, and still better than one block fading. */
+.line {
+  display: block;
+  overflow: hidden;
+  /* line-height 1 sets a box exactly 1em tall, which clips ascenders and
+     descenders — 'y' in "your", both 'p's in "purpose". The padding opens
+     the mask enough to clear them (overflow clips at the padding box, so
+     the padding area still paints), and the negative margin takes the
+     space back so line spacing is unchanged. .title cancels the two outer
+     ends the same way — see the note there. */
+  padding-block: 0.12em 0.16em;
+  margin-block: -0.12em -0.16em;
+}
+
+.lineInner {
+  display: block;
+  will-change: transform;
+  /* --line-index is set per line in the component, so adding or reordering
+     a headline line needs no change here. */
+  animation: hero-line 1.15s var(--ease-entrance) both;
+  animation-delay: calc(0.45s + var(--line-index, 0) * 0.085s);
 }
 
 .highlight {
-  display: block;
   color: var(--accent);
 }
 
 .subtitle {
-  margin-top: 1.5rem;
+  margin-top: clamp(0.875rem, 0.5rem + 1.5vh, 1.5rem);
   max-width: 44ch;
   font-size: var(--fs-lede);
   line-height: 1.6;
@@ -150,7 +209,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.875rem;
-  margin-top: 2.25rem;
+  margin-top: clamp(1.25rem, 0.75rem + 2vh, 2.25rem);
 }
 
 /* ---------- detail strip ---------- */
@@ -162,11 +221,104 @@
      ~768 and 900px, and the wider gutter was pushing the last one onto a
      line of its own. Above 900px space-between distributes the slack. */
   gap: 1rem 2rem;
-  padding-top: 1.75rem;
+  padding-top: clamp(1rem, 0.5rem + 1.75vh, 1.75rem);
   /* Full width: the rule is the base of the composition, so it has to
      reach both edges of the frame rather than stopping mid-span. */
   border-top: 1px solid var(--border);
   list-style: none;
+}
+
+/* ---------- opening cascade ---------- */
+
+/* The opening is a cascade, not one fade repeated at four delays. Each
+   beat is a different move, ordered by what the eye should read first:
+
+     0.00  the photograph settles out of a 14% overscale (2.6s, underneath
+           everything) while the black veil over it lifts
+     0.25  the brand bar, the smallest thing, arrives
+     0.45  headline lines rise out of their masks, 85ms apart
+     0.95  subtitle, then actions, then the detail strip
+
+   Total settle is ~2.2s. That is long for a UI and right for a hero: the
+   page gets one chance to look composed rather than assembled.
+
+   This is CSS rather than framer on purpose. Driving it from JavaScript
+   meant the server shipped the veil at full opacity and every headline
+   line translated out of frame, so until hydration landed the hero was a
+   black rectangle with no headline in it. CSS animations run at first
+   paint and need no hydration.
+
+   `both` fill on every one of these matters — without it each element
+   paints in its final position during its delay, then jumps back to the
+   start when the animation actually begins. */
+.rise {
+  animation: hero-rise 0.95s var(--ease-soft) both;
+}
+
+.riseBrand {
+  animation-delay: 0.25s;
+}
+
+.riseSubtitle {
+  animation-delay: 0.95s;
+}
+
+.riseActions {
+  animation-delay: 1.08s;
+}
+
+.riseMeta {
+  animation-delay: 1.22s;
+}
+
+@keyframes hero-veil {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-settle {
+  from {
+    transform: scale(1.14);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-line {
+  from {
+    transform: translateY(125%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Nothing here carries meaning, so reduced motion gets the composed final
+   frame with no movement at all. */
+@media (prefers-reduced-motion: reduce) {
+  .backdropInner,
+  .veil,
+  .lineInner,
+  .rise {
+    animation: none;
+  }
+
+  .veil {
+    opacity: 0;
+  }
 }
 
 @media (min-width: 900px) {
@@ -263,5 +415,38 @@
 
   .edition {
     display: none;
+  }
+}
+
+/* Short phones — an iPhone 8/SE at 667px tall, or an older 640px Android.
+   The vh-keyed rhythm above already gives back what it can here, because
+   at this width most of those clamps were sitting on their lower bound
+   before height ever entered into it. What is left to recover is in the
+   three tallest blocks: a stacked pair of full-width buttons, four detail
+   items one per line, and a headline still set at desktop proportions.
+
+   Only the headline is scaled, and only to 30px — large enough to still
+   lead the page, small enough to buy back a line's worth of height. The
+   subtitle and the detail items keep their 16px: those are being read,
+   not looked at, and shrinking them to win a few pixels is the wrong
+   trade on the device where reading is hardest. The shared button keeps
+   its own dimensions too — its touch target is set where it is on
+   purpose, and the hero has no business overriding it. */
+@media (max-width: 640px) and (max-height: 700px) {
+  .title {
+    font-size: clamp(1.6875rem, 1rem + 3.6vw, 1.875rem);
+  }
+
+  .subtitle {
+    margin-top: 0.875rem;
+  }
+
+  .actions {
+    gap: 0.625rem;
+  }
+
+  .metaRow {
+    gap: 0.5rem;
+    padding-top: 0.875rem;
   }
 }

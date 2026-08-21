@@ -1,9 +1,13 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { MapPin, CalendarDays, Clock, Users } from "lucide-react";
-import Reveal from "@/components/Reveal";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
 import { EVENT } from "@/lib/event";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import sessionImg from "../../../public/founders-session.jpg";
 import styles from "./Hero.module.css";
 
@@ -14,29 +18,119 @@ const META = [
   { Icon: Users, label: `${EVENT.seats} founders, ${EVENT.admission.toLowerCase()}` },
 ];
 
+// The headline is set as explicit lines because each one is masked and
+// rises independently. Automatic wrapping can't be masked per line — the
+// browser gives you no handle on a line box.
+const TITLE_LINES = [
+  { text: "Build your million dollar", accent: false },
+  { text: "company", accent: false },
+  { text: "on purpose.", accent: true },
+];
+
+/**
+ * The hero opening.
+ *
+ * The entrance is CSS, deliberately, and only the parallax is JavaScript.
+ * An earlier pass drove the whole cascade from framer, which meant the
+ * server shipped markup with the veil at opacity 1 and every headline line
+ * translated 125% out of frame — so until hydration landed the hero was a
+ * black rectangle with no headline in it. CSS animations run at first
+ * paint, need no hydration, and honour prefers-reduced-motion natively.
+ * If the JavaScript never arrives the opening still plays; only the
+ * parallax is lost, and nothing about the page looks broken without it.
+ *
+ * Timings live in Hero.module.css next to the keyframes that use them.
+ */
 export default function Hero() {
+  const still = useSafeReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+
+  // Parallax. The backdrop drifts down as the page scrolls up so it appears
+  // to move slower than the copy in front of it — depth out of the only two
+  // planes the section has. Written straight to the nodes from one rAF
+  // callback rather than through a motion library, so there is a single
+  // render loop and the transform is exactly what this code says it is.
+  useEffect(() => {
+    const backdrop = backdropRef.current;
+    const inner = innerRef.current;
+    if (still) {
+      // Covers the user turning the OS setting on mid-session: without this
+      // the last values written before the switch stay stuck on the nodes.
+      if (backdrop) backdrop.style.transform = "";
+      if (inner) {
+        inner.style.transform = "";
+        inner.style.opacity = "";
+      }
+      return;
+    }
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const el = sectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const height = rect.height || 1;
+      const p = Math.min(1, Math.max(0, -rect.top / height));
+      // Scaled off viewport height rather than a fixed pixel count, so the
+      // drift is proportional on a phone and on a 27" display alike. The
+      // backdrop is oversized by 8% either side to cover the travel.
+      if (backdrop) {
+        backdrop.style.transform = `translate3d(0, ${p * Math.min(110, window.innerHeight * 0.12)}px, 0)`;
+      }
+      if (inner) {
+        inner.style.transform = `translate3d(0, ${p * -70}px, 0)`;
+        // Holds full strength through the first third, then leaves. Fading
+        // from the very first pixel of scroll reads as the page dimming.
+        inner.style.opacity = String(p < 0.35 ? 1 : Math.max(0, 1 - (p - 0.35) / 0.45));
+      }
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [still]);
+
   return (
-    <section className={styles.hero}>
+    <section ref={sectionRef} className={styles.hero}>
       {/* The room carries the hero rather than a gradient: an actual
-          session, founders taking notes. The scrim is left-weighted so the
-          copy column has a dark bed while the faces stay readable. */}
-      <div className={styles.backdrop} aria-hidden="true">
-        <Image
-          src={sessionImg}
-          alt=""
-          fill
-          sizes="100vw"
-          priority
-          className={styles.backdropImg}
-        />
-        <div className={styles.scrim} />
+          session, founders taking notes. Two nested wrappers on purpose —
+          the outer one is scroll-driven, the inner one owns the entrance,
+          and keeping them apart stops the two transforms fighting. */}
+      <div ref={backdropRef} className={styles.backdrop} aria-hidden="true">
+        <div className={styles.backdropInner}>
+          <Image
+            src={sessionImg}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            className={styles.backdropImg}
+          />
+        </div>
       </div>
 
-      {/* Three bands: brand, message, detail. The whole frame used to be one
-          bottom-left block, which left a third of the viewport empty at the
-          top and gave the composition nothing to sit against. */}
-      <div className={styles.inner}>
-        <header className={styles.brandBar}>
+      {/* Outside the parallax wrapper: the scrim is tuned against the
+          viewport frame, and travelling with the image would drag its
+          dark bed off the copy column. */}
+      <div className={styles.scrim} aria-hidden="true" />
+
+      {/* Lifts off the photograph rather than off the whole section, so the
+          copy can rise through it instead of waiting behind it. */}
+      <div className={styles.veil} aria-hidden="true" />
+
+      {/* Three bands: brand, message, detail. */}
+      <div ref={innerRef} className={styles.inner}>
+        <header className={`${styles.brandBar} ${styles.rise} ${styles.riseBrand}`}>
           <p className={styles.wordmark}>
             Founder <span className={styles.accent}>10X.</span>
           </p>
@@ -44,42 +138,42 @@ export default function Hero() {
         </header>
 
         <div className={styles.content}>
-          <Reveal delay={0.1}>
-            <h1 className={styles.title}>
-              Build your million dollar company
-              <span className={styles.highlight}>on purpose.</span>
-            </h1>
-          </Reveal>
+          <h1 className={styles.title}>
+            {TITLE_LINES.map((line, i) => (
+              <span key={line.text} className={styles.line}>
+                <span
+                  className={`${styles.lineInner} ${line.accent ? styles.highlight : ""}`}
+                  style={{ "--line-index": i } as CSSProperties}
+                >
+                  {line.text}
+                </span>
+              </span>
+            ))}
+          </h1>
 
-          <Reveal delay={0.2}>
-            <p className={styles.subtitle}>
-              Most founders work harder than anyone in the room, and still can&apos;t tell if
-              they are building the right thing.
-            </p>
-          </Reveal>
+          <p className={`${styles.subtitle} ${styles.rise} ${styles.riseSubtitle}`}>
+            Most founders work harder than anyone in the room, and still can&apos;t tell if
+            they are building the right thing.
+          </p>
 
-          <Reveal delay={0.3}>
-            <div className={styles.actions}>
-              <BookCallButton showArrow>Join The Wait List</BookCallButton>
-              <Button href="#film" variant="secondary">
-                Watch the Testimonials
-              </Button>
-            </div>
-          </Reveal>
+          <div className={`${styles.actions} ${styles.rise} ${styles.riseActions}`}>
+            <BookCallButton showArrow>Join The Wait List</BookCallButton>
+            <Button href="#film" variant="secondary">
+              Watch the Testimonials
+            </Button>
+          </div>
         </div>
 
         {/* Spans the full frame so its rule reads as the base of the
             composition rather than a line that stops halfway. */}
-        <Reveal delay={0.45}>
-          <ul className={styles.metaRow}>
-            {META.map(({ Icon, label }) => (
-              <li className={styles.metaItem} key={label}>
-                <Icon size={18} className={styles.metaIcon} aria-hidden="true" />
-                {label}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+        <ul className={`${styles.metaRow} ${styles.rise} ${styles.riseMeta}`}>
+          {META.map(({ Icon, label }) => (
+            <li className={styles.metaItem} key={label}>
+              <Icon size={18} className={styles.metaIcon} aria-hidden="true" />
+              {label}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
