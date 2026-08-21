@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SOFT } from "@/lib/motion-variants";
 import { AlertTriangle, Target, Link2, Compass } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
@@ -36,8 +37,8 @@ const STEPS = [
 const lineVariants = (isMobile: boolean) => ({
   hidden: isMobile ? { scaleY: 0, opacity: 0 } : { scaleX: 0, opacity: 0 },
   show: isMobile
-    ? { scaleY: 1, opacity: 1, transition: { duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] as const } }
-    : { scaleX: 1, opacity: 1, transition: { duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] as const } },
+    ? { scaleY: 1, opacity: 1, transition: { duration: 0.9, delay: 0.5, ease: SOFT } }
+    : { scaleX: 1, opacity: 1, transition: { duration: 0.9, delay: 0.5, ease: SOFT } },
 });
 
 export default function Transformation() {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { SOFT } from "@/lib/motion-variants";
 import { X } from "lucide-react";
 import { useBookCallModal } from "@/components/BookCallModalContext";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -75,18 +76,28 @@ export default function BookCallModal() {
     triggerRef.current?.focus?.();
   }, [isOpen, triggerRef]);
 
+  // Entrance and exit are deliberately asymmetric: the dialog arrives on the
+  // long-tailed SOFT curve at full length, and leaves in half the time on a
+  // plain ease-in fade. A dismissal is the user saying "go away" — making
+  // them watch the same luxurious settle in reverse reads as the UI
+  // ignoring them.
   const dialogMotionProps = reduceMotion
     ? { initial: false, animate: {}, exit: undefined }
     : isMobile
       ? {
           initial: { y: "100%" },
-          animate: { y: 0 },
-          exit: { y: "100%" },
+          animate: { y: 0, transition: { duration: 0.55, ease: SOFT } },
+          exit: { y: "100%", transition: { duration: 0.3, ease: [0.4, 0, 1, 1] as const } },
         }
       : {
-          initial: { opacity: 0, scale: 0.96, y: 16 },
-          animate: { opacity: 1, scale: 1, y: 0 },
-          exit: { opacity: 0, scale: 0.96, y: 16 },
+          initial: { opacity: 0, scale: 0.97, y: 20 },
+          animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.55, ease: SOFT } },
+          exit: {
+            opacity: 0,
+            scale: 0.98,
+            y: 10,
+            transition: { duration: 0.25, ease: [0.4, 0, 1, 1] as const },
+          },
         };
 
   return (
@@ -99,7 +110,7 @@ export default function BookCallModal() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+            transition={{ duration: reduceMotion ? 0 : 0.4, ease: "easeOut" }}
             aria-hidden="true"
           />
           <motion.div
@@ -109,7 +120,6 @@ export default function BookCallModal() {
             aria-labelledby="book-call-title"
             className={`${styles.dialog} ${isMobile ? styles.dialogMobile : ""}`}
             {...dialogMotionProps}
-            transition={{ duration: reduceMotion ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
             <button type="button" className={styles.closeBtn} onClick={closeModal} aria-label="Close">
               <X size={18} aria-hidden="true" />

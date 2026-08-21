@@ -9,7 +9,7 @@ import type { Variants } from "framer-motion";
 // front-loads almost all its movement, which is punchy but lands hard.
 // [0.22, 1, 0.36, 1] keeps the long tail and takes the edge off the
 // arrival, which is the whole difference between "snappy" and "expensive".
-const SOFT = [0.22, 1, 0.36, 1] as const;
+export const SOFT = [0.22, 1, 0.36, 1] as const;
 
 // Every variant below explicitly sets x, y, and scale in both "hidden" and
 // "show" states (even when a given variant doesn't use one of those axes).
