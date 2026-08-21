@@ -1,13 +1,17 @@
 .section {
-  padding: var(--section-py) var(--section-px);
+  padding: var(--section-py) 0;
   background: var(--bg-2);
   position: relative;
-  overflow: hidden;
+  /* `clip`, not `hidden`. Both trim the full-bleed rail, but `hidden` makes
+     this element the scrollport for any sticky descendant, which silently
+     kills the pin below. `clip` doesn't create a scroll container. */
+  overflow: clip;
 }
 
 .container {
   max-width: var(--section-max);
   margin: 0 auto;
+  padding: 0 var(--section-px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,23 +36,61 @@
   line-height: 1.7;
 }
 
-/* ---------- stage ---------- */
+/* ---------- pinned rail ---------- */
 
-.stageWrap {
+/* Height is set inline from JS: viewport height + the track's overflow, so
+   one pixel of vertical scroll buys one pixel of horizontal travel. */
+.pinWrap {
   position: relative;
-  width: 100%;
-  max-width: 860px;
-  margin-top: 3rem;
-  padding: 0 0.75rem 0.75rem 0;
+  margin-top: 3.5rem;
 }
 
-.offsetFrame {
-  position: absolute;
-  inset: 0;
-  transform: translate(0.75rem, 0.75rem);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-panel);
-  pointer-events: none;
+.pinViewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Non-pinned fallback: a plain swipeable rail with snap points. */
+.swipeRail {
+  margin-top: 3rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.swipeRail::-webkit-scrollbar {
+  display: none;
+}
+
+.track {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 2rem);
+  /* Aligns the first card with the container's left edge rather than the
+     viewport's, so the rail starts under the heading it belongs to. */
+  padding-inline: max(var(--section-px), calc((100vw - var(--section-max)) / 2));
+  width: max-content;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: clamp(17rem, 82vw, 38.75rem);
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: center;
+  text-align: left;
+}
+
+@media (min-width: 1024px) {
+  .card {
+    width: 38.75rem;
+  }
 }
 
 .stage {
@@ -155,75 +197,10 @@
 }
 
 .caption {
-  margin-top: 1.75rem;
-  max-width: 38rem;
+  margin-top: 1.25rem;
   color: var(--text-secondary);
   font-size: var(--fs-md);
   line-height: 1.65;
-}
-
-/* ---------- chapter rail ---------- */
-
-.rail {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-.chip {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem 0.5rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--bg-elevated);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: border-color 0.35s ease, color 0.35s ease, transform 0.35s ease;
-}
-
-.chip:hover {
-  border-color: var(--border-hover);
-  color: var(--text-primary);
-  transform: translateY(-2px);
-}
-
-.chipActive {
-  border-color: var(--accent);
-  color: var(--text-primary);
-}
-
-.chipThumb {
-  position: relative;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.chipImg {
-  object-fit: cover;
-}
-
-.chipText {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.25;
-}
-
-.chipName {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-}
-
-.chipRole {
-  font-size: var(--fs-2xs);
-  color: var(--text-faint);
 }
 
 /* ---------- cta ---------- */
@@ -233,7 +210,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.875rem;
-  margin-top: 2.75rem;
+  margin-top: 3rem;
 }
 
 .ctaNote {
@@ -242,14 +219,6 @@
 }
 
 @media (max-width: 640px) {
-  .stageWrap {
-    padding: 0 0.5rem 0.5rem 0;
-  }
-
-  .offsetFrame {
-    transform: translate(0.5rem, 0.5rem);
-  }
-
   .playBtn {
     width: 3.5rem;
     height: 3.5rem;

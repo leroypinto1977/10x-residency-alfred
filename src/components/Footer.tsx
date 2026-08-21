@@ -8,7 +8,7 @@ import styles from "./Footer.module.css";
 // set oversized as a sign-off, then a three-column row, then a thin
 // bottom bar. Keeps the two residency sites ending the same way.
 const LINKS: [string, string][] = [
-  ["The film", "#film"],
+  ["The Testimonials", "#film"],
   ["What changes", "#transformation"],
   ["The location", "#location"],
   ["Your host", "#mentor"],
