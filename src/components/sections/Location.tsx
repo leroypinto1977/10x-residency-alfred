@@ -1,6 +1,10 @@
+import Image from "next/image";
 import { MapPin, Plane, Compass } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
+import riverImg from "../../../public/location-river.jpg";
+import nightImg from "../../../public/location-night.jpg";
+import venueImg from "../../../public/location-venue.jpg";
 import styles from "./Location.module.css";
 
 // The hero already shows Athirapalli, so repeating the waterfall here
@@ -39,6 +43,46 @@ export default function Location() {
             You stay in, eat in and build in. Strategy sessions by day, founder conversations by
             night. No commute, no calendar, no dipping back into the inbox between sessions.
           </p>
+        </Reveal>
+
+        {/* The claim in the copy is "off the grid" and "by day / by night",
+            so the photographs are chosen to evidence exactly that pair: a
+            day session on the rock by the river, a night one on the lawn,
+            and the building everyone sleeps in. Text alone was asking to be
+            taken on trust. */}
+        <Reveal delay={0.15} className={styles.gallery}>
+          <figure className={`${styles.shot} ${styles.shotLead}`}>
+            <Image
+              src={riverImg}
+              alt="Founders sitting in a circle on the rocks beside the river at Athirapalli"
+              sizes="(max-width: 860px) 100vw, 62vw"
+              className={styles.shotImg}
+              placeholder="blur"
+            />
+            <figcaption className={styles.shotCaption}>Day sessions, on the rock.</figcaption>
+          </figure>
+
+          <figure className={`${styles.shot} ${styles.shotNight}`}>
+            <Image
+              src={nightImg}
+              alt="Founders talking in a circle on the lawn after dark"
+              sizes="(max-width: 860px) 100vw, 34vw"
+              className={styles.shotImg}
+              placeholder="blur"
+            />
+            <figcaption className={styles.shotCaption}>Conversations, after dark.</figcaption>
+          </figure>
+
+          <figure className={`${styles.shot} ${styles.shotVenue}`}>
+            <Image
+              src={venueImg}
+              alt="The villa retreat where the residency is hosted"
+              sizes="(max-width: 860px) 100vw, 34vw"
+              className={styles.shotImg}
+              placeholder="blur"
+            />
+            <figcaption className={styles.shotCaption}>The retreat itself.</figcaption>
+          </figure>
         </Reveal>
 
         <Reveal stagger className={styles.grid}>

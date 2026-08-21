@@ -31,11 +31,96 @@
   color: var(--text-secondary);
 }
 
+/* ---------- gallery ---------- */
+
+/* One lead frame with two stacked beside it. Asymmetric on purpose: an even
+   three-up reads as a stock grid, and the river shot is the one carrying the
+   "off the grid" claim, so it gets the area. */
+.gallery {
+  display: grid;
+  gap: 0.875rem;
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+}
+
+@media (min-width: 860px) {
+  .gallery {
+    grid-template-columns: 1.75fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .shotLead {
+    grid-row: span 2;
+  }
+}
+
+.shot {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--bg-elevated);
+}
+
+/* The ratio lives on the figure, not the image. The image is absolutely
+   positioned so it can fill a frame whose height comes from the grid (the
+   lead frame is two rows tall), and an absolutely positioned child gives
+   its parent no height at all — so the frame has to state its own. */
+.shotLead {
+  aspect-ratio: 4 / 3;
+}
+
+.shotNight,
+.shotVenue {
+  aspect-ratio: 3 / 2;
+}
+
+.shotImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shot:hover .shotImg {
+  transform: scale(1.04);
+}
+
+@media (min-width: 860px) {
+  /* Spanning both rows, the lead frame takes its height from the pair
+     beside it rather than from a ratio of its own. */
+  .shotLead {
+    aspect-ratio: auto;
+  }
+}
+
+.shotCaption {
+  position: absolute;
+  left: 1rem;
+  bottom: 0.875rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(8, 8, 10, 0.62);
+  backdrop-filter: blur(6px);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot:hover .shotImg {
+    transform: none;
+  }
+}
+
 /* Three practical details as columns under a rule, not as boxes. */
 .grid {
   display: grid;
   gap: 2rem;
-  margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
   padding-top: 2.25rem;
   border-top: 1px solid var(--border);
 }
