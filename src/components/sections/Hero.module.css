@@ -24,6 +24,27 @@
      scrim goes over it — brightening here rather than weakening the scrim
      alone keeps the copy column's dark bed intact. */
   filter: brightness(1.18) saturate(1.04);
+  /* A slow drift, not a Ken Burns. Thirty seconds end to end and never
+     more than 5% — at that rate the photograph reads as alive rather than
+     as animated, and the eye never catches it moving. Transform only, so
+     it stays on the compositor and never touches layout. */
+  animation: hero-drift 30s ease-in-out infinite alternate;
+  transform-origin: 60% 45%;
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdropImg {
+    animation: none;
+  }
 }
 
 .scrim {

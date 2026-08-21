@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+import RevealItem from "@/components/RevealItem";
 import styles from "./Urgency.module.css";
 import { EVENT } from "@/lib/event";
 
@@ -19,45 +21,49 @@ export default function UrgencySection() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        {/* Eyebrow */}
-        <p className={`kicker ${styles.eyebrow}`}>Don&apos;t miss your chance</p>
+        {/* This was the one section on the page with no entrance at all —
+            it popped while everything around it settled. Same Reveal
+            grammar as every other section: header first, then the two
+            columns of the panel walking in as a stagger. */}
+        <Reveal>
+          <p className={`kicker ${styles.eyebrow}`}>Don&apos;t miss your chance</p>
+          <h2 className={`displayLg ${styles.headline}`}>
+            This is your opportunity to join India&apos;s most exclusive founder
+            residency.
+          </h2>
+        </Reveal>
 
-        {/* Headline */}
-        <h2 className={`displayLg ${styles.headline}`}>
-          This is your opportunity to join India&apos;s most exclusive founder
-          residency.
-        </h2>
+        <Reveal delay={0.1}>
+          <div className={styles.panel}>
+            <h3 className={styles.panelTitle}>What happens if you wait?</h3>
 
-        {/* Comparison panel */}
-        <div className={styles.panel}>
-          <h3 className={styles.panelTitle}>What happens if you wait?</h3>
+            <Reveal stagger className={styles.comparisonGrid}>
+              <RevealItem>
+                <p className={styles.columnTitle1}>If you don&apos;t act now</p>
+                <ul className={styles.list}>
+                  {ifYouWait.map((item) => (
+                    <li key={item} className={styles.listItem}>
+                      <span className={styles.dash1}>–</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </RevealItem>
 
-          <div className={styles.comparisonGrid}>
-            <div>
-              <p className={styles.columnTitle1}>If you don&apos;t act now</p>
-              <ul className={styles.list}>
-                {ifYouWait.map((item) => (
-                  <li key={item} className={styles.listItem}>
-                    <span className={styles.dash1}>–</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className={styles.columnTitle2}>If you apply today</p>
-              <ul className={styles.list}>
-                {ifYouApply.map((item) => (
-                  <li key={item} className={styles.listItem}>
-                    <span className={styles.dash2}>–</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <RevealItem>
+                <p className={styles.columnTitle2}>If you apply today</p>
+                <ul className={styles.list}>
+                  {ifYouApply.map((item) => (
+                    <li key={item} className={styles.listItem}>
+                      <span className={styles.dash2}>–</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </RevealItem>
+            </Reveal>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
