@@ -11,16 +11,39 @@
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color var(--dur-quick) var(--ease-soft), border-color var(--dur-quick) var(--ease-soft), color var(--dur-quick) var(--ease-soft);
+  transition:
+    background-color var(--dur-quick) var(--ease-soft),
+    border-color var(--dur-quick) var(--ease-soft),
+    color var(--dur-quick) var(--ease-soft),
+    transform var(--dur-quick) var(--ease-soft),
+    box-shadow var(--dur-quick) var(--ease-soft);
 }
 
+/* Hover lifts, press plants. The press transition is deliberately shorter
+   than the hover's: feedback for a click has to land inside the click, and
+   the soft curve at full length reads as the button ignoring the tap. */
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 90ms;
+}
+
+/* Both variants go white on hover — the same destination from two
+   different starting points, so gold and outline read as one family the
+   moment the cursor lands. White here is the page's white, the warm
+   --text-primary, not #fff; pure white sits cold against the gold. */
 .primary {
   background: var(--accent-500);
   color: var(--bg-void);
 }
 
 .primary:hover {
-  background: var(--accent-400);
+  background: var(--text-primary);
+  color: var(--bg-void);
+  box-shadow: 0 10px 32px -8px rgba(245, 243, 238, 0.28);
 }
 
 .secondary {
@@ -30,11 +53,34 @@
 }
 
 .secondary:hover {
-  border-color: var(--accent-400);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-void);
+}
+
+/* On the bone sections a white fill has nothing to stand against, so it
+   keeps a visible ink edge and drops the glow — which on a light surface
+   reads as a smudge rather than as light. */
+:global(.onLight) .primary:hover,
+:global(.onLight) .secondary:hover {
+  border-color: rgba(23, 20, 15, 0.45);
+  box-shadow: 0 10px 28px -12px rgba(23, 20, 15, 0.3);
 }
 
 .arrow {
   display: inline-flex;
   align-items: center;
+  transition: transform var(--dur-quick) var(--ease-soft);
+}
+
+.btn:hover .arrow {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover,
+  .btn:active,
+  .btn:hover .arrow {
+    transform: none;
+  }
 }
