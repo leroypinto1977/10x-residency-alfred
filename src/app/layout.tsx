@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Manrope } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { BookCallModalProvider } from "@/components/BookCallModalContext";
 import BookCallModal from "@/components/BookCallModal";
 import { EVENT } from "@/lib/event";
@@ -7,15 +7,15 @@ import "./globals.css";
 
 // Shared with the "Become an Authority" residency site — both programmes
 // run under GOAT Mastermind, so they read as siblings rather than as two
-// unrelated brands. Space Grotesk carries the headlines, Manrope the body.
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+// unrelated brands. Outfit carries the headlines, Plus Jakarta Sans the body.
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
 });
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
   display: "swap",
 });
@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${plusJakarta.variable}`}>
       <body>
         <BookCallModalProvider>
           {children}
