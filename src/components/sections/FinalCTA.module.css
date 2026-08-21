@@ -11,6 +11,35 @@
   z-index: 1;
 }
 
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+
+.backdropImg {
+  object-fit: cover;
+  object-position: center 38%;
+}
+
+.backdropScrim {
+  position: absolute;
+  inset: 0;
+  /* Heavier than the hero's: this section's copy is centred, so there is no
+     dark column to hide in — every line sits over the photograph. */
+  background:
+    radial-gradient(
+      120% 90% at 50% 50%,
+      rgba(8, 8, 10, 0.94) 0%,
+      rgba(8, 8, 10, 0.88) 45%,
+      rgba(8, 8, 10, 0.8) 100%
+    ),
+    linear-gradient(to bottom, var(--bg-void) 0%, transparent 18%),
+    linear-gradient(to top, var(--bg-void) 0%, transparent 20%);
+}
+
 .glow {
   position: absolute;
   top: 50%;

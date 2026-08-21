@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import { EVENT } from "@/lib/event";
+import roomImg from "../../../public/room-workshop.jpg";
 import styles from "./Room.module.css";
 
 // The qualification criteria used to sit inside the hero as a glass card,
@@ -34,6 +36,22 @@ export default function Room() {
               <p className={styles.note}>{item.note}</p>
             </RevealItem>
           ))}
+        </Reveal>
+
+        {/* "Who it's for" is an abstract claim until you can see the room it
+            describes — a working table, not an audience. Spans both columns
+            so it reads as the floor of the section rather than a sidebar. */}
+        <Reveal delay={0.2} className={styles.shotWrap}>
+          <div className={styles.offsetFrame} aria-hidden="true" />
+          <figure className={styles.shot}>
+            <Image
+              src={roomImg}
+              alt="Founders working through a session around a table"
+              sizes="(max-width: 900px) 100vw, 1120px"
+              className={styles.shotImg}
+              placeholder="blur"
+            />
+          </figure>
         </Reveal>
       </div>
     </section>

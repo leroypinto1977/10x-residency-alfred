@@ -1,5 +1,7 @@
+import Image from "next/image";
 import BookCallButton from "@/components/BookCallButton";
 import Reveal from "@/components/Reveal";
+import cohortImg from "../../../public/cohort-group.jpg";
 import styles from "./FinalCTA.module.css";
 
 const TRUST_BADGES = ["By Application Only", "100% Confidential", "No Obligation"];
@@ -7,6 +9,21 @@ const TRUST_BADGES = ["By Application Only", "100% Confidential", "No Obligation
 export default function FinalCTA() {
   return (
     <section className={styles.section}>
+      {/* The closing ask is the one place a face-of-the-cohort photograph
+          earns its keep: the page has spent every section describing a room,
+          and this is the room. Pushed well back behind a scrim — it is
+          atmosphere for the CTA, not a picture with a button on it. */}
+      <div className={styles.backdrop} aria-hidden="true">
+        <Image
+          src={cohortImg}
+          alt=""
+          fill
+          sizes="100vw"
+          className={styles.backdropImg}
+          placeholder="blur"
+        />
+        <div className={styles.backdropScrim} />
+      </div>
       <div className={styles.glow} aria-hidden="true" />
 
       <Reveal className={styles.content}>

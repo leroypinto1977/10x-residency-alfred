@@ -76,3 +76,57 @@
   line-height: 1.5;
   color: var(--text-faint);
 }
+
+/* ---------- session shot ---------- */
+
+.shotWrap {
+  position: relative;
+  /* The head/list split above is two columns; the photograph is the width
+     of the whole section under it. */
+  grid-column: 1 / -1;
+  margin-top: 1rem;
+  padding: 0 0.75rem 0.75rem 0;
+}
+
+/* The offset accent frame is the motif shared with the sibling residency
+   site — kept here in Founder 10X's gold. */
+.offsetFrame {
+  position: absolute;
+  inset: 0;
+  transform: translate(0.75rem, 0.75rem);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  pointer-events: none;
+}
+
+.shot {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--bg-elevated);
+  aspect-ratio: 16 / 7;
+}
+
+.shotImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+@media (max-width: 640px) {
+  .shotWrap {
+    padding: 0 0.5rem 0.5rem 0;
+  }
+
+  .offsetFrame {
+    transform: translate(0.5rem, 0.5rem);
+  }
+
+  .shot {
+    aspect-ratio: 4 / 3;
+  }
+}
