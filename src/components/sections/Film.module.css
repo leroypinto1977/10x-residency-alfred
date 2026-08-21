@@ -1,29 +1,77 @@
+/* The testimonials run on the page's deepest surface, not --bg-2. The cards
+   are video stills — cinema frames — and they gain contrast from a darker
+   room. The light block on this page is the mentor section instead. */
 .section {
-  padding: var(--section-py) 0;
-  background: var(--bg-2);
   position: relative;
+  background: var(--bg-void);
   /* `clip`, not `hidden`. Both trim the full-bleed rail, but `hidden` makes
-     this element the scrollport for any sticky descendant, which silently
-     kills the pin below. `clip` doesn't create a scroll container. */
+     this element the scrollport for its own sticky child, which silently
+     kills the pin. `clip` doesn't create a scroll container. */
   overflow: clip;
 }
 
-.container {
-  max-width: var(--section-max);
-  margin: 0 auto;
-  padding: 0 var(--section-px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 70% at 12% 0%,
+    rgba(var(--accent-rgb), 0.09),
+    transparent 60%
+  );
+  pointer-events: none;
 }
 
-.header {
+/* The pinned frame: one viewport-high column holding header, rail and
+   footer. Everything except the cards holds still. */
+.pinned {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  max-width: 44rem;
+  justify-content: center;
+  gap: clamp(1.5rem, 1rem + 2vh, 2.75rem);
+  padding-block: clamp(2rem, 5vh, 4rem);
+  overflow: hidden;
+}
+
+/* Non-pinned fallback (phones, reduced motion): the same three blocks in
+   normal flow, with the rail swipeable instead of scroll-driven. */
+.static {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding-block: var(--section-py);
+}
+
+/* ---------- header ---------- */
+
+.header {
+  display: grid;
+  gap: 1.25rem 3rem;
+  align-items: end;
+  max-width: var(--section-max);
+  width: 100%;
+  margin: 0 auto;
+  padding-inline: var(--section-px);
+}
+
+@media (min-width: 900px) {
+  .header {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.heading {
+  text-wrap: balance;
 }
 
 .accent {
@@ -31,82 +79,100 @@
 }
 
 .lede {
+  max-width: 34ch;
   color: var(--text-secondary);
-  font-size: var(--fs-lede);
+  font-size: var(--fs-md);
   line-height: 1.7;
 }
 
-/* ---------- pinned rail ---------- */
+/* ---------- rail ---------- */
 
-/* Height is set inline from JS: viewport height + the track's overflow, so
-   one pixel of vertical scroll buys one pixel of horizontal travel. */
-.pinWrap {
-  position: relative;
-  margin-top: 3.5rem;
-}
-
-.pinViewport {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+/* Full-bleed frame. The track inside is padded to the container edge so the
+   first card lines up with the heading above it, then runs off both sides. */
+.railFrame {
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
-  overflow: hidden;
-}
-
-/* Non-pinned fallback: a plain swipeable rail with snap points. */
-.swipeRail {
-  margin-top: 3rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.swipeRail::-webkit-scrollbar {
-  display: none;
 }
 
 .track {
   display: flex;
   align-items: stretch;
-  gap: clamp(1rem, 2vw, 2rem);
-  /* Aligns the first card with the container's left edge rather than the
-     viewport's, so the rail starts under the heading it belongs to. */
+  gap: clamp(1rem, 1.6vw, 1.75rem);
   padding-inline: max(var(--section-px), calc((100vw - var(--section-max)) / 2));
   width: max-content;
+  /* will-change is worth it here and nowhere else on the page: this element
+     is transformed on every scroll frame. */
+  will-change: transform;
 }
+
+.trackSwipe {
+  width: auto;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  will-change: auto;
+}
+
+.trackSwipe::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- card ---------- */
 
 .card {
   flex: 0 0 auto;
-  width: clamp(17rem, 82vw, 38.75rem);
+  width: clamp(15.5rem, 76vw, 28.75rem);
   display: flex;
   flex-direction: column;
   scroll-snap-align: center;
   text-align: left;
+  /* Off-centre cards sit back a step. Both properties move on the same soft
+     curve as everything else on the page. */
+  opacity: 0.42;
+  transform: scale(0.965);
+  transition:
+    opacity var(--dur-slow) var(--ease-soft),
+    transform var(--dur-slow) var(--ease-soft);
+}
+
+.cardActive {
+  opacity: 1;
+  transform: scale(1);
 }
 
 @media (min-width: 1024px) {
+  /* Wide enough that roughly two and a half cards are in frame at once —
+     the rhythm that makes the rail read as a line continuing past both
+     edges rather than a row of three that nearly fits. It also buys the pin
+     its length: travel is track width minus viewport, so narrow cards give
+     a pin so short it is not worth having. */
   .card {
-    width: 38.75rem;
+    width: 34rem;
   }
 }
 
 .stage {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border);
   border-radius: var(--radius-panel);
-  background: var(--bg-void);
-  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  /* Height comes from the viewport, not a fixed ratio: the card has to fit
+     inside a pinned 100vh frame alongside header and footer, and a fixed
+     16:9 overflows that on a laptop. */
+  height: clamp(11rem, 38vh, 19rem);
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.9);
 }
 
 .player,
 .poster {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   border: 0;
 }
 
@@ -120,122 +186,172 @@
 .posterImg {
   object-fit: cover;
   /* The posters are portrait stills pulled from vertical footage — a
-     centred 16:9 crop cuts the subject's face off at the forehead. */
+     centred crop cuts the subject's face off at the forehead. */
   object-position: center 22%;
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--dur-drift) var(--ease-soft);
 }
 
-.poster:hover .posterImg {
-  transform: scale(1.05);
+.card:hover .posterImg {
+  transform: scale(1.045);
 }
 
-.scrim {
+.posterScrim {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(8, 8, 10, 0.85) 0%,
-    rgba(8, 8, 10, 0.15) 45%,
-    rgba(8, 8, 10, 0.35) 100%
+    rgba(8, 8, 10, 0.72) 0%,
+    rgba(8, 8, 10, 0.1) 55%,
+    rgba(8, 8, 10, 0.3) 100%
   );
 }
 
+/* A thin ring rather than the old pulsing gold disc: at this card size the
+   solid button was the loudest thing in the section. */
 .playBtn {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 1.25rem;
+  bottom: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
+  border: 1px solid rgba(245, 243, 238, 0.35);
+  background: rgba(8, 8, 10, 0.4);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  padding-left: 2px; /* optically centres the triangle */
+  transition:
+    background-color var(--dur-base) var(--ease-soft),
+    border-color var(--dur-base) var(--ease-soft),
+    color var(--dur-base) var(--ease-soft),
+    transform var(--dur-base) var(--ease-soft);
+}
+
+.card:hover .playBtn {
   background: var(--accent);
+  border-color: var(--accent);
   color: var(--bg-void);
-  padding-left: 4px; /* optically centres the triangle */
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: pulse-ring 2.6s ease-out infinite;
+  transform: scale(1.08);
 }
 
-.poster:hover .playBtn {
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.45);
-  }
-  70% {
-    box-shadow: 0 0 0 22px rgba(var(--accent-rgb), 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0);
-  }
-}
-
-.posterMeta {
-  position: absolute;
-  left: 1.5rem;
-  bottom: 1.25rem;
+.cardBody {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
+  gap: 0.75rem;
+  padding: 1.5rem 0.25rem 0;
 }
 
-.posterName {
+.cardIndex {
   font-family: var(--font-display);
+  font-size: var(--fs-2xs);
   font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+}
+
+.quote {
+  font-family: var(--font-display);
   font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-wrap: pretty;
+}
+
+.attribution {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.cardName {
+  font-size: var(--fs-sm);
+  font-weight: 700;
   color: var(--text-primary);
 }
 
-.posterRole {
+.cardRole {
   font-size: var(--fs-xs);
-  color: var(--text-secondary);
+  color: var(--text-faint);
 }
 
-.caption {
-  margin-top: 1.25rem;
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
-  line-height: 1.65;
-}
+/* ---------- footer: meter, counter, cta ---------- */
 
-/* ---------- cta ---------- */
-
-.cta {
-  display: flex;
-  flex-direction: column;
+.footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 0.875rem;
-  margin-top: 3rem;
+  gap: 1rem 1.75rem;
+  max-width: var(--section-max);
+  width: 100%;
+  margin: 0 auto;
+  padding-inline: var(--section-px);
 }
 
-.ctaNote {
+.meter {
+  position: relative;
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.meterFill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  /* Starts at a sliver rather than zero so the rule reads as a track with a
+     position on it, not an empty line. */
+  transform: scaleX(0.04);
+  background: linear-gradient(90deg, transparent, var(--accent));
+}
+
+.counter {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-family: var(--font-display);
   font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.counterNow {
+  color: var(--text-primary);
+}
+
+.counterOf {
   color: var(--text-faint);
 }
 
 @media (max-width: 640px) {
-  .playBtn {
-    width: 3.5rem;
-    height: 3.5rem;
+  .footer {
+    grid-template-columns: 1fr;
+    justify-items: start;
   }
 
-  .posterMeta {
+  .playBtn {
     left: 1rem;
     bottom: 1rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .card,
+  .posterImg,
   .playBtn {
-    animation: none;
+    transition: none;
   }
 
-  .poster:hover .posterImg {
+  .card:hover .posterImg {
     transform: none;
   }
 }
