@@ -18,15 +18,16 @@ export default function Home() {
     <div className="relative min-h-screen">
       <Background />
       <main className="relative z-[1]">
-        {/* Order mirrors the sibling residency site's arc: hook, then the
-            film as proof, then what changes, then where it happens, then
-            who runs it — objections (FAQ) last, right before the ask. */}
+        {/* Hook, then the room, then who runs it — the mentor is the reason
+            to trust everything that follows, so he lands before the film and
+            the promise rather than after them. Then proof, what changes, and
+            where it happens; objections (FAQ) last, right before the ask. */}
         <Hero />
         <Room />
+        <Mentor portraitSrc={alfredPortrait} />
         <Film />
         <Transformation />
         <Location />
-        <Mentor portraitSrc={alfredPortrait} />
         <Outcomes />
         <Features />
         <UrgencySection />
