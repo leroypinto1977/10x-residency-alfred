@@ -79,7 +79,7 @@
   /* The ring masks the connector line behind the circle, so it has to be
      the section's own background colour, not the page's dark one. */
   box-shadow: 0 0 0 6px var(--surface-light);
-  transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
+  transition: border-color var(--dur-quick) var(--ease-soft), color var(--dur-quick) var(--ease-soft), background var(--dur-quick) var(--ease-soft);
 }
 
 .step:hover .node {

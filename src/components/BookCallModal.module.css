@@ -45,7 +45,7 @@
   border: 1px solid var(--border);
   color: var(--text-muted);
   cursor: pointer;
-  transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+  transition: color var(--dur-quick) var(--ease-soft), border-color var(--dur-quick) var(--ease-soft), background var(--dur-quick) var(--ease-soft);
 }
 
 .closeBtn:hover {

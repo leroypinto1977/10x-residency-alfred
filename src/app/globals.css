@@ -86,6 +86,25 @@
   --fs-h2: clamp(1.5rem, 0.97rem + 2.79vw, 3.2rem);
   --fs-h1: clamp(2rem, 1rem + 5.3vw, 5.25rem);
 
+  /* Motion — one easing vocabulary for the whole page.
+     Every curve here is long-tailed: it leaves quickly and arrives slowly.
+     That asymmetry is what reads as expensive; a symmetrical `ease` (the
+     browser default, and what 60 transitions in this codebase used to say)
+     decelerates too early and feels mechanical by comparison.
+       soft     — the default. Entrances, hovers, colour and opacity.
+       glide    — long positional moves that start from rest.
+       entrance — the sharpest arrival, for elements travelling a distance.
+     Durations are deliberately longer than the old 200-350ms: at these
+     easings a short duration spends all its time in the tail and reads as
+     a jump. */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-glide: cubic-bezier(0.35, 0, 0.15, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-quick: 280ms;
+  --dur-base: 480ms;
+  --dur-slow: 780ms;
+  --dur-drift: 1400ms;
+
   /* Shadows */
   --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.45);
   --shadow-accent: 0 8px 30px rgba(var(--accent-rgb), 0.2);

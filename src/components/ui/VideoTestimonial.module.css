@@ -61,7 +61,7 @@
   color: #000;
   cursor: pointer;
   box-shadow: var(--shadow-accent);
-  transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+  transition: transform var(--dur-quick) var(--ease-soft), box-shadow var(--dur-quick) var(--ease-soft), opacity var(--dur-quick) var(--ease-soft);
 }
 
 .playBtn[aria-disabled="true"] {

@@ -10,7 +10,7 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  transition: color 200ms ease;
+  transition: color var(--dur-quick) var(--ease-soft);
 }
 
 .groupError .label {
@@ -47,7 +47,7 @@
   color: var(--text);
   font-size: var(--fs-sm);
   cursor: pointer;
-  transition: border-color 200ms ease, background 200ms ease, transform 150ms ease;
+  transition: border-color var(--dur-quick) var(--ease-soft), background var(--dur-quick) var(--ease-soft), transform var(--dur-quick) var(--ease-soft);
 }
 
 .option:hover {
@@ -82,7 +82,7 @@
   align-items: center;
   justify-content: center;
   color: var(--bg-void);
-  transition: border-color 200ms ease, background 200ms ease;
+  transition: border-color var(--dur-quick) var(--ease-soft), background var(--dur-quick) var(--ease-soft);
 }
 
 .optionChecked .indicator {

@@ -11,7 +11,7 @@
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition: background-color var(--dur-quick) var(--ease-soft), border-color var(--dur-quick) var(--ease-soft), color var(--dur-quick) var(--ease-soft);
 }
 
 .primary {

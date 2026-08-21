@@ -10,7 +10,7 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  transition: color 200ms ease;
+  transition: color var(--dur-quick) var(--ease-soft);
 }
 
 .group:focus-within .label {
@@ -37,7 +37,7 @@
   color: var(--text);
   font-size: var(--fs-md);
   cursor: pointer;
-  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  transition: border-color var(--dur-quick) var(--ease-soft), box-shadow var(--dur-quick) var(--ease-soft), background var(--dur-quick) var(--ease-soft);
 }
 
 .trigger[data-placeholder] {
@@ -54,7 +54,7 @@
 
 .triggerError {
   border-color: var(--danger);
-  animation: shake 320ms ease;
+  animation: shake var(--dur-base) var(--ease-soft);
 }
 
 .icon {
@@ -62,7 +62,7 @@
   align-items: center;
   color: var(--accent);
   flex-shrink: 0;
-  transition: transform 200ms ease;
+  transition: transform var(--dur-quick) var(--ease-soft);
 }
 
 .trigger[data-state="open"] .icon {
@@ -80,12 +80,12 @@
   box-shadow: var(--shadow-soft);
   overflow: hidden;
   z-index: 350;
-  animation: contentIn 160ms ease;
+  animation: contentIn var(--dur-quick) var(--ease-soft);
   transform-origin: var(--radix-select-content-transform-origin);
 }
 
 .content[data-state="closed"] {
-  animation: contentOut 120ms ease;
+  animation: contentOut var(--dur-quick) var(--ease-soft);
 }
 
 .viewport {
@@ -104,7 +104,7 @@
   cursor: pointer;
   outline: none;
   user-select: none;
-  transition: background 150ms ease, color 150ms ease;
+  transition: background var(--dur-quick) var(--ease-soft), color var(--dur-quick) var(--ease-soft);
 }
 
 .item[data-highlighted] {

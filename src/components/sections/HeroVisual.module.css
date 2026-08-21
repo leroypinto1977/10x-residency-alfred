@@ -76,7 +76,7 @@
   background: var(--accent-500);
   color: var(--bg-void);
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: background-color var(--dur-quick) var(--ease-soft);
 }
 
 .playButton:hover {

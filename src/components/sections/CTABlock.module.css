@@ -108,7 +108,7 @@
   border-radius: 999px;
   font-size: 14px;
   font-weight: 600;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--dur-quick) var(--ease-soft), box-shadow var(--dur-quick) var(--ease-soft);
   box-shadow: 0 0 25px rgba(212, 162, 78, 0.25);
 }
 
@@ -118,7 +118,7 @@
 }
 
 .ctaArrow {
-  transition: transform 0.2s ease;
+  transition: transform var(--dur-quick) var(--ease-soft);
 }
 
 .cta:hover .ctaArrow {

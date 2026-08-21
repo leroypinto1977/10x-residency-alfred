@@ -16,7 +16,7 @@
   white-space: normal;
   word-break: normal;
   overflow-wrap: break-word;
-  transition: color 200ms ease;
+  transition: color var(--dur-quick) var(--ease-soft);
 }
 
 .labelFocused {
@@ -39,7 +39,7 @@
   color: var(--text);
   font-size: var(--fs-md);
   line-height: 1.4;
-  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease, transform 200ms ease;
+  transition: border-color var(--dur-quick) var(--ease-soft), box-shadow var(--dur-quick) var(--ease-soft), background var(--dur-quick) var(--ease-soft), transform var(--dur-quick) var(--ease-soft);
   resize: vertical;
 }
 
@@ -61,7 +61,7 @@
 
 .fieldError {
   border-color: var(--danger);
-  animation: shake 320ms ease;
+  animation: shake var(--dur-base) var(--ease-soft);
 }
 
 .fieldErrorMessage {

@@ -78,7 +78,7 @@
 
 .navLink {
   color: var(--text-secondary);
-  transition: color 0.3s ease;
+  transition: color var(--dur-quick) var(--ease-soft);
 }
 
 .navLink:hover {
