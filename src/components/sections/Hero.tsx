@@ -62,7 +62,7 @@ export default function Hero() {
             <div className={styles.actions}>
               <BookCallButton showArrow>Join The Wait List</BookCallButton>
               <Button href="#film" variant="secondary">
-                Watch the film
+                Watch the Testimonials
               </Button>
             </div>
           </Reveal>
