@@ -47,14 +47,14 @@ export default function Hero() {
           <Reveal delay={0.1}>
             <h1 className={styles.title}>
               Build your million dollar company
-              <span className={styles.highlight}>before 30.</span>
+              <span className={styles.highlight}>on purpose.</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.2}>
             <p className={styles.subtitle}>
-              Most founders in their 20s work harder than anyone in the room, and still can&apos;t
-              tell if they are building the right thing.
+              Most founders work harder than anyone in the room, and still can&apos;t tell if
+              they are building the right thing.
             </p>
           </Reveal>
 

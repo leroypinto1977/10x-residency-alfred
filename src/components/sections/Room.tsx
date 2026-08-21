@@ -11,7 +11,7 @@ import styles from "./Room.module.css";
 // reads after the promise.
 const CRITERIA = [
   { k: "Who", v: "Founders and creators", note: "Already running something real" },
-  { k: "Age", v: "Under 27", note: "Built for the decade that compounds" },
+  { k: "Age", v: "No limit", note: "Judged on the company, not the birthday" },
   { k: "Room", v: "80% founders, 20% creators", note: `Capped at ${EVENT.seats}` },
 ];
 

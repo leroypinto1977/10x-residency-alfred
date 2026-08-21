@@ -20,7 +20,7 @@ interface QA {
 const FAQS: QA[] = [
   {
     q: "Who is this actually for?",
-    a: `Founders and creators under 27 who are already running something real, not people looking for a business idea. The room is roughly 80% founders and 20% creators, and it is deliberately capped at ${EVENT.seats} so every plan in it gets looked at properly.`,
+    a: `Founders and creators at any age who are already running something real, not people looking for a business idea. The room is roughly 80% founders and 20% creators, and it is deliberately capped at ${EVENT.seats} so every plan in it gets looked at properly.`,
   },
   {
     q: `What happens across the ${EVENT.durationDays} days?`,
