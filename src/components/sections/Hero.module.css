@@ -184,6 +184,16 @@
 }
 
 @media (max-width: 767px) {
+  /* A 3:2 landscape frame cropped into a tall portrait viewport loses most
+     of its width, and a centred crop spends what's left on the middle of
+     the audience — the speaker, who is the subject, falls off the right
+     edge entirely. Anchoring near the right keeps him in frame on a phone.
+     Desktop keeps `center` because at that aspect nothing is cropped away
+     horizontally. */
+  .backdropImg {
+    object-position: 88% 42%;
+  }
+
   /* The base scrim is weighted to the left, which is right on desktop where
      the copy occupies the left third. On a phone the copy runs the full
      width and sits directly over the lit faces in the front row, so the
