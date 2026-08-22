@@ -6,6 +6,7 @@
   "types": "./index.ts",
   "exports": {
     ".": "./index.ts",
-    "./password": "./password.ts"
+    "./password": "./password.ts",
+    "./vocab": "./vocab.ts"
   }
 }

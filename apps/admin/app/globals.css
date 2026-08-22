@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* The panel is a tool, not the landing page — it borrows the site's accent
+   and its near-black ground so the two feel related, and otherwise optimises
+   for reading a table at 8am rather than for atmosphere. */
+:root {
+  --accent: #c69f64;
+  --bg: #0b0b0d;
+  --surface: #131316;
+  --surface-2: #191920;
+  --border: #26262d;
+  --text: #ececf0;
+  --muted: #9a9aa6;
+  --faint: #6b6b78;
+  --hot: #f0685f;
+  --warm: #e0a852;
+  --cold: #6d9fd4;
+  --won: #5fbf88;
+  --lost: #7c7c88;
+}
+
+html, body { background: var(--bg); color: var(--text); }
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+* { border-color: var(--border); }
+
+/* Native controls default to the OS light palette; without this the selects
+   and date inputs render as white slabs in a dark table. */
+input, select, textarea, button { color-scheme: dark; font: inherit; }
