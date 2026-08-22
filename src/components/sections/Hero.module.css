@@ -12,7 +12,6 @@
      document shifting under a scroll. 100vh first for browsers predating
      the unit — same value, minus the small-viewport guarantee. */
   min-height: 100vh;
-  min-height: 100svh;
   display: flex;
   /* Vertical rhythm is keyed to vh, not vw. Sizing the gaps off width is
      what put the detail strip below the fold on a 1280x720 laptop: the
@@ -459,5 +458,16 @@
   .metaRow {
     gap: 0.5rem;
     padding-top: 0.875rem;
+  }
+}
+
+/* The svh switch, in @supports rather than as a second declaration on
+   .hero. A plain `min-height: 100vh; min-height: 100svh` pair reads as a
+   fallback but minifiers drop the first as dead code — the shipped CSS
+   carried only the svh line — which leaves a browser without the unit no
+   min-height at all. As an override it either applies or is ignored. */
+@supports (min-height: 100svh) {
+  .hero {
+    min-height: 100svh;
   }
 }

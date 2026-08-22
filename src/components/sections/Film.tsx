@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Play } from "lucide-react";
@@ -295,8 +296,8 @@ export default function Film() {
     <section
       ref={sectionRef}
       id="film"
-      className={styles.section}
-      style={pinned ? { height: `calc(100svh + ${travel}px)` } : undefined}
+      className={`${styles.section} ${pinned ? styles.pinnedSection : ""}`}
+      style={pinned ? ({ "--travel": `${travel}px` } as CSSProperties) : undefined}
     >
       <div ref={pinRef} className={pinned ? styles.pinned : styles.static}>
         {pinned ? (

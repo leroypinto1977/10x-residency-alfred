@@ -1,6 +1,14 @@
 /* The testimonials run on the page's deepest surface, not --bg-2. The cards
    are video stills — cinema frames — and they gain contrast from a darker
    room. The light block on this page is the mentor section instead. */
+/* Height lives here rather than in an inline style so the unit can carry a
+   fallback: an inline `calc(100svh + Npx)` has no way to degrade, and a
+   browser without svh would get no height and collapse the pin. --travel is
+   the only part JS needs to supply. */
+.pinnedSection {
+  height: calc(100vh + var(--travel, 0px));
+}
+
 .section {
   position: relative;
   background: var(--bg-void);
@@ -34,7 +42,6 @@
      mid-scroll. Pinning is live from 1024px, which includes an iPad in
      landscape, so this is a real device and not a hypothetical one. */
   height: 100vh;
-  height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -360,5 +367,15 @@
 
   .card:hover .posterImg {
     transform: none;
+  }
+}
+
+@supports (height: 100svh) {
+  .pinned {
+    height: 100svh;
+  }
+
+  .pinnedSection {
+    height: calc(100svh + var(--travel, 0px));
   }
 }
