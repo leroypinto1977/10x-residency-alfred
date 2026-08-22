@@ -13,6 +13,11 @@
      the unit — same value, minus the small-viewport guarantee. */
   min-height: 100vh;
   display: flex;
+  /* The box is sized to the large viewport (see the @supports at the foot)
+     while .inner is sized to the small one, so the two must not be tied
+     together by a stretch. flex-start lets .inner take its own height and
+     leaves the difference as hero at the bottom of the box. */
+  align-items: flex-start;
   /* Vertical rhythm is keyed to vh, not vw. Sizing the gaps off width is
      what put the detail strip below the fold on a 1280x720 laptop: the
      frame is wide, so every vw-driven gap resolved near its maximum while
@@ -20,7 +25,9 @@
      Keying them to height instead means they shrink exactly when height is
      scarce. At tall sizes this costs nothing visually — .inner is
      space-between, so it redistributes whatever the gaps give back. */
-  padding-block: clamp(1rem, 0.5rem + 2vh, 2.25rem) clamp(1rem, 0.5rem + 2.5vh, 2.5rem);
+  --pad-top: clamp(1rem, 0.5rem + 2vh, 2.25rem);
+  --pad-bottom: clamp(1rem, 0.5rem + 2.5vh, 2.5rem);
+  padding-block: var(--pad-top) var(--pad-bottom);
   padding-inline: var(--section-px);
   overflow: hidden;
   isolation: isolate;
@@ -105,6 +112,12 @@
   width: 100%;
   max-width: var(--section-max);
   margin: 0 auto;
+  /* The composition's own height, which is what space-between distributes
+     across. It used to come from stretching to the hero's box; now the box
+     is the large viewport and this is the small one, so it has to be
+     stated. Same value the stretch produced before on any viewport where
+     the two are equal, which is every desktop. */
+  min-height: calc(100vh - var(--pad-top) - var(--pad-bottom));
   display: flex;
   flex-direction: column;
   /* Brand at the top, message in the middle, detail at the foot. */
@@ -461,13 +474,40 @@
   }
 }
 
-/* The svh switch, in @supports rather than as a second declaration on
-   .hero. A plain `min-height: 100vh; min-height: 100svh` pair reads as a
-   fallback but minifiers drop the first as dead code — the shipped CSS
-   carried only the svh line — which leaves a browser without the unit no
-   min-height at all. As an override it either applies or is ignored. */
+/* Two viewports, one hero.
+
+   The box takes lvh — the viewport with the address bar and toolbar gone,
+   which is the largest it ever gets. The composition inside takes svh —
+   the viewport with both bars showing, the smallest it ever gets. Both
+   units are static, so nothing here moves when the bars do; that was the
+   whole point of the earlier switch away from dvh and it still holds.
+
+   Sizing the box to svh was the last version of this, and it left the hero
+   ~65-110px short of the bottom the moment the bars retracted, sliding the
+   top edge of the next section into frame. Nothing was reflowing — the
+   height was constant — but a seam appearing mid-scroll reads exactly like
+   the jump the dvh fix was meant to remove, which is what it was mistaken
+   for. Sizing the box to lvh instead means the hero always reaches the
+   bottom, whatever the bars are doing, and the strip that appears when
+   they go is hero rather than the section after it.
+
+   Holding .inner at svh is what keeps that from costing anything: the
+   brand, headline and detail strip are laid out inside the height that is
+   guaranteed visible, so none of them fall below the fold on first paint.
+   Once the bars retract the composition simply sits a little high in a
+   taller frame, which is a still image, not a movement.
+
+   In @supports rather than as a second declaration: a plain
+   `min-height: 100vh; min-height: 100svh` pair reads as a fallback but
+   minifiers drop the first as dead code — the shipped CSS carried only the
+   svh line — leaving a browser without the unit no min-height at all. As
+   an override it either applies whole or is ignored whole. */
 @supports (min-height: 100svh) {
   .hero {
-    min-height: 100svh;
+    min-height: 100lvh;
+  }
+
+  .inner {
+    min-height: calc(100svh - var(--pad-top) - var(--pad-bottom));
   }
 }
