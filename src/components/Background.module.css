@@ -1,6 +1,17 @@
 .wrapper {
   position: fixed;
-  inset: 0;
+  /* Pinned to the *largest* the viewport ever gets rather than to whatever
+     it is right now. A fixed element with inset:0 is sized to the dynamic
+     viewport, so on a phone this layer resized every time the address bar
+     moved and the accent glow — a radial gradient positioned in percentages
+     — was rescaled and nudged on each scroll. lvh always covers, because it
+     is by definition the largest of the three, and it never changes value,
+     so the glow now holds still. */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100lvh;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;

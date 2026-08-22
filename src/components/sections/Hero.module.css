@@ -1,7 +1,18 @@
 .hero {
   position: relative;
-  /* dvh, not vh — vh jumps when the mobile address bar collapses. */
-  min-height: 100dvh;
+  /* svh, and deliberately not dvh. dvh is *defined* to track the mobile
+     address bar, so it recalculates continuously as the bar collapses on
+     scroll — the hero grew ~65px mid-gesture and shoved every section
+     below it down with it, which is what the page was stuttering on. svh
+     is the viewport with the bar showing: it is the smallest the viewport
+     ever gets, so the composition is whole on first paint, and it never
+     changes value, so nothing below it ever moves. The cost is that the
+     hero stops ~65px short of the bottom once the bar has gone; a seam of
+     the next section showing is a far cheaper price than the whole
+     document shifting under a scroll. 100vh first for browsers predating
+     the unit — same value, minus the small-viewport guarantee. */
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   /* Vertical rhythm is keyed to vh, not vw. Sizing the gaps off width is
      what put the detail strip below the fold on a 1280x720 laptop: the

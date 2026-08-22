@@ -89,6 +89,7 @@ export default function Film() {
 
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   // Horizontal distance the track has to travel for its right edge to reach
   // the right edge of the viewport. The pin height is derived from it in CSS
   // as calc(100vh + travel), so viewport height never has to be mirrored
@@ -145,7 +146,14 @@ export default function Film() {
       const el = sectionRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const distance = rect.height - window.innerHeight;
+      // The pinned frame's own height, not window.innerHeight. The section
+      // is `calc(100svh + travel)` and the frame is `100svh`, so measuring
+      // the frame makes this difference exactly `travel` by construction
+      // and keeps the CSS and this calculation from ever disagreeing.
+      // window.innerHeight is the address bar's number: on an iPad it grows
+      // as the bar retracts, which shortened `distance` mid-scroll and
+      // snapped the rail sideways.
+      const distance = rect.height - (pinRef.current?.offsetHeight ?? 0);
       if (distance <= 0) return;
       const p = Math.min(1, Math.max(0, -rect.top / distance));
       xRaw.set(-travel * p);
@@ -288,9 +296,9 @@ export default function Film() {
       ref={sectionRef}
       id="film"
       className={styles.section}
-      style={pinned ? { height: `calc(100vh + ${travel}px)` } : undefined}
+      style={pinned ? { height: `calc(100svh + ${travel}px)` } : undefined}
     >
-      <div className={pinned ? styles.pinned : styles.static}>
+      <div ref={pinRef} className={pinned ? styles.pinned : styles.static}>
         {pinned ? (
           <>
             {header}

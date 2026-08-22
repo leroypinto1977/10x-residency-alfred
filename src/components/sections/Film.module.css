@@ -27,7 +27,14 @@
 .pinned {
   position: sticky;
   top: 0;
+  /* svh so the frame is whole while the address bar is showing, and — the
+     reason it matters here — so its height is a constant. The scroll maths
+     in Film.tsx derives the rail's progress from this element's height, so
+     a height that moved with the bar would retime the whole animation
+     mid-scroll. Pinning is live from 1024px, which includes an iPad in
+     landscape, so this is a real device and not a hypothetical one. */
   height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;

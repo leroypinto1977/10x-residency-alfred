@@ -66,6 +66,14 @@ export default function Hero() {
       return;
     }
     let frame = 0;
+    // Sampled here rather than read inside update(). window.innerHeight is
+    // the one number the collapsing address bar changes, so reading it per
+    // frame made the backdrop's travel jump ~8px mid-scroll on a phone —
+    // the drift is meant to be a function of scroll position alone. Width
+    // is the trigger for resampling because it is what actually changes on
+    // rotation or a resize; the bar moving never touches it.
+    let drift = Math.min(110, window.innerHeight * 0.12);
+    let lastWidth = window.innerWidth;
     const update = () => {
       frame = 0;
       const el = sectionRef.current;
@@ -77,7 +85,7 @@ export default function Hero() {
       // drift is proportional on a phone and on a 27" display alike. The
       // backdrop is oversized by 8% either side to cover the travel.
       if (backdrop) {
-        backdrop.style.transform = `translate3d(0, ${p * Math.min(110, window.innerHeight * 0.12)}px, 0)`;
+        backdrop.style.transform = `translate3d(0, ${p * drift}px, 0)`;
       }
       if (inner) {
         inner.style.transform = `translate3d(0, ${p * -70}px, 0)`;
@@ -90,13 +98,21 @@ export default function Hero() {
       if (frame) return;
       frame = requestAnimationFrame(update);
     };
+    const onResize = () => {
+      // Height-only resizes are the address bar and nothing else; ignoring
+      // them is the whole point of caching drift in the first place.
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      drift = Math.min(110, window.innerHeight * 0.12);
+      onScroll();
+    };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
     return () => {
       if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [still]);
 
