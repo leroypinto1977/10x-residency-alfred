@@ -1,0 +1,416 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties, RefObject } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import Reveal from "@/components/Reveal";
+import { WALL_PHOTOS, dealIntoColumns, type WallPhoto } from "@/lib/wall-photos";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
+import { useIsMobile } from "@/lib/useIsMobile";
+import styles from "./PhotoWall.module.css";
+
+/* Per-column drift. Four columns, four different periods so the wall never
+   resolves into a repeating pattern the eye can lock onto, and alternating
+   directions so it reads as a living surface rather than a scrolling list.
+   The periods are deliberately long and mutually prime-ish — at these
+   speeds a tile crosses the stage in about a minute, which is slow enough
+   to feel like drift instead of motion.
+
+   `z` pushes each column to its own depth. That is what makes the cursor
+   parallax do anything: rotating a flat plane just turns a picture, but
+   rotating four planes at different depths moves them past each other. */
+const COLUMNS = [
+  { seconds: 68, up: true, z: -140 },
+  { seconds: 82, up: false, z: 0 },
+  { seconds: 74, up: true, z: -220 },
+  { seconds: 92, up: false, z: -60 },
+];
+
+export default function PhotoWall() {
+  const reduceMotion = useSafeReducedMotion();
+  const isMobile = useIsMobile();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const planeRef = useRef<HTMLDivElement>(null);
+  const [settled, setSettled] = useState(false);
+  const [armed, setArmed] = useState(false);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  // Two columns on a phone, four from tablet up. Every photo appears in
+  // both arrangements — the count changes, the curation doesn't.
+  const columnCount = isMobile ? 2 : 4;
+  const columns = useMemo(
+    () => dealIntoColumns(WALL_PHOTOS, columnCount),
+    [columnCount]
+  );
+
+  // Tiles drift, and a drifting element is a bad fit for `loading="lazy"`:
+  // the browser decides based on where a tile sits relative to the
+  // scrollport, so the ones parked outside the column's clip never queue,
+  // and the wall turns over to reveal empty slots. So the whole set is
+  // promoted to eager once the section is within a screen's reach — 24
+  // tiles at ~16 KB, and the two copies share URLs, so it is one small
+  // burst rather than a trickle of pop-in. `lazy` stays on as the fallback
+  // for anything that never sees this observer fire.
+  useEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setArmed(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  // The wall arrives from depth the first time it comes into view. Done with
+  // an observer and a class rather than framer-motion because the plane's
+  // transform is already owned by the pointer parallax below — two systems
+  // writing the same property would fight.
+  useEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    // Under reduced motion there is no entrance to observe — `.still` paints
+    // the plane at full opacity on its own, so nothing needs settling.
+    if (reduceMotion) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSettled(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [reduceMotion]);
+
+  // Pointer parallax. Writes CSS custom properties straight to the node
+  // inside a rAF instead of going through React state — this fires on every
+  // mousemove, and a setState per event would re-render 48 tiles for a
+  // fractional degree of rotation.
+  useEffect(() => {
+    const stage = stageRef.current;
+    const plane = planeRef.current;
+    if (!stage || !plane || reduceMotion || isMobile) return;
+
+    let frame = 0;
+    let px = 0;
+    let py = 0;
+
+    const apply = () => {
+      frame = 0;
+      plane.style.setProperty("--px", px.toFixed(4));
+      plane.style.setProperty("--py", py.toFixed(4));
+    };
+
+    const handleMove = (e: PointerEvent) => {
+      const rect = stage.getBoundingClientRect();
+      // -1 .. 1 from the centre of the stage.
+      px = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      py = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+
+    const handleLeave = () => {
+      px = 0;
+      py = 0;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+
+    stage.addEventListener("pointermove", handleMove);
+    stage.addEventListener("pointerleave", handleLeave);
+    return () => {
+      stage.removeEventListener("pointermove", handleMove);
+      stage.removeEventListener("pointerleave", handleLeave);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [reduceMotion, isMobile]);
+
+  const openAt = useCallback((photo: WallPhoto, trigger: HTMLButtonElement) => {
+    triggerRef.current = trigger;
+    setOpenIndex(WALL_PHOTOS.findIndex((p) => p.id === photo.id));
+  }, []);
+
+  const close = useCallback(() => setOpenIndex(null), []);
+  const step = useCallback((delta: number) => {
+    setOpenIndex((current) => {
+      if (current === null) return current;
+      return (current + delta + WALL_PHOTOS.length) % WALL_PHOTOS.length;
+    });
+  }, []);
+
+  return (
+    <section id="inside" className={styles.section}>
+      <div className={styles.inner}>
+        <Reveal className={styles.head}>
+          <p className="kicker">Inside the room</p>
+          <h2 className="displayLg">
+            You can read the promise.
+            <br />
+            <span className={styles.accent}>Or you can see it.</span>
+          </h2>
+          <p className={styles.lede}>
+            Photographs from the last session — the founders who showed up, the work they
+            did, and the faces they made while doing it. Move your cursor through the wall.
+            Open any frame.
+          </p>
+        </Reveal>
+      </div>
+
+      <div
+        ref={stageRef}
+        className={`${styles.stage} ${settled ? styles.settled : ""} ${
+          reduceMotion ? styles.still : ""
+        }`}
+      >
+        <div ref={planeRef} className={styles.plane}>
+          {columns.map((column, columnIndex) => {
+            const config = COLUMNS[columnIndex % COLUMNS.length];
+            return (
+              <div
+                key={columnIndex}
+                className={styles.column}
+                style={{ "--col-z": `${config.z}px` } as CSSProperties}
+              >
+                <div
+                  className={`${styles.track} ${config.up ? styles.up : styles.down}`}
+                  style={{ "--drift": `${config.seconds}s` } as CSSProperties}
+                >
+                  {column.map((photo) => (
+                    <Tile key={photo.id} photo={photo} onOpen={openAt} armed={armed} />
+                  ))}
+                  {/* The loop needs a second pass of the same tiles to hand
+                      off to as the first scrolls away. Same src, so it costs
+                      no extra network — and it's hidden from assistive tech
+                      so the wall isn't announced twice. */}
+                  {!reduceMotion &&
+                    column.map((photo) => (
+                      <Tile
+                        key={`${photo.id}-loop`}
+                        photo={photo}
+                        onOpen={openAt}
+                        armed={armed}
+                        duplicate
+                      />
+                    ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.fadeTop} aria-hidden="true" />
+        <div className={styles.fadeBottom} aria-hidden="true" />
+      </div>
+
+      {openIndex !== null && (
+        <Lightbox
+          index={openIndex}
+          onClose={close}
+          onStep={step}
+          returnFocusTo={triggerRef}
+        />
+      )}
+    </section>
+  );
+}
+
+/* ---------- tile ---------- */
+
+function Tile({
+  photo,
+  onOpen,
+  armed,
+  duplicate = false,
+}: {
+  photo: WallPhoto;
+  onOpen: (photo: WallPhoto, trigger: HTMLButtonElement) => void;
+  armed: boolean;
+  duplicate?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className={styles.tile}
+      style={{ aspectRatio: `${photo.w} / ${photo.h}` }}
+      onClick={(e) => onOpen(photo, e.currentTarget)}
+      aria-hidden={duplicate || undefined}
+      tabIndex={duplicate ? -1 : undefined}
+    >
+      {/* Deliberately not next/image. See the note in lib/wall-photos.ts:
+          these are pre-sized static WebP so the optimizer has nothing to
+          decide and there is no large srcset fallback for a crawler to
+          pull — the exact shape of this project's past transfer blowout. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`/wall/${photo.id}.webp`}
+        alt={duplicate ? "" : photo.alt}
+        width={photo.w}
+        height={photo.h}
+        loading={armed ? "eager" : "lazy"}
+        decoding="async"
+        draggable={false}
+        className={styles.tileImg}
+      />
+      <span className={styles.tileGlow} aria-hidden="true" />
+    </button>
+  );
+}
+
+/* ---------- lightbox ---------- */
+
+const FOCUSABLE_SELECTOR = 'button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function Lightbox({
+  index,
+  onClose,
+  onStep,
+  returnFocusTo,
+}: {
+  index: number;
+  onClose: () => void;
+  onStep: (delta: number) => void;
+  returnFocusTo: RefObject<HTMLButtonElement | null>;
+}) {
+  const photo = WALL_PHOTOS[index];
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Lock body scroll while open — same approach as BookCallModal.
+  useEffect(() => {
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, []);
+
+  // Escape closes, arrows walk the set, Tab stays inside the dialog.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onClose();
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        onStep(1);
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        onStep(-1);
+        return;
+      }
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusables = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
+  }, [onClose, onStep]);
+
+  // Focus in on open, back to the tile that opened it on close.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
+    }, 60);
+    const trigger = returnFocusTo.current;
+    return () => {
+      clearTimeout(timer);
+      trigger?.focus?.();
+    };
+    // Only on mount/unmount: re-running on each arrow press would yank focus
+    // back to the close button every time someone steps through the set.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Warm the neighbours so arrowing through doesn't blank between frames.
+  useEffect(() => {
+    [-1, 1].forEach((delta) => {
+      const neighbour =
+        WALL_PHOTOS[(index + delta + WALL_PHOTOS.length) % WALL_PHOTOS.length];
+      const img = new Image();
+      img.src = `/wall/${neighbour.id}-lg.webp`;
+    });
+  }, [index]);
+
+  return (
+    <div
+      className={styles.lightbox}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Photograph ${index + 1} of ${WALL_PHOTOS.length}: ${photo.caption}`}
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        className={styles.lightboxInner}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button type="button" className={styles.close} onClick={onClose} aria-label="Close">
+          <X size={18} aria-hidden="true" />
+        </button>
+
+        <button
+          type="button"
+          className={`${styles.nav} ${styles.navPrev}`}
+          onClick={() => onStep(-1)}
+          aria-label="Previous photograph"
+        >
+          <ChevronLeft size={22} aria-hidden="true" />
+        </button>
+
+        <figure className={styles.frame}>
+          {/* Keyed on id so React swaps the element rather than mutating src
+              in place — without it the browser paints the old frame at the
+              new one's aspect ratio for a beat while it decodes. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={photo.id}
+            src={`/wall/${photo.id}-lg.webp`}
+            alt={photo.alt}
+            className={styles.frameImg}
+            decoding="async"
+          />
+          <figcaption className={styles.frameCaption}>
+            <span>{photo.caption}</span>
+            <span className={styles.counter}>
+              {index + 1} / {WALL_PHOTOS.length}
+            </span>
+          </figcaption>
+        </figure>
+
+        <button
+          type="button"
+          className={`${styles.nav} ${styles.navNext}`}
+          onClick={() => onStep(1)}
+          aria-label="Next photograph"
+        >
+          <ChevronRight size={22} aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+}

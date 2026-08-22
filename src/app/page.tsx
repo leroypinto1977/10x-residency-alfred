@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/sections/Hero";
 import Room from "@/components/sections/Room";
 import Film from "@/components/sections/Film";
+import PhotoWall from "@/components/sections/PhotoWall";
 import Transformation from "@/components/sections/Transformation";
 import Location from "@/components/sections/Location";
 import Mentor from "@/components/sections/Mentor";
@@ -26,6 +27,11 @@ export default function Home() {
         <Room />
         <Mentor portraitSrc={alfredPortrait} />
         <Film />
+        {/* Testimonials make the claim; the wall is the receipt. Photographs
+            of the actual room land straight after the people describing it,
+            while the claim is still fresh, and before Transformation starts
+            explaining what changes. */}
+        <PhotoWall />
         <Transformation />
         <Location />
         <Outcomes />

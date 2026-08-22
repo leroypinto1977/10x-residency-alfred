@@ -1,0 +1,430 @@
+.section {
+  padding: var(--section-py) 0;
+  background: var(--bg-void);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.inner {
+  max-width: var(--section-max);
+  margin: 0 auto;
+  padding: 0 var(--section-px);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 44ch;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.lede {
+  font-size: var(--fs-lede);
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+/* ---------- stage ---------- */
+
+/* The wall is deliberately taller than a phone screen and wider than the
+   text column: it should feel like a wall you are standing in front of,
+   not a widget sitting in the layout. */
+.stage {
+  --wall-gap: clamp(0.5rem, 1.4vw, 1rem);
+  position: relative;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  height: clamp(28rem, 78vh, 52rem);
+  perspective: 1500px;
+  perspective-origin: 50% 45%;
+  /* Every tile is a button, so without this a drag across the wall selects
+     text and leaves the page looking broken. */
+  user-select: none;
+}
+
+.plane {
+  --px: 0;
+  --py: 0;
+  position: absolute;
+  /* Overhangs the viewport on both sides so the outermost columns are cut
+     by the screen edge rather than ending in mid-air — the wall reads as
+     continuing past the frame. Signs matter in this clamp: the bound
+     nearest zero is the *max*, so a phone gets a hint of bleed and a wide
+     desktop gets the full overhang. Written the other way round, 375px
+     screens took the largest overhang and lost a fifth of both edge
+     columns. */
+  inset: 0 clamp(-6rem, -5vw, -0.5rem);
+  display: flex;
+  justify-content: center;
+  gap: var(--wall-gap);
+  transform-style: preserve-3d;
+  transform: translateZ(-320px) rotateX(9deg);
+  opacity: 0;
+  transition:
+    transform 1.7s var(--ease-entrance),
+    opacity 1.1s var(--ease-soft);
+}
+
+/* Settled state: the entrance transform resolves into the rest pose, which
+   from here on is driven entirely by the pointer. The two are the same
+   property, so they have to live in the same declaration — hence repeating
+   the parallax expression rather than layering another wrapper. */
+.settled .plane {
+  opacity: 1;
+  transform: rotateY(calc(var(--px) * 9deg)) rotateX(calc(var(--py) * -5deg));
+  /* Long enough that the wall lags the cursor and feels weighted, short
+     enough that it never feels disconnected from the hand moving it. */
+  transition:
+    transform 700ms var(--ease-soft),
+    opacity 1.1s var(--ease-soft);
+}
+
+.column {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  transform: translateZ(var(--col-z, 0));
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+/* margin-bottom rather than `gap`, and it matters: the loop translates by
+   exactly -50% of the track, which only lands on the start of the second
+   copy if every tile — including the last one — carries its own spacing.
+   With `gap` the track is one gap short of twice a single pass, and the
+   wall visibly hitches once per cycle. */
+.tile {
+  display: block;
+  position: relative;
+  width: 100%;
+  margin-bottom: var(--wall-gap);
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--bg-surface);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition:
+    transform var(--dur-base) var(--ease-soft),
+    opacity var(--dur-base) var(--ease-soft),
+    box-shadow var(--dur-base) var(--ease-soft);
+}
+
+.tileImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The wall is a texture at rest and a photograph on approach. Holding the
+     tiles slightly cool and dim keeps two dozen competing images from
+     shouting over the headline; hover restores the frame to full. */
+  filter: saturate(0.72) brightness(0.82) contrast(1.04);
+  transition: filter var(--dur-base) var(--ease-soft);
+}
+
+/* Gold edge that only exists on the raised tile. */
+.tileGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0);
+  transition: box-shadow var(--dur-base) var(--ease-soft);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .stage:not(.still) .tile:hover,
+  .stage:not(.still) .tile:focus-visible {
+    transform: translateZ(90px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65);
+  }
+
+  .tile:hover .tileImg,
+  .tile:focus-visible .tileImg {
+    filter: saturate(1) brightness(1) contrast(1);
+  }
+
+  .tile:hover .tileGlow,
+  .tile:focus-visible .tileGlow {
+    box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.55);
+  }
+
+  /* Everything the cursor isn't on steps back, so one photograph at a time
+     is the subject. */
+  .plane:has(.tile:hover) .tile:not(:hover) {
+    opacity: 0.42;
+  }
+
+  /* A moving target is a hostile one — the drift stops while the pointer is
+     in the wall so a tile can actually be clicked. */
+  .stage:hover .track {
+    animation-play-state: paused;
+  }
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- drift ---------- */
+
+.up {
+  animation: driftUp var(--drift) linear infinite;
+}
+
+.down {
+  animation: driftDown var(--drift) linear infinite;
+}
+
+@keyframes driftUp {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes driftDown {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ---------- edge fades ---------- */
+
+/* Tiles have to leave and arrive somewhere. Without these the wall ends on
+   a hard horizontal cut and the illusion of depth goes with it. */
+.fadeTop,
+.fadeBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(3rem, 9vh, 6rem);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fadeTop {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg-void), transparent);
+}
+
+.fadeBottom {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg-void), transparent);
+}
+
+/* ---------- reduced motion ---------- */
+
+/* No drift, no depth, no parallax — the same 24 photographs as a plain
+   scrollable wall. The section still does its job; it just stops moving. */
+.still {
+  height: auto;
+  perspective: none;
+}
+
+.still .plane {
+  position: static;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.still .column {
+  overflow: visible;
+  height: auto;
+  transform: none;
+}
+
+.still .track {
+  animation: none;
+  will-change: auto;
+}
+
+.still .fadeTop,
+.still .fadeBottom {
+  display: none;
+}
+
+/* ---------- lightbox ---------- */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  background: rgba(4, 4, 6, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: fadeIn var(--dur-quick) var(--ease-soft);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightboxInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1.5rem);
+  max-width: min(1100px, 100%);
+  max-height: 100%;
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  animation: frameIn var(--dur-base) var(--ease-entrance);
+}
+
+@keyframes frameIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.frameImg {
+  display: block;
+  /* Bounded on both axes so a portrait frame can't push the caption off
+     the bottom of a laptop screen. */
+  max-width: 100%;
+  max-height: calc(100vh - 11rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.frameCaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.counter {
+  flex-shrink: 0;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+}
+
+.close,
+.nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    background var(--dur-quick) var(--ease-soft),
+    border-color var(--dur-quick) var(--ease-soft),
+    color var(--dur-quick) var(--ease-soft);
+}
+
+.close:hover,
+.nav:hover {
+  background: rgba(var(--accent-rgb), 0.14);
+  border-color: var(--border-strong);
+  color: var(--accent);
+}
+
+.close:focus-visible,
+.nav:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.nav {
+  width: 3rem;
+  height: 3rem;
+}
+
+.close {
+  position: absolute;
+  top: -3.25rem;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  z-index: 1;
+}
+
+@media (max-width: 700px) {
+  .lightboxInner {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* On a phone the arrows sit under the photograph instead of beside it —
+     side rails would eat the width the photograph needs. */
+  .navPrev {
+    order: 2;
+  }
+
+  .frame {
+    order: 1;
+  }
+
+  .navNext {
+    order: 3;
+  }
+
+  .lightboxInner {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    align-content: center;
+  }
+
+  .frame {
+    grid-column: 1 / -1;
+  }
+
+  .frameImg {
+    max-height: calc(100vh - 16rem);
+  }
+
+  .close {
+    top: -3rem;
+  }
+}
