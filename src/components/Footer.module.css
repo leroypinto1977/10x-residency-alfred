@@ -85,6 +85,29 @@
   color: var(--accent);
 }
 
+/* These are 22px tall, which is a comfortable target for a cursor and an
+   awkward one for a fingertip — roughly half the 44px a finger needs. On a
+   coarse pointer each link gets that box, and the row gap drops to zero
+   because the padding inside the taller link now provides the separation
+   the gap used to. min-height with centring rather than padding so the
+   text sits where it did and only the hit area grows.
+
+   Scoped to (pointer: coarse) rather than a width: the constraint is the
+   input device, not the screen. Left alone for a mouse, where the current
+   size is right and a 44px nav would make this column outgrow the two
+   beside it in the horizontal row. */
+@media (pointer: coarse) {
+  .nav {
+    row-gap: 0;
+  }
+
+  .navLink {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
 .ctaCol {
   display: flex;
   flex-direction: column;
