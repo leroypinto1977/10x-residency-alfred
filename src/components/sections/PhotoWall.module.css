@@ -417,3 +417,37 @@
     top: -3rem;
   }
 }
+
+/* ---------- touch ---------- */
+
+/* Everything that lifts the wall out of its resting state lives in the
+   @media (hover: hover) block above, which a touch screen never matches.
+   That left the phone with the resting state and nothing to lift it: the
+   photographs stayed permanently desaturated and dim, and full colour was
+   only ever reachable by opening the lightbox. The dim exists to stop four
+   columns of competing images shouting over the headline — a phone shows
+   two, so there is less to hold back to begin with. Brightness stays a
+   touch under 1 so the wall still sits inside a near-black section rather
+   than glaring out of it. */
+@media (hover: none) {
+  .tileImg {
+    filter: saturate(1) brightness(0.94) contrast(1.02);
+  }
+}
+
+/* The lede names the interaction, so the sentence follows the same feature
+   query the interaction itself does. Default is the pointer copy, so a
+   browser that reports neither still gets a sentence that makes sense. */
+.touchCue {
+  display: none;
+}
+
+@media (hover: none) {
+  .pointerCue {
+    display: none;
+  }
+
+  .touchCue {
+    display: inline;
+  }
+}

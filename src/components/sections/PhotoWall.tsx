@@ -157,9 +157,17 @@ export default function PhotoWall() {
             <br />
             <span className={styles.accent}>Or you can see it.</span>
           </h2>
+          {/* The instruction swaps on `(hover: hover)` rather than on a
+              width guess, because it is describing the interaction and that
+              is the exact feature deciding whether the interaction exists.
+              Done in CSS rather than from useIsMobile so the right sentence
+              is in the server-rendered HTML either way — a hook would ship
+              the desktop copy first and correct it after hydration. */}
           <p className={styles.lede}>
             Photographs from the last session — the founders who showed up, the work they
-            did, and the faces they made while doing it. Move your cursor through the wall.
+            did, and the faces they made while doing it.{" "}
+            <span className={styles.pointerCue}>Move your cursor through the wall. </span>
+            <span className={styles.touchCue}>Scroll, and the wall drifts past you. </span>
             Open any frame.
           </p>
         </Reveal>
