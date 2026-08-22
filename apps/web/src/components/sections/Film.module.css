@@ -1,12 +1,28 @@
 /* The testimonials run on the page's deepest surface, not --bg-2. The cards
    are video stills — cinema frames — and they gain contrast from a darker
    room. The light block on this page is the mentor section instead. */
-/* Height lives here rather than in an inline style so the unit can carry a
-   fallback: an inline `calc(100svh + Npx)` has no way to degrade, and a
-   browser without svh would get no height and collapse the pin. --travel is
-   the only part JS needs to supply. */
+/* How far you scroll while the frame is pinned.
+ *
+ * This used to be `calc(100vh + var(--travel))`, where --travel was measured
+ * in JS and written back as an inline style. That made the section's height a
+ * number that did not exist until React had hydrated and measured the track:
+ * the first paint was one viewport tall, and the moment the measurement
+ * landed the section grew by the full travel — 552px on a phone, more on a
+ * laptop — and every section below it moved down by that much. Read as a
+ * glitch partway down the page, which is what it was.
+ *
+ * So the pin's length is a CSS constant now. It is right in the first frame
+ * the browser paints, identical on the server and the client, and nothing
+ * measures it. What the rail has to travel is still measured — that part
+ * genuinely cannot be known without layout — but it is mapped onto this
+ * distance rather than defining it. Layout belongs to CSS, animation to JS,
+ * and the two no longer negotiate.
+ *
+ * vh rather than svh deliberately: this is a scroll length, not a frame, so
+ * it wants the stable number and never the one the address bar moves. */
 .pinnedSection {
-  height: calc(100vh + var(--travel, 0px));
+  --pin-distance: 85vh;
+  height: calc(100vh + var(--pin-distance));
 }
 
 .section {
@@ -375,8 +391,11 @@
     height: 100svh;
   }
 
+  /* The frame is svh so it is whole while the bars are showing; the scroll
+     length stays vh, because it is a distance rather than a frame and must
+     not change when the bars move. */
   .pinnedSection {
-    height: calc(100svh + var(--travel, 0px));
+    height: calc(100svh + var(--pin-distance));
   }
 }
 

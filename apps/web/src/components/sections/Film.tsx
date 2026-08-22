@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Play } from "lucide-react";
@@ -96,10 +95,17 @@ export default function Film() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
-  // Horizontal distance the track has to travel for its right edge to reach
-  // the right edge of the viewport. The pin height is derived from it in CSS
-  // as calc(100vh + travel), so viewport height never has to be mirrored
-  // into state where it could go stale.
+  // Horizontal distance the track has to move for its right edge to reach the
+  // right edge of the frame.
+  //
+  // This is read, never written back into layout. It used to be published as
+  // an inline `--travel` that the section's height was calculated from, which
+  // meant the section had one height before this measurement existed and a
+  // taller one after — a jump of the entire travel, landing partway down the
+  // page and pushing every later section down with it. The pin's length is a
+  // CSS constant now (--pin-distance); this only decides how far the rail
+  // slides across it, so a late or changed measurement moves cards and never
+  // the page.
   const [travel, setTravel] = useState(0);
 
   useEffect(() => {
@@ -152,13 +158,12 @@ export default function Film() {
       const el = sectionRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      // The pinned frame's own height, not window.innerHeight. The section
-      // is `calc(100svh + travel)` and the frame is `100svh`, so measuring
-      // the frame makes this difference exactly `travel` by construction
-      // and keeps the CSS and this calculation from ever disagreeing.
-      // window.innerHeight is the address bar's number: on an iPad it grows
-      // as the bar retracts, which shortened `distance` mid-scroll and
-      // snapped the rail sideways.
+      // The pinned frame's own height, not window.innerHeight. The section is
+      // `calc(100svh + --pin-distance)` and the frame is `100svh`, so this
+      // difference is exactly --pin-distance by construction and the CSS and
+      // this calculation cannot disagree. window.innerHeight is the address
+      // bar's number: on an iPad it grows as the bar retracts, which
+      // shortened `distance` mid-scroll and snapped the rail sideways.
       const distance = rect.height - (pinRef.current?.offsetHeight ?? 0);
       if (distance <= 0) return;
       const p = Math.min(1, Math.max(0, -rect.top / distance));
@@ -302,7 +307,6 @@ export default function Film() {
       ref={sectionRef}
       id="film"
       className={`${styles.section} ${pinned ? styles.pinnedSection : ""}`}
-      style={pinned ? ({ "--travel": `${travel}px` } as CSSProperties) : undefined}
     >
       <div ref={pinRef} className={pinned ? styles.pinned : styles.static}>
         {pinned ? (

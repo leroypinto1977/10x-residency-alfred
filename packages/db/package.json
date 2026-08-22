@@ -1,0 +1,11 @@
+{
+  "name": "@founder10x/db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./password": "./password.ts"
+  }
+}

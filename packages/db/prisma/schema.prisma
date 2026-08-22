@@ -1,0 +1,165 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Application {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  company     String
+  revenue     String
+  role        String
+  bottleneck  String?
+
+  createdAt   DateTime @default(now())
+}
+
+// The client-intake questionnaire (name, business details, income,
+// services interested in, etc.) — a separate funnel from Application
+// (the short "book a call" qualification form), so it gets its own table
+// rather than reshaping Application's columns out from under its existing rows.
+model ClientIntake {
+  id               Int      @id @default(autoincrement())
+  name             String
+  email            String
+  dob              String?
+  phone            String
+  businessType     String
+  industryDuration String
+  incomeLevel      String
+  incomeTarget     String
+  meetingTargets   String
+  websiteDetails   String
+  socialLinks      String
+  investmentReady  String
+  foundUs          String[]
+  foundUsOther     String?
+
+  createdAt        DateTime @default(now())
+
+  // ---- CRM: everything the team adds after the form arrives ----
+  //
+  // All of it is nullable or defaulted, so the migration that introduces it
+  // is purely additive and the rows already in Neon keep their values. The
+  // submitted answers above are what the lead said; everything below is what
+  // we since decided about them, which is why they are not interleaved.
+
+  // Where the lead has reached. Deliberately independent of `rating` — a cold
+  // lead can still be at "call done", and a hot one can still be new.
+  status         String    @default("new")
+  // hot | warm | cold. Null means nobody has judged it yet, which is not the
+  // same as cold, so the board groups it separately.
+  rating         String?
+  ownerId        Int?
+  owner          AdminUser? @relation("LeadOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  followUpOn     DateTime? @db.Date
+  lastTouchedAt  DateTime?
+  lastTouchedById Int?
+  lastTouchedBy  AdminUser? @relation("LeadToucher", fields: [lastTouchedById], references: [id], onDelete: SetNull)
+
+  notes          LeadNote[]
+  events         LeadEvent[]
+
+  @@index([status])
+  @@index([rating])
+  @@index([ownerId])
+  @@index([followUpOn])
+  @@index([createdAt])
+}
+
+// Named accounts, so a status change or a note can say who made it. The
+// shared query-string key this panel started with could not: with one
+// credential the audit trail is a list of things that happened to nobody in
+// particular.
+model AdminUser {
+  id           Int       @id @default(autoincrement())
+  username     String
+  name         String
+  // pbkdf2$<iterations>$<salt>$<hash>, built in packages/db/password.ts
+  passwordHash String
+  // owner manages accounts, member works leads, viewer may only read.
+  // Enforced in the server actions rather than as a DB constraint: a check
+  // would reject a future role at insert time rather than where the decision
+  // actually belongs.
+  role         String    @default("member")
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+
+  ownedLeads   ClientIntake[] @relation("LeadOwner")
+  touchedLeads ClientIntake[] @relation("LeadToucher")
+  authoredNotes LeadNote[]
+  actedEvents  LeadEvent[]
+
+  // Case-insensitive uniqueness is enforced by a raw index in the migration —
+  // Prisma cannot express `lower(username)` here, and people capitalise their
+  // own username however they please.
+  @@index([username])
+}
+
+// What was said on the call. Free text, newest first, never edited: a note
+// someone can rewrite is not much of a record.
+model LeadNote {
+  id        Int      @id @default(autoincrement())
+  leadId    Int
+  lead      ClientIntake @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // Set null rather than cascade: the record of what was said outlives the
+  // account of whoever said it, and the panel shows those as "Removed account".
+  authorId  Int?
+  author    AdminUser? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+// Every field change, so "who moved this to Won" always has an answer.
+model LeadEvent {
+  id        Int      @id @default(autoincrement())
+  leadId    Int
+  lead      ClientIntake @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  actorId   Int?
+  actor     AdminUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  field     String
+  fromValue String?
+  toValue   String?
+  createdAt DateTime @default(now())
+
+  @@index([leadId, createdAt])
+}
+
+// Login throttling for the admin panel: one row per IP, dropped on a
+// successful sign-in. Eight failures inside fifteen minutes locks that IP out
+// for fifteen — slow enough that guessing a password is pointless, short
+// enough to forgive a typo.
+model AdminLoginAttempt {
+  ip          String    @id
+  fails       Int       @default(0)
+  firstFailAt DateTime  @default(now())
+  lockedUntil DateTime?
+}
+
+// Fixed-window request counter backing the /api/client-intake rate limit.
+// Vercel's WAF rate_limit action is Pro-only, so the throttle lives in the
+// app instead. One row per (key, minute); only the current window is ever
+// read, so stale rows are harmless and get swept opportunistically.
+model RateLimit {
+  id          Int      @id @default(autoincrement())
+  key         String
+  windowStart DateTime
+  count       Int      @default(1)
+
+  @@unique([key, windowStart])
+  @@index([windowStart])
+}

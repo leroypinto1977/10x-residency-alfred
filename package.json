@@ -1,15 +1,24 @@
 {
-  "name": "anti_demo",
+  "name": "founder10x-residency",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "npm run migrate:deploy && prisma generate && next build",
-    "migrate:deploy": "if [ -n \"$DATABASE_URL\" ]; then prisma migrate deploy; else echo 'No DATABASE_URL — skipping migrations'; fi",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "next dev apps/web",
+    "dev:admin": "next dev apps/admin --port 3001",
+    "build": "npm run build:web",
+    "build:web": "npm run db:generate && next build apps/web",
+    "build:admin": "npm run db:generate && next build apps/admin",
+    "db:generate": "prisma generate --config packages/db/prisma.config.ts",
+    "db:migrate": "prisma migrate deploy --config packages/db/prisma.config.ts",
+    "admin:users": "node --env-file=.env scripts/admin-users.mjs",
+    "lint": "eslint apps/web"
   },
   "dependencies": {
+    "@founder10x/db": "*",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@radix-ui/react-select": "^2.3.3",
@@ -28,6 +37,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.4",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "typescript": "^5"
