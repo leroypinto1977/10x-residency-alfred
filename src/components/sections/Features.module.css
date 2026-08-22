@@ -155,3 +155,40 @@
     max-width: none;
   }
 }
+
+/* ---------- closing block ---------- */
+
+/* Photograph and footnote as one unit. `.footnote` carries its own
+   margin-top from when it stood alone in this section; the wrapper owns
+   that spacing now, so it is zeroed here rather than removed — the rule
+   still has to hold if the footnote is ever used on its own again. */
+.closing {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  display: grid;
+  gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  align-items: center;
+}
+
+@media (min-width: 820px) {
+  .closing {
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  }
+}
+
+.closing .footnote {
+  margin-top: 0;
+}
+
+.closingPhoto {
+  margin: 0;
+}
+
+/* max-width binds only in the single-column case; above 820px the grid
+   track is the narrower of the two and wins. */
+.closingPhoto img {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 0.5rem;
+}

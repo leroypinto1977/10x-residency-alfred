@@ -115,3 +115,32 @@
     grid-row: auto;
   }
 }
+
+/* ---------- photograph ---------- */
+
+/* Sits between the header and the ledger. Letterboxed to 2:1 rather than
+   given the frame's own 3:2, because at the full 1120px column a 3:2 is
+   747px tall and stops being a supporting image — this has to read as a
+   band the eye crosses, not a second hero. */
+.band {
+  margin: 0 0 clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+
+.band img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  /* The one light section on the page, so the photograph needs its own
+     edge — against near-black it would have the section border doing that
+     job for it. */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 18px 40px rgba(0, 0, 0, 0.13);
+}
+
+.band figcaption {
+  margin-top: 0.85rem;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-light-muted);
+}

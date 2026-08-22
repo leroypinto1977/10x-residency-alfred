@@ -1,5 +1,6 @@
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
+import RoomPhoto from "@/components/RoomPhoto";
 import styles from "./Urgency.module.css";
 import { EVENT } from "@/lib/event";
 
@@ -31,6 +32,22 @@ export default function UrgencySection() {
             This is your opportunity to join India&apos;s most exclusive founder
             residency.
           </h2>
+        </Reveal>
+
+        {/* This section counts seats and then argues about them entirely in
+            text. The photograph is the room from where Alfred stands, which
+            is the only view that makes a seat count concrete — every face in
+            it took one. Shot from behind him deliberately: the subject is
+            the room, not the speaker. */}
+        <Reveal delay={0.05}>
+          <RoomPhoto
+            className={styles.band}
+            src="/room/urgency-room.webp"
+            alt="The room seen from behind Alfred's shoulder, founders seated at tables watching him"
+            width={1600}
+            height={800}
+            caption={`${EVENT.seats} seats. This is what they look like taken.`}
+          />
         </Reveal>
 
         <Reveal delay={0.1}>

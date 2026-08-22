@@ -113,3 +113,32 @@
     padding: 1.75rem 1.25rem;
   }
 }
+
+/* ---------- photograph ---------- */
+
+/* Between the headline and the panel. Radius matches .panel so the two
+   read as the same family of blocks rather than a picture that happened to
+   land above a card. */
+.band {
+  width: 100%;
+  margin: clamp(2.5rem, 2rem + 2vw, 3.5rem) auto 0;
+}
+
+.band img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+}
+
+/* Centred because this section is centred throughout — the eyebrow,
+   headline and panel title all are. */
+.band figcaption {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}

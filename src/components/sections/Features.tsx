@@ -1,5 +1,6 @@
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
+import RoomPhoto from "@/components/RoomPhoto";
 import styles from "./Features.module.css";
 
 // This section used to restate the curriculum: two of its four rows were
@@ -61,7 +62,18 @@ export default function Features() {
           ))}
         </Reveal>
 
-        <Reveal delay={0.2}>
+        {/* The footnote promises the documents are reviewed line by line
+            with Alfred. This is that, photographed — so the sentence and
+            the picture are one block rather than a claim with decoration
+            somewhere near it. */}
+        <Reveal delay={0.2} className={styles.closing}>
+          <RoomPhoto
+            className={styles.closingPhoto}
+            src="/room/features-review.webp"
+            alt="Alfred in a maroon blazer holding a printed worksheet at arm's length, reading down it"
+            width={600}
+            height={800}
+          />
           <p className={styles.footnote}>
             Each one reviewed line by line with Alfred, and pressure-tested by the room before you
             leave.
