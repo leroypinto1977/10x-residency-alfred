@@ -9,7 +9,6 @@ import Reveal from "@/components/Reveal";
 import BookCallButton from "@/components/BookCallButton";
 import { getEmbedUrl } from "@/lib/video";
 import { EVENT } from "@/lib/event";
-import { useIsDesktop } from "@/lib/useIsDesktop";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import alfredImg from "../../../public/alfred.jpg";
 import pavanImg from "../../../public/pavan_img.jpg";
@@ -80,13 +79,19 @@ export default function Film() {
   const [playingIdx, setPlayingIdx] = useState<number | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const isDesktop = useIsDesktop();
   const reduceMotion = useSafeReducedMotion();
-  // Pinning is an enhancement, never the only way to reach a card. It stays
-  // off for SSR, for reduced motion, and on anything narrower than a laptop,
-  // where hijacking vertical scroll to move a rail sideways fights the
-  // gesture people already use. Those cases get a plain swipeable rail.
-  const pinned = isDesktop && !reduceMotion;
+  // Pinning is an enhancement, never the only way to reach a card: reduced
+  // motion still gets the plain swipeable rail, and so does any viewport
+  // where the travel measures zero.
+  //
+  // This used to require a laptop as well, on the reasoning that turning a
+  // vertical gesture sideways fights the one people already use on a phone.
+  // It runs on a phone now by request. The gesture argument was not wrong —
+  // it is the reason the rail is spring-damped rather than bound straight to
+  // scroll, so a flick lands somewhere rather than stopping dead — but the
+  // section reads as one continuous piece this way instead of a heading, a
+  // rail you might not notice is scrollable, and a footer.
+  const pinned = !reduceMotion;
 
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
