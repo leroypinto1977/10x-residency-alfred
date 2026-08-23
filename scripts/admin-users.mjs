@@ -4,7 +4,7 @@
  *
  *   npm run admin:users -- list
  *   npm run admin:users -- add <username> "<Full Name>" [owner|member|viewer]
- *   npm run admin:users -- passwd <username>
+ *   npm run admin:users -- passwd <username> [password]
  *   npm run admin:users -- role <username> <owner|member|viewer>
  *   npm run admin:users -- disable <username>
  *   npm run admin:users -- enable <username>
@@ -14,6 +14,9 @@
  * require access to this repo and its DATABASE_URL, not merely a session that
  * someone else left open. Passwords are generated here and printed once — they
  * are stored only as a pbkdf2 hash, so a lost one is reset, never recovered.
+ * `passwd` will take one you have chosen instead, which is the weaker option
+ * and therefore not the default: a password passed as an argument survives in
+ * shell history and in whatever carried it to you.
  *
  * Uses `pg` directly rather than the Prisma client, because the client is
  * generated TypeScript that plain node cannot import.
@@ -120,14 +123,27 @@ try {
     }
 
     case "passwd": {
-      const [username] = args;
+      // A password may be given, or left out to have one generated. Given is
+      // the weaker of the two — it ends up in shell history and in whatever
+      // was used to pass it along — so the generated one stays the default
+      // and choosing your own has to be deliberate.
+      const [username, chosen] = args;
       const user = await findId(username);
-      const password = generatePassword();
+      if (chosen !== undefined && chosen.length < 8) {
+        throw new Error("A chosen password needs at least 8 characters.");
+      }
+      const password = chosen ?? generatePassword();
       await db.query(`update "AdminUser" set "passwordHash" = $1 where id = $2`, [
         await hashPassword(password),
         user.id,
       ]);
-      console.log(`New password for ${user.name}: ${password}`);
+      if (chosen) {
+        console.log(`Password updated for ${user.name}.`);
+        console.log("Set from the command line, so clear it from your shell history.");
+      } else {
+        console.log(`New password for ${user.name}: ${password}`);
+        console.log("Shown once — it is stored only as a hash.");
+      }
       break;
     }
 
@@ -167,7 +183,7 @@ try {
           "Usage:",
           "  npm run admin:users -- list",
           '  npm run admin:users -- add <username> "<Full Name>" [owner|member|viewer]',
-          "  npm run admin:users -- passwd <username>",
+          "  npm run admin:users -- passwd <username> [password]   (omit to generate one)",
           "  npm run admin:users -- role <username> <owner|member|viewer>",
           "  npm run admin:users -- disable|enable <username>",
           "  npm run admin:users -- delete <username>",
