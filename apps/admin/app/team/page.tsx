@@ -24,7 +24,7 @@ export default async function TeamPage() {
     <main className="mx-auto max-w-[900px] px-5 py-6">
       <header className="flex items-center justify-between mb-5">
         <h1 className="text-lg font-semibold">Team</h1>
-        <a href="/" className="text-xs underline underline-offset-2" style={{ color: "var(--muted)" }}>
+        <a href="/" className="tap text-xs underline underline-offset-2" style={{ color: "var(--muted)" }}>
           Back to leads
         </a>
       </header>

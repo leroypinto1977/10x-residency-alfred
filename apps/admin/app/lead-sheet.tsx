@@ -127,7 +127,7 @@ export default function LeadSheet({
               {lead.lastTouchedAt ? ` · last touched ${when(lead.lastTouchedAt)}` : ""}
             </p>
           </div>
-          <button onClick={onClose} aria-label="Close" className="text-xl leading-none px-2">
+          <button onClick={onClose} aria-label="Close" className="tap -mr-1 flex h-8 w-8 items-center justify-center rounded-md text-xl leading-none">
             ×
           </button>
         </div>
@@ -217,7 +217,7 @@ export default function LeadSheet({
           <button
             disabled={busy}
             onClick={() => run(() => claimLead(lead.id))}
-            className="mt-3 rounded-md border px-3 py-1.5 text-xs disabled:opacity-60"
+            className="tap mt-3 rounded-md border px-3 py-1.5 text-xs disabled:opacity-60"
           >
             Claim this lead
           </button>
@@ -264,7 +264,7 @@ export default function LeadSheet({
               <button
                 type="submit"
                 disabled={busy || !note.trim()}
-                className="mt-2 rounded-md px-3 py-1.5 text-xs font-medium disabled:opacity-50"
+                className="tap mt-2 rounded-md px-3 py-1.5 text-xs font-medium disabled:opacity-50"
                 style={{ background: "var(--accent)", color: "#17130a" }}
               >
                 Add note

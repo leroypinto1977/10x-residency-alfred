@@ -30,3 +30,29 @@ body {
 /* Native controls default to the OS light palette; without this the selects
    and date inputs render as white slabs in a dark table. */
 input, select, textarea, button { color-scheme: dark; font: inherit; }
+
+/* ---------- touch ---------- */
+
+/* The panel is sized for a cursor: its links sit at text height and its
+   filters at a compact 33px, both comfortable to click and both about half
+   what a fingertip needs. On a coarse pointer they get a 44px box. Scoped to
+   the pointer rather than to a width, because the constraint is the finger
+   and not the screen — a small window with a mouse is still a mouse. */
+@media (pointer: coarse) {
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    /* Width too, for the icon-only ones — the sheet's close button is a
+       single character and was 25px across, which is the hardest thing on
+       the page to hit and the only way out of a full-screen panel. */
+    min-width: 44px;
+  }
+
+  select,
+  textarea,
+  input:not([type="checkbox"]):not([type="radio"]) {
+    min-height: 44px;
+  }
+}

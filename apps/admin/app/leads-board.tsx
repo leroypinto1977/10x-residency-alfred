@@ -91,18 +91,18 @@ export default function LeadsBoard({
             {me.name} · {me.role}
           </span>
           {me.role === "owner" ? (
-            <a href="/team" className="underline underline-offset-2">
+            <a href="/team" className="tap underline underline-offset-2">
               Team
             </a>
           ) : null}
           <a
             href={`/api/export?${params.toString()}`}
-            className="underline underline-offset-2"
+            className="tap underline underline-offset-2"
           >
             Export CSV
           </a>
           <form action="/api/logout" method="post">
-            <button type="submit" className="underline underline-offset-2">
+            <button type="submit" className="tap underline underline-offset-2">
               Sign out
             </button>
           </form>
@@ -214,7 +214,15 @@ export default function LeadsBoard({
         </span>
       </div>
 
-      <div className="rounded-lg border overflow-x-auto" style={{ background: "var(--surface)" }}>
+      {/* A nine-column table on a 375px screen shows Name and Contact and
+          hides everything the board exists for — status, rating, owner, what
+          is due — behind a sideways scroll nobody discovers. The table is for
+          screens that can hold it; a phone gets the cards below, which carry
+          the same fields and the same click target. */}
+      <div
+        className="hidden md:block rounded-lg border overflow-x-auto"
+        style={{ background: "var(--surface)" }}
+      >
         <table className="w-full text-left border-collapse min-w-[900px]">
           <thead>
             <tr style={{ color: "var(--muted)" }} className="text-xs">
@@ -295,6 +303,77 @@ export default function LeadsBoard({
           </tbody>
         </table>
       </div>
+
+      <ul className="md:hidden space-y-2">
+        {leads.map((l) => {
+          const due = l.followUpOn && l.followUpOn <= today;
+          return (
+            <li key={l.id}>
+              <button
+                onClick={() => setOpenId(l.id)}
+                className="w-full text-left rounded-lg border p-3.5"
+                style={{ background: "var(--surface)" }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="font-medium leading-tight">{l.name}</span>
+                  <span
+                    className="shrink-0 rounded px-2 py-0.5 text-[11px]"
+                    style={{
+                      border: `1px solid ${STATUS_COLOR[l.status]}`,
+                      color: STATUS_COLOR[l.status],
+                    }}
+                  >
+                    {STATUS_LABELS[l.status]}
+                  </span>
+                </div>
+
+                <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
+                  <div className="break-all">{l.email}</div>
+                  <div>{l.phone}</div>
+                </div>
+
+                {l.businessType ? (
+                  <p className="mt-1.5 text-xs line-clamp-2" style={{ color: "var(--muted)" }}>
+                    {l.businessType}
+                  </p>
+                ) : null}
+
+                {/* Only the facts that are actually set, so a new lead is two
+                    lines rather than a column of dashes. */}
+                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                  {l.rating ? (
+                    <span style={{ color: RATING_COLOR[l.rating] }}>● {RATING_LABELS[l.rating]}</span>
+                  ) : null}
+                  {l.ownerName ? (
+                    <span style={{ color: "var(--muted)" }}>{l.ownerName}</span>
+                  ) : null}
+                  {l.followUpOn ? (
+                    <span style={{ color: due ? "var(--hot)" : "var(--muted)" }}>
+                      due {l.followUpOn}
+                    </span>
+                  ) : null}
+                  {l.noteCount > 0 ? (
+                    <span style={{ color: "var(--faint)" }}>
+                      {l.noteCount} note{l.noteCount === 1 ? "" : "s"}
+                    </span>
+                  ) : null}
+                  <span className="ml-auto" style={{ color: "var(--faint)" }}>
+                    {when(l.createdAt)}
+                  </span>
+                </div>
+              </button>
+            </li>
+          );
+        })}
+        {leads.length === 0 ? (
+          <li
+            className="rounded-lg border p-8 text-center"
+            style={{ background: "var(--surface)", color: "var(--muted)" }}
+          >
+            {filtered ? "Nothing matches those filters." : "No leads yet."}
+          </li>
+        ) : null}
+      </ul>
 
       {open ? (
         <LeadSheet
