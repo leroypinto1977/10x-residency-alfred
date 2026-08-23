@@ -7,6 +7,7 @@ import Reveal from "@/components/Reveal";
 import { WALL_PHOTOS, dealIntoColumns, type WallPhoto } from "@/lib/wall-photos";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useIsMobile } from "@/lib/useIsMobile";
+import { useHasPointer } from "@/lib/useHasPointer";
 import styles from "./PhotoWall.module.css";
 
 /* Per-column drift. Four columns, four different periods so the wall never
@@ -26,9 +27,65 @@ const COLUMNS = [
   { seconds: 92, up: false, z: -60 },
 ];
 
+/**
+ * Calls `flag(true)` once `node` comes within `margin` px of the viewport,
+ * and cleans up after itself.
+ *
+ * This was an IntersectionObserver, which is the obvious tool and was the
+ * wrong one here, because both things it gated were load-bearing: the plane
+ * is `opacity: 0` until it settles, and the tiles stay `loading="lazy"` until
+ * they arm. An observer that never fires therefore did not degrade the wall,
+ * it erased it — a section of two dozen photographs rendering as an empty
+ * black band with no way to recover. Confirmed reachable: with the stage 71%
+ * inside the viewport, neither callback had run and none of the 48 images had
+ * loaded.
+ *
+ * A rect check cannot fail that way. It runs immediately, again on scroll and
+ * resize, and once on a timer regardless — so the worst case is the entrance
+ * animation being missed, never the wall being invisible.
+ */
+function reachedBy(
+  node: HTMLElement | null,
+  margin: number,
+  flag: (v: true) => void
+): (() => void) | undefined {
+  if (!node) return;
+  let done = false;
+
+  const finish = () => {
+    if (done) return;
+    done = true;
+    flag(true);
+    cleanup();
+  };
+
+  const check = () => {
+    if (done) return;
+    const r = node.getBoundingClientRect();
+    if (r.top - margin < window.innerHeight && r.bottom + margin > 0) finish();
+  };
+
+  // Belt to the rect check's braces: a browser that mis-reports rects inside
+  // a preserve-3d ancestor, or a restored scroll position that fires no
+  // scroll event, still ends with a visible wall.
+  const timer = window.setTimeout(finish, 3000);
+
+  function cleanup() {
+    window.clearTimeout(timer);
+    window.removeEventListener("scroll", check);
+    window.removeEventListener("resize", check);
+  }
+
+  check();
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check);
+  return cleanup;
+}
+
 export default function PhotoWall() {
   const reduceMotion = useSafeReducedMotion();
   const isMobile = useIsMobile();
+  const hasPointer = useHasPointer();
   const stageRef = useRef<HTMLDivElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
   const [settled, setSettled] = useState(false);
@@ -39,6 +96,19 @@ export default function PhotoWall() {
   // Two columns on a phone, four from tablet up. Every photo appears in
   // both arrangements — the count changes, the curation doesn't.
   const columnCount = isMobile ? 2 : 4;
+
+  // Tapping a tile opened a full-screen viewer on a phone, which is not what
+  // the section is for there: the wall is the proof, and the lightbox exists
+  // so a cursor can inspect one frame. On a touch screen it interrupted a
+  // scroll with a modal nobody asked for, and every tile was a tap target
+  // sitting in the path of the gesture used to get past it. Off without a
+  // pointer, which also means the tiles stop being buttons entirely.
+  //
+  // Keyed on the pointer and not on width, so it always agrees with the lede
+  // beside it — that sentence swaps on the same `(hover: hover)` in CSS, and
+  // keying this off `isMobile` left a narrow desktop window offering to open
+  // a frame that could not be opened.
+  const openable = hasPointer;
   const columns = useMemo(
     () => dealIntoColumns(WALL_PHOTOS, columnCount),
     [columnCount]
@@ -51,22 +121,8 @@ export default function PhotoWall() {
   // promoted to eager once the section is within a screen's reach — 24
   // tiles at ~16 KB, and the two copies share URLs, so it is one small
   // burst rather than a trickle of pop-in. `lazy` stays on as the fallback
-  // for anything that never sees this observer fire.
-  useEffect(() => {
-    const node = stageRef.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setArmed(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "600px 0px" }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  // for anything that never sees the check succeed.
+  useEffect(() => reachedBy(stageRef.current, 600, setArmed), []);
 
   // The wall arrives from depth the first time it comes into view. Done with
   // an observer and a class rather than framer-motion because the plane's
@@ -78,18 +134,7 @@ export default function PhotoWall() {
     // Under reduced motion there is no entrance to observe — `.still` paints
     // the plane at full opacity on its own, so nothing needs settling.
     if (reduceMotion) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setSettled(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.12 }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
+    return reachedBy(node, 0, setSettled);
   }, [reduceMotion]);
 
   // Pointer parallax. Writes CSS custom properties straight to the node
@@ -166,9 +211,14 @@ export default function PhotoWall() {
           <p className={styles.lede}>
             Photographs from the last session — the founders who showed up, the work they
             did, and the faces they made while doing it.{" "}
-            <span className={styles.pointerCue}>Move your cursor through the wall. </span>
-            <span className={styles.touchCue}>Scroll, and the wall drifts past you. </span>
-            Open any frame.
+            {/* "Open any frame" belongs to the pointer copy now: tiles are not
+                openable on a touch screen, so on a phone that sentence was
+                instructing the reader to do something the wall no longer
+                does. */}
+            <span className={styles.pointerCue}>
+              Move your cursor through the wall. Open any frame.
+            </span>
+            <span className={styles.touchCue}>Scroll, and the wall drifts past you.</span>
           </p>
         </Reveal>
       </div>
@@ -193,7 +243,13 @@ export default function PhotoWall() {
                   style={{ "--drift": `${config.seconds}s` } as CSSProperties}
                 >
                   {column.map((photo) => (
-                    <Tile key={photo.id} photo={photo} onOpen={openAt} armed={armed} />
+                    <Tile
+                      key={photo.id}
+                      photo={photo}
+                      onOpen={openAt}
+                      armed={armed}
+                      openable={openable}
+                    />
                   ))}
                   {/* The loop needs a second pass of the same tiles to hand
                       off to as the first scrolls away. Same src, so it costs
@@ -206,6 +262,7 @@ export default function PhotoWall() {
                         photo={photo}
                         onOpen={openAt}
                         armed={armed}
+                        openable={openable}
                         duplicate
                       />
                     ))}
@@ -219,7 +276,7 @@ export default function PhotoWall() {
         <div className={styles.fadeBottom} aria-hidden="true" />
       </div>
 
-      {openIndex !== null && (
+      {openable && openIndex !== null && (
         <Lightbox
           index={openIndex}
           onClose={close}
@@ -237,22 +294,28 @@ function Tile({
   photo,
   onOpen,
   armed,
+  openable,
   duplicate = false,
 }: {
   photo: WallPhoto;
   onOpen: (photo: WallPhoto, trigger: HTMLButtonElement) => void;
   armed: boolean;
+  /** False on a phone, where the wall is something to watch, not to operate. */
+  openable: boolean;
   duplicate?: boolean;
 }) {
-  return (
-    <button
-      type="button"
-      className={styles.tile}
-      style={{ aspectRatio: `${photo.w} / ${photo.h}` }}
-      onClick={(e) => onOpen(photo, e.currentTarget)}
-      aria-hidden={duplicate || undefined}
-      tabIndex={duplicate ? -1 : undefined}
-    >
+  const common = {
+    className: `${styles.tile} ${openable ? "" : styles.tileStatic}`,
+    style: { aspectRatio: `${photo.w} / ${photo.h}` } as CSSProperties,
+    "aria-hidden": duplicate || undefined,
+  };
+
+  // A plain element rather than a disabled button: a button that does nothing
+  // is still a tab stop, still announced as a control, and on a phone the
+  // whole wall would be two dozen of them between the reader and the next
+  // section.
+  const inner = (
+    <>
       {/* Deliberately not next/image. See the note in lib/wall-photos.ts:
           these are pre-sized static WebP so the optimizer has nothing to
           decide and there is no large srcset fallback for a crawler to
@@ -269,6 +332,21 @@ function Tile({
         className={styles.tileImg}
       />
       <span className={styles.tileGlow} aria-hidden="true" />
+    </>
+  );
+
+  if (!openable) {
+    return <div {...common}>{inner}</div>;
+  }
+
+  return (
+    <button
+      type="button"
+      {...common}
+      onClick={(e) => onOpen(photo, e.currentTarget)}
+      tabIndex={duplicate ? -1 : undefined}
+    >
+      {inner}
     </button>
   );
 }
