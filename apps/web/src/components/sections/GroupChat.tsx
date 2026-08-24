@@ -28,7 +28,7 @@ import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import styles from "./GroupChat.module.css";
 
 const SHOTS = Array.from(
-  { length: 10 },
+  { length: 7 },
   (_, i) => `/chatter/chat-${String(i + 1).padStart(2, "0")}.webp`
 );
 
@@ -111,7 +111,7 @@ function useVelocityMarquee(
      * than starting only once the observer says the section is visible. This
      * is the lesson PhotoWall already paid for: an IntersectionObserver that
      * never fires does not degrade a section gated on it, it erases it. Gating
-     * the start that way would leave a dead strip of ten frozen screenshots.
+     * the start that way would leave a dead strip of frozen screenshots.
      *
      * Inverted like this the worst case is a rAF loop running while the
      * section is off screen — some wasted CPU, nothing the reader can see —
