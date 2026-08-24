@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { BookCallModalProvider } from "@/components/BookCallModalContext";
 import BookCallModal from "@/components/BookCallModal";
 import { EVENT } from "@/lib/event";
@@ -49,6 +50,11 @@ export default function RootLayout({
           <BookCallModal />
         </BookCallModalProvider>
       </body>
+      {/* Only on the deployed site — keeps local dev traffic out of the property.
+          The measurement ID lives in NEXT_PUBLIC_GA_ID on Vercel production. */}
+      {process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
