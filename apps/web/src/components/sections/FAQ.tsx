@@ -14,9 +14,10 @@ interface QA {
 
 // Every answer here restates something the page already commits to
 // elsewhere (format, cohort size, who it's for, what you leave with) so
-// the FAQ can't drift out of sync with the rest of the copy. The two
-// questions we genuinely can't answer yet — exact dates and fee — say so
-// plainly rather than inventing a number.
+// the FAQ can't drift out of sync with the rest of the copy. The dates come
+// from EVENT so they cannot contradict the hero; the fee is the one thing we
+// genuinely can't answer yet, and says so plainly rather than inventing a
+// number.
 const FAQS: QA[] = [
   {
     q: "Who is this actually for?",
@@ -40,7 +41,7 @@ const FAQS: QA[] = [
   },
   {
     q: "When are the dates, and what does it cost?",
-    a: "Dates and the fee go out to the waitlist first, before anything is announced publicly. Joining the waitlist costs nothing and commits you to nothing. It just puts you in line to hear first.",
+    a: `${EVENT.dateLabel}, in ${EVENT.venue}. The fee goes out to the waitlist first, before it is announced publicly. Joining the waitlist costs nothing and commits you to nothing. It just puts you in line to hear first.`,
   },
   {
     q: "I'm early. Is it too soon for me?",

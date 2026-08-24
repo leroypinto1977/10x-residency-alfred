@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "Founder 10X: the 3-day residential intensive in Athirapalli, Kerala for founders and creators already running something real. Build the operating system, identity and engine to take your company past a million dollars.",
   openGraph: {
     title: `${EVENT.name} — Build Your Million Dollar Company`,
-    description: `A ${EVENT.durationDays}-day founder residency in ${EVENT.venue}, hosted by ${EVENT.host}. ${EVENT.seats} seats, by application.`,
+    description: `A ${EVENT.durationDays}-day founder residency in ${EVENT.venue}, ${EVENT.dateLabel}, hosted by ${EVENT.host}. ${EVENT.seats} seats, by application.`,
     type: "website",
   },
 };

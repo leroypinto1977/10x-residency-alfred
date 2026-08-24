@@ -6,8 +6,7 @@
 // silently went stale. Anything a section states as fact now comes from
 // here.
 //
-// TODO(content): the two dates below are the only values still awaiting
-// confirmation from the team. Everything else is live copy.
+// Every value here is confirmed live copy.
 export const EVENT = {
   name: "Founder 10X",
   edition: "Edition I",
@@ -35,8 +34,8 @@ export const EVENT = {
   ticketUrl: "https://theticket9.com/event/founder-10x-become-a-7-figure-entrepreneur",
 
   /**
-   * The residency dates, ISO `YYYY-MM-DD`. Confirmed by the team and first
-   * published in the hero.
+   * The residency dates, ISO `YYYY-MM-DD`. Confirmed by the team, published
+   * in the hero and stated in the FAQ.
    */
   startDate: "2026-10-02" as string | null,
   endDate: "2026-10-05" as string | null,
