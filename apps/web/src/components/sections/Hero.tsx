@@ -144,6 +144,10 @@ export default function Hero() {
           copy can rise through it instead of waiting behind it. */}
       <div className={styles.veil} aria-hidden="true" />
 
+      {/* Covers the strip the address bar vacates — see .foot. Nothing on a
+          desktop, where the two viewports are the same height. */}
+      <div className={styles.foot} aria-hidden="true" />
+
       {/* Three bands: brand, message, detail. */}
       <div ref={innerRef} className={styles.inner}>
         <header className={`${styles.brandBar} ${styles.rise} ${styles.riseBrand}`}>

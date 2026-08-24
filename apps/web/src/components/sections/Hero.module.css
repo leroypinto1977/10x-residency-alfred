@@ -71,6 +71,30 @@
   filter: brightness(1.18) saturate(1.04);
 }
 
+/* The strip the address bar vacates.
+
+   The box is lvh and the composition is svh, which is what stops anything
+   reflowing when the bars move — but it also means ~78px of the hero sits
+   below the guaranteed-visible height, and the photograph runs the whole
+   way down. So the moment the bars retract, that strip is uncovered and
+   78px more photograph appears. Nothing resized; a constant-height picture
+   simply stopped being clipped by the browser, which is indistinguishable
+   from the image growing and was being read as exactly that.
+
+   Masking the strip is what fixes it, rather than shortening the photograph
+   to svh: the parallax overscan hangs 8% below the image's own box, so a
+   backdrop sized to the small viewport still leaks most of that 78px back
+   into the strip. Painting over it stops the reveal wherever the overscan
+   happens to end.
+
+   Inert by default and only positioned inside the @supports: without svh
+   there is no second viewport to be short of, and `top: 100svh` in an
+   unsupporting browser would drop the declaration and leave the panel
+   sitting at the top of the hero, over the photograph. */
+.foot {
+  display: none;
+}
+
 /* Sits over the photograph and under the copy, so the headline rises
    through it rather than waiting for it to clear. */
 .veil {
@@ -509,5 +533,23 @@
 
   .inner {
     min-height: calc(100svh - var(--pad-top) - var(--pad-bottom));
+  }
+
+  /* Starts exactly where the guaranteed-visible height ends and runs to the
+     hero's real bottom. On any viewport where the two units agree — every
+     desktop — this resolves to zero height and paints nothing.
+
+     The fade is what keeps it from reading as a band: the scrim has already
+     carried the photograph most of the way to --bg-void by this point, so
+     the panel only has the last of it to cover. */
+  .foot {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100svh;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0, var(--bg-void) 2.5rem);
+    pointer-events: none;
   }
 }
