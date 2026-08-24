@@ -1,0 +1,121 @@
+/* The screenshots are dark-mode chat windows, so they sit on the void rather
+   than on the bone surface — on light they read as ten pasted black
+   rectangles. It also breaks up the two light sections either side of it. */
+.section {
+  padding: var(--section-py) 0;
+  background: var(--bg-void);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.inner {
+  max-width: var(--section-max);
+  margin: 0 auto;
+  padding: 0 var(--section-px);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: 44ch;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.lede {
+  font-size: var(--fs-lede);
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+/* ---------- strips ---------- */
+
+.strips {
+  position: relative;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--strip-gap);
+  --strip-gap: clamp(0.65rem, 1.4vw, 1.25rem);
+  /* A drag across the strips would otherwise select the whole page. */
+  user-select: none;
+}
+
+.viewport {
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  gap: var(--strip-gap);
+  /* transform is written per frame from JS; `will-change` is set and cleared
+     alongside the rAF loop rather than declared here, so the rows only hold a
+     compositor layer while they are actually moving. */
+}
+
+.card {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(8.75rem, 16vw, 13.75rem);
+  overflow: hidden;
+  border-radius: clamp(0.75rem, 1.2vw, 1.125rem);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.shot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The loop point is hidden by fading the strips out into the section
+   background at both edges, the same trick the photo wall uses top and
+   bottom. Two painted gradients rather than a mask, to match it. */
+.fadeLeft,
+.fadeRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(2.5rem, 8vw, 8rem);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-void), transparent);
+}
+
+.fadeRight {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-void), transparent);
+}
+
+/* ---------- reduced motion ---------- */
+
+/* No drift and no loop — one pass of the same screenshots, scrollable by
+   hand. The section still does its job; it just stops moving on its own. */
+.still .viewport {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.still .viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.still .track {
+  padding: 0 var(--section-px);
+}
+
+.still .fadeLeft,
+.still .fadeRight {
+  display: none;
+}

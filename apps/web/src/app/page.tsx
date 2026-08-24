@@ -9,6 +9,7 @@ import Location from "@/components/sections/Location";
 import Mentor from "@/components/sections/Mentor";
 import Features from "@/components/sections/Features";
 import Outcomes from "@/components/sections/Outcomes";
+import GroupChat from "@/components/sections/GroupChat";
 import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
 import UrgencySection from "@/components/sections/urgency";
@@ -35,6 +36,11 @@ export default function Home() {
         <Transformation />
         <Location />
         <Outcomes />
+        {/* Outcomes says what a founder walks out with; this says it was
+            still true weeks later. Deliberately kept well clear of PhotoWall
+            — both are drifting photographs, and back to back the second one
+            would read as the same idea twice. */}
+        <GroupChat />
         <Features />
         <UrgencySection />
         <FAQ />
