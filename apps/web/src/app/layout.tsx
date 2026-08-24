@@ -3,6 +3,7 @@ import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { BookCallModalProvider } from "@/components/BookCallModalContext";
 import BookCallModal from "@/components/BookCallModal";
+import MetaPixel from "@/components/MetaPixel";
 import { EVENT } from "@/lib/event";
 import "./globals.css";
 
@@ -49,9 +50,13 @@ export default function RootLayout({
           {children}
           <BookCallModal />
         </BookCallModalProvider>
+        {process.env.NODE_ENV === "production" &&
+          process.env.NEXT_PUBLIC_FB_PIXEL_ID && (
+            <MetaPixel pixelId={process.env.NEXT_PUBLIC_FB_PIXEL_ID} />
+          )}
       </body>
-      {/* Only on the deployed site — keeps local dev traffic out of the property.
-          The measurement ID lives in NEXT_PUBLIC_GA_ID on Vercel production. */}
+      {/* Only on the deployed site — keeps local dev traffic out of the
+          property and the pixel. Both IDs live in Vercel production env vars. */}
       {process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_GA_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       )}
