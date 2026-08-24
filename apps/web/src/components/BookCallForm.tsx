@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check } from "lucide-react";
@@ -11,6 +11,7 @@ import FloatingField from "@/components/ui/FloatingField";
 import RadioGroup from "@/components/ui/RadioGroup";
 import CheckboxGroup from "@/components/ui/CheckboxGroup";
 import { trackMetaEvent, newMetaEventId } from "@/lib/meta-pixel";
+import { EVENT } from "@/lib/event";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import styles from "./BookCallForm.module.css";
 import { DEFAULT_PHONE_COUNTRY } from "@/lib/phoneCountries";
@@ -42,6 +43,10 @@ const FOUND_US_OPTIONS = [
   { value: "Alfred Joshua's LinkedIn", label: "Alfred Joshua's LinkedIn" },
   { value: "Others", label: "Others" },
 ];
+
+// How long the confirmation stays up before the applicant is handed to the
+// ticket page.
+const REDIRECT_DELAY_MS = 2200;
 
 const INITIAL_FORM = {
   name: "",
@@ -114,6 +119,18 @@ export default function BookCallForm() {
     if (formError) setFormError("");
   };
 
+  // Long enough for the applicant to register that the form went through,
+  // short enough that it still feels like one continuous step into booking.
+  // The Lead event has already been sent by the time this runs, so leaving
+  // the page cannot cost us the conversion.
+  useEffect(() => {
+    if (!formSubmitted) return;
+    const timer = setTimeout(() => {
+      window.location.href = EVENT.ticketUrl;
+    }, REDIRECT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [formSubmitted]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -183,18 +200,11 @@ export default function BookCallForm() {
             Thank you, <strong>{formData.name}</strong>. We&apos;ve received your application.
           </p>
           <p className={styles.successNext}>
-            Our team will review your details and reach out within 24 hours via{" "}
-            <strong>{formData.email}</strong>.
+            Our team will review your details and reach out via{" "}
+            <strong>{formData.email}</strong>. Taking you to the booking page now…
           </p>
-          <Button
-            variant="secondary"
-            className={styles.resetBtn}
-            onClick={() => {
-              setFormSubmitted(false);
-              setFormData(INITIAL_FORM);
-            }}
-          >
-            Submit another request
+          <Button href={EVENT.ticketUrl} className={styles.resetBtn} showArrow>
+            Book your seat
           </Button>
         </motion.div>
       ) : (

@@ -28,6 +28,13 @@ export const EVENT = {
   admission: "By application",
 
   /**
+   * Where applicants buy their seat. The application form sends people here
+   * the moment it is submitted, so booking is one continuous flow rather
+   * than something that waits on an email.
+   */
+  ticketUrl: "https://theticket9.com/event/founder-10x-become-a-7-figure-entrepreneur",
+
+  /**
    * The residency dates, ISO `YYYY-MM-DD`. Confirmed by the team and first
    * published in the hero.
    */
