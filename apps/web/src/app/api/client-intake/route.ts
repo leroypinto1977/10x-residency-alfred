@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { saveClientIntake, getAllClientIntakes } from "../../../service/client_intake_service";
 import { getAgeCategory, calculateAge } from "@/lib/age";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { sendMetaEvent, splitName } from "@/lib/meta-capi";
 
 // Generous for a human filling in one application, including retries after a
 // validation error. Tight enough that scripted submissions stop being free.
@@ -10,6 +11,13 @@ const SUBMIT_LIMIT_PER_MINUTE = 10;
 // The export is guarded by a shared secret in the query string, so this is
 // also the brute-force ceiling on guessing it.
 const EXPORT_LIMIT_PER_MINUTE = 20;
+
+// The pixel drops _fbp and _fbc on the browser; forwarding them is the
+// strongest match signal we can give Meta short of an email address.
+function readCookie(cookieHeader: string, name: string): string | undefined {
+  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : undefined;
+}
 
 function tooManyRequests(retryAfter: number) {
   return NextResponse.json(
@@ -91,6 +99,28 @@ export async function POST(request: Request) {
     }
 
     await saveClientIntake(body);
+
+    // Report the lead to Meta from here as well as from the browser. The two
+    // copies share eventId, so Meta counts one conversion; the server copy is
+    // what survives when an ad blocker stops the pixel. Awaited so the request
+    // stays alive until Meta answers — sendMetaEvent swallows its own errors,
+    // so a bad token can never cost us a saved application.
+    const { firstName, lastName } = splitName(String(body.name ?? ""));
+    const cookies = request.headers.get("cookie") ?? "";
+    await sendMetaEvent({
+      eventName: "Lead",
+      eventId: String(body.metaEventId ?? crypto.randomUUID()),
+      eventSourceUrl: request.headers.get("referer") ?? undefined,
+      email: body.email,
+      phone: body.phone,
+      firstName,
+      lastName,
+      clientIp: getClientIp(request),
+      clientUserAgent: request.headers.get("user-agent") ?? undefined,
+      fbp: readCookie(cookies, "_fbp"),
+      fbc: readCookie(cookies, "_fbc"),
+      customData: { content_name: "Founder 10X application" },
+    });
 
     return NextResponse.json({
       success: true,

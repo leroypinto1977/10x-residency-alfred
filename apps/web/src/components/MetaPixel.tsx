@@ -3,12 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-
-declare global {
-  interface Window {
-    fbq?: (...args: unknown[]) => void;
-  }
-}
+import "@/lib/meta-pixel";
 
 // The Meta pixel counts a PageView once, when its own snippet runs. This site
 // navigates on the client, so anything after the first page would go unnoticed

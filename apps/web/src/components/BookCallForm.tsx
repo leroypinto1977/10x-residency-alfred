@@ -10,6 +10,7 @@ import Button from "@/components/ui/Button";
 import FloatingField from "@/components/ui/FloatingField";
 import RadioGroup from "@/components/ui/RadioGroup";
 import CheckboxGroup from "@/components/ui/CheckboxGroup";
+import { trackMetaEvent, newMetaEventId } from "@/lib/meta-pixel";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import styles from "./BookCallForm.module.css";
 import { DEFAULT_PHONE_COUNTRY } from "@/lib/phoneCountries";
@@ -134,11 +135,15 @@ export default function BookCallForm() {
     const fullPhone =
       parsePhoneNumberFromString(formData.phone, formData.phoneCountry)?.number ?? formData.phone;
 
+    // Shared by the browser pixel and the server-side Conversions API copy of
+    // this lead, so Meta recognises the two reports as one conversion.
+    const metaEventId = newMetaEventId();
+
     try {
       const response = await fetch("/api/client-intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, phone: fullPhone }),
+        body: JSON.stringify({ ...formData, phone: fullPhone, metaEventId }),
       });
 
       const data = await response.json();
@@ -147,6 +152,10 @@ export default function BookCallForm() {
         setFormError(data.message || "Something went wrong. Please try again.");
         return;
       }
+
+      // Only a stored application counts as a lead, so this fires after the
+      // response rather than on submit.
+      trackMetaEvent("Lead", metaEventId, { content_name: "Founder 10X application" });
 
       setFormSubmitted(true);
       setFormError("");
