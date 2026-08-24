@@ -65,7 +65,7 @@ export default function Location() {
           <figure className={`${styles.shot} ${styles.shotNight}`}>
             <Image
               src={nightImg}
-              alt="Founders talking in a circle on the lawn after dark"
+              alt="Founders holding their cards up in a night session at the venue"
               sizes="(max-width: 860px) 100vw, 34vw"
               className={styles.shotImg}
               placeholder="blur"

@@ -46,7 +46,7 @@ export default function Room() {
           <figure className={styles.shot}>
             <Image
               src={roomImg}
-              alt="Founders working through a session around a table"
+              alt="A founder making his point across the table while the group hears him out"
               sizes="(max-width: 900px) 100vw, 1120px"
               className={styles.shotImg}
               placeholder="blur"

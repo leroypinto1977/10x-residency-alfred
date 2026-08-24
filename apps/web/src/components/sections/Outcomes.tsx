@@ -77,7 +77,7 @@ export default function Outcomes() {
           <RoomPhoto
             className={styles.band}
             src="/room/outcomes-cards.webp"
-            alt="Founders seated at the session with printed exercise cards laid out on boards across their laps"
+            alt="Founders reading through their printed worksheets, exercise cards in hand"
             width={1600}
             height={800}
             caption="The frameworks, mid-exercise."

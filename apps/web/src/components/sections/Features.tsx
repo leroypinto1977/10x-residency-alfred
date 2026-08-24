@@ -70,9 +70,9 @@ export default function Features() {
           <RoomPhoto
             className={styles.closingPhoto}
             src="/room/features-review.webp"
-            alt="Alfred in a maroon blazer holding a printed worksheet at arm's length, reading down it"
+            alt="Alfred in a maroon blazer listening while a founder makes his case to the room"
             width={600}
-            height={800}
+            height={400}
           />
           <p className={styles.footnote}>
             Each one reviewed line by line with Alfred, and pressure-tested by the room before you

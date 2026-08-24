@@ -43,7 +43,7 @@ export default function UrgencySection() {
           <RoomPhoto
             className={styles.band}
             src="/room/urgency-room.webp"
-            alt="The room seen from behind Alfred's shoulder, founders seated at tables watching him"
+            alt="A founder standing at the glass wall with the seated room turned towards him"
             width={1600}
             height={800}
             caption={`${EVENT.seats} seats. This is what they look like taken.`}
