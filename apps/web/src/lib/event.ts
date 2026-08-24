@@ -9,7 +9,6 @@
 // Every value here is confirmed live copy.
 export const EVENT = {
   name: "Founder 10X",
-  edition: "Edition I",
   host: "The GOAT Media",
 
   /** Where the residency runs. */

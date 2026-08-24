@@ -154,7 +154,6 @@ export default function Hero() {
           <p className={styles.wordmark}>
             Founder <span className={styles.accent}>10X.</span>
           </p>
-          <p className={styles.edition}>{EVENT.edition}</p>
         </header>
 
         <div className={styles.content}>
