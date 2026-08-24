@@ -22,9 +22,9 @@ const META = [
 // rises independently. Automatic wrapping can't be masked per line — the
 // browser gives you no handle on a line box.
 const TITLE_LINES = [
-  { text: "Build your million dollar", accent: false },
-  { text: "company", accent: false },
-  { text: "on purpose.", accent: true },
+  { text: "Blueprint to build your", accent: false },
+  { text: "million dollar company", accent: false },
+  { text: "in 1 year", accent: true },
 ];
 
 /**

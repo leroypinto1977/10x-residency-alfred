@@ -114,7 +114,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 42%;
+  /* Held high in the frame: at 16/7 this window throws away most of the
+     source's height, and anything past ~20% starts shaving the heads of
+     the two men on the right. Low enough that the near edge of the table
+     still reads as a table. */
+  object-position: center 15%;
 }
 
 @media (max-width: 640px) {
