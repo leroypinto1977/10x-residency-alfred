@@ -34,7 +34,7 @@ export default function FinalCTA() {
         </p>
 
         <BookCallButton variant="primary" className={styles.cta} showArrow>
-          Join The Wait List
+          Book a Call
         </BookCallButton>
 
         {/* <div className={styles.badges}>

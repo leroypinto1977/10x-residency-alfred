@@ -37,11 +37,11 @@ const FAQS: QA[] = [
   },
   {
     q: "How does the application work?",
-    a: `${EVENT.admission}. You join the waitlist, we send you the application, and places are offered on fit rather than first-come. ${EVENT.seats} seats total.`,
+    a: `${EVENT.admission}. You fill in the application, block your seat with ${EVENT.seatFeeLabel} on the booking page, and places are offered on fit rather than first-come. ${EVENT.seats} seats total.`,
   },
   {
     q: "When are the dates, and what does it cost?",
-    a: `${EVENT.dateLabel}, in ${EVENT.venue}. The fee goes out to the waitlist first, before it is announced publicly. Joining the waitlist costs nothing and commits you to nothing. It just puts you in line to hear first.`,
+    a: `${EVENT.dateLabel}, in ${EVENT.venue}. Blocking a seat costs ${EVENT.seatFeeLabel}, paid on the booking page right after you apply. That holds your place while we review the application, and our team walks you through the rest personally.`,
   },
   {
     q: "I'm early. Is it too soon for me?",

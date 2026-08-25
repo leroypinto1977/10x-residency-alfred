@@ -49,9 +49,9 @@ export default function Footer() {
           </RevealItem>
 
           <RevealItem className={styles.ctaCol}>
-            <BookCallButton showArrow>Join The Wait List</BookCallButton>
+            <BookCallButton showArrow>Book a Call</BookCallButton>
             <p className={styles.ctaNote}>
-              No payment. We personally contact everyone on the list.
+              {EVENT.seatFeeLabel} blocks your seat. We personally contact everyone who applies.
             </p>
           </RevealItem>
         </Reveal>

@@ -26,6 +26,14 @@ export const EVENT = {
   admission: "By application",
 
   /**
+   * What it costs to block a seat once an application goes through. This is
+   * the only number the page states about money, so every mention of the fee
+   * reads it from here rather than writing it out again.
+   */
+  seatFee: 499,
+  seatFeeLabel: "₹499",
+
+  /**
    * Where applicants buy their seat. The application form sends people here
    * the moment it is submitted, so booking is one continuous flow rather
    * than something that waits on an email.

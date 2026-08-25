@@ -176,7 +176,7 @@ export default function Hero() {
           </p>
 
           <div className={`${styles.actions} ${styles.rise} ${styles.riseActions}`}>
-            <BookCallButton showArrow>Join The Wait List</BookCallButton>
+            <BookCallButton showArrow>Book a Call</BookCallButton>
             <Button href="#film" variant="secondary">
               Watch the Testimonials
             </Button>

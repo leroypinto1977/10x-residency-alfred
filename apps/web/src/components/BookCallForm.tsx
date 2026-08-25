@@ -201,10 +201,11 @@ export default function BookCallForm() {
           </p>
           <p className={styles.successNext}>
             Our team will review your details and reach out via{" "}
-            <strong>{formData.email}</strong>. Taking you to the booking page now…
+            <strong>{formData.email}</strong>. Taking you to the booking page to block your
+            seat with {EVENT.seatFeeLabel} now…
           </p>
           <Button href={EVENT.ticketUrl} className={styles.resetBtn} showArrow>
-            Book your seat
+            Block your seat &middot; {EVENT.seatFeeLabel}
           </Button>
         </motion.div>
       ) : (

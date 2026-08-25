@@ -294,7 +294,7 @@ export default function Film() {
           / {String(ALL_CHAPTERS.length).padStart(2, "0")}
         </span>
       </p>
-      <BookCallButton showArrow>Join The Wait List</BookCallButton>
+      <BookCallButton showArrow>Book a Call</BookCallButton>
     </div>
   );
 
