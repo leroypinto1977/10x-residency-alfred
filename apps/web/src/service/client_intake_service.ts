@@ -15,6 +15,11 @@ export async function saveClientIntake(data: {
   investmentReady: string;
   foundUs: string[];
   foundUsOther?: string;
+  // Meta attribution, resolved on the server from the request's cookies. Not
+  // part of the questionnaire, so it is optional and the form never sends it.
+  fbp?: string;
+  fbc?: string;
+  metaEventId?: string;
 }) {
   return prisma.clientIntake.create({
     data: {
@@ -32,6 +37,9 @@ export async function saveClientIntake(data: {
       investmentReady: data.investmentReady,
       foundUs: data.foundUs,
       foundUsOther: data.foundUsOther || null,
+      fbp: data.fbp || null,
+      fbc: data.fbc || null,
+      metaEventId: data.metaEventId || null,
     },
   });
 }

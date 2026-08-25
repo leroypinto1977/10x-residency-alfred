@@ -48,6 +48,19 @@ model ClientIntake {
 
   createdAt        DateTime @default(now())
 
+  // ---- Meta attribution, captured at submission time ----
+  //
+  // The pixel's own browser cookies plus the id the browser and the server
+  // both reported the Lead under. Kept because every CRM stage we report
+  // later has to be matched back to the same person, and _fbp/_fbc are a far
+  // stronger match than a hashed email on its own — they are the only things
+  // that name the actual ad click. Null on rows written before this existed,
+  // and null whenever the pixel was blocked and no fbclid survived.
+  fbp              String?
+  fbc              String?
+  /// The event id the website Lead was reported under, for reference.
+  metaEventId      String?
+
   // ---- CRM: everything the team adds after the form arrives ----
   //
   // All of it is nullable or defaulted, so the migration that introduces it
@@ -70,6 +83,7 @@ model ClientIntake {
 
   notes          LeadNote[]
   events         LeadEvent[]
+  metaEvents     MetaConversion[]
 
   @@index([status])
   @@index([rating])
@@ -137,6 +151,29 @@ model LeadEvent {
   createdAt DateTime @default(now())
 
   @@index([leadId, createdAt])
+}
+
+// One row per lead stage reported to Meta's Conversions API.
+//
+// Its job is to stop the same stage being reported twice: a status dragged
+// from Won back to Call done and forward again would otherwise send a second
+// Won, and Meta only collapses duplicates inside a short window. `ok` is what
+// makes a row a claim rather than a headstone — a send that failed leaves
+// ok = false and will be tried again on the next change, while a send that
+// landed is never repeated.
+model MetaConversion {
+  id        Int      @id @default(autoincrement())
+  leadId    Int
+  lead      ClientIntake @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  /// The Meta event name, e.g. "crm_call_done".
+  eventName String
+  ok        Boolean  @default(false)
+  /// Meta's complaint, when there was one. Read from the lead sheet.
+  detail    String?
+  sentAt    DateTime @default(now())
+
+  @@unique([leadId, eventName])
+  @@index([leadId, sentAt])
 }
 
 // Login throttling for the admin panel: one row per IP, dropped on a

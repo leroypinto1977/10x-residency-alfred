@@ -8,17 +8,22 @@ import {
   isStatus,
   leadHistory,
   leadNotes,
+  metaReports,
   updateLeadField,
   type Lead,
   type LeadEvent,
   type LeadNote,
+  type MetaReport,
 } from "@founder10x/db";
 import { requireEditor, requireUser } from "@/lib/session";
+import { ratingEventName, reportLeadStage, statusEventName } from "@/lib/meta-crm";
 
 export type LeadDetail = {
   lead: Lead;
   notes: LeadNote[];
   history: LeadEvent[];
+  /** What has been reported to Meta about this lead, and whether it landed. */
+  meta: MetaReport[];
 };
 
 /**
@@ -29,13 +34,14 @@ export type LeadDetail = {
  * than reconciling.
  */
 async function detail(leadId: number): Promise<LeadDetail> {
-  const [lead, notes, history] = await Promise.all([
+  const [lead, notes, history, meta] = await Promise.all([
     getLead(leadId),
     leadNotes(leadId),
     leadHistory(leadId),
+    metaReports(leadId),
   ]);
   if (!lead) throw new Error("That lead no longer exists.");
-  return { lead, notes, history };
+  return { lead, notes, history, meta };
 }
 
 /** Ids arrive from the client, so they are checked rather than trusted. */
@@ -45,11 +51,24 @@ function leadIdOf(value: unknown): number {
   return id;
 }
 
+/**
+ * Moving a lead along is also what tells Meta the lead was any good, so the
+ * stage report goes out from here.
+ *
+ * Awaited rather than left to run after the response, because the detail this
+ * returns is what the sheet redraws from — reporting in the background would
+ * show the team a lead whose stage had supposedly not been sent, until they
+ * reopened it. reportLeadStage never throws and gives up on Meta after five
+ * seconds, so the cost of waiting is bounded and a status change cannot fail
+ * because an ad platform did.
+ */
 export async function setStatus(leadId: number, status: string): Promise<LeadDetail> {
   const user = await requireEditor();
   const id = leadIdOf(leadId);
   if (!isStatus(status)) throw new Error("Unknown status.");
-  await updateLeadField(id, user.id, "status", status);
+  const result = await updateLeadField(id, user.id, "status", status);
+  const eventName = statusEventName(status);
+  if (result?.changed && eventName) await reportLeadStage(id, eventName);
   revalidatePath("/");
   return detail(id);
 }
@@ -58,7 +77,9 @@ export async function setRating(leadId: number, rating: string | null): Promise<
   const user = await requireEditor();
   const id = leadIdOf(leadId);
   if (rating !== null && !isRating(rating)) throw new Error("Unknown rating.");
-  await updateLeadField(id, user.id, "rating", rating);
+  const result = await updateLeadField(id, user.id, "rating", rating);
+  const eventName = ratingEventName(rating);
+  if (result?.changed && eventName) await reportLeadStage(id, eventName);
   revalidatePath("/");
   return detail(id);
 }

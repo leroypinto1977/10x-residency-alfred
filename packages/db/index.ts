@@ -485,3 +485,81 @@ export async function updateLeadField(
   });
   return { changed: true };
 }
+
+/* ------------------------------------------------------------------ */
+/*  Meta CRM reporting                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Everything Meta needs to recognise a lead, and nothing else.
+ *
+ * Read separately from `getLead` rather than folded into it because the board
+ * and the sheet are client components: fbp and fbc have no business crossing
+ * the wire to a browser, and the surest way to keep them off it is to leave
+ * them out of the shape that goes there.
+ */
+export type LeadMatchKeys = {
+  name: string;
+  email: string;
+  phone: string;
+  fbp: string | null;
+  fbc: string | null;
+};
+
+export async function leadMatchKeys(leadId: number): Promise<LeadMatchKeys | null> {
+  return prisma.clientIntake.findUnique({
+    where: { id: leadId },
+    select: { name: true, email: true, phone: true, fbp: true, fbc: true },
+  });
+}
+
+/** One attempt at reporting a lead stage, successful or not. */
+export type MetaReport = {
+  eventName: string;
+  ok: boolean;
+  detail: string | null;
+  sentAt: string;
+};
+
+export async function metaReports(leadId: number): Promise<MetaReport[]> {
+  const rows = await prisma.metaConversion.findMany({
+    where: { leadId },
+    select: { eventName: true, ok: true, detail: true, sentAt: true },
+    orderBy: { sentAt: "asc" },
+  });
+  return rows.map((r) => ({
+    eventName: r.eventName,
+    ok: r.ok,
+    detail: r.detail,
+    sentAt: r.sentAt.toISOString(),
+  }));
+}
+
+/** Has this exact stage already reached Meta? A failed attempt has not. */
+export async function metaStageDelivered(leadId: number, eventName: string): Promise<boolean> {
+  const row = await prisma.metaConversion.findUnique({
+    where: { leadId_eventName: { leadId, eventName } },
+    select: { ok: true },
+  });
+  return row?.ok === true;
+}
+
+/**
+ * Remember what happened to a stage report.
+ *
+ * An upsert rather than a create, so a stage that failed the first time is
+ * overwritten by the attempt that succeeds instead of colliding with it.
+ */
+export async function recordMetaStage(
+  leadId: number,
+  eventName: string,
+  ok: boolean,
+  detail?: string
+): Promise<void> {
+  const data = { ok, detail: detail ?? null, sentAt: new Date() };
+  await prisma.metaConversion.upsert({
+    where: { leadId_eventName: { leadId, eventName } },
+    create: { leadId, eventName, ...data },
+    update: data,
+  });
+}

@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@founder10x/db": "*"
+    "@founder10x/db": "*",
+    "@founder10x/meta": "*"
   }
 }

@@ -31,6 +31,19 @@ const FIELD_LABELS: Record<string, string> = {
   followUpOn: "Follow-up",
 };
 
+/**
+ * The names Meta knows these stages by, back in the words the panel uses.
+ * The sheet shows what has been reported so that a token that has quietly
+ * expired is visible here rather than only in Events Manager three weeks later.
+ */
+const META_EVENT_LABELS: Record<string, string> = {
+  crm_qualified_lead: "Qualified",
+  crm_contacted: "Contacted",
+  crm_call_done: "Call done",
+  crm_won: "Won",
+  crm_lost: "Lost",
+};
+
 /** The submitted answers, in the order the form asked for them. */
 function answers(lead: Lead): [string, string | null][] {
   return [
@@ -63,7 +76,12 @@ export default function LeadSheet({
   onClose: () => void;
   onChanged: () => void;
 }) {
-  const [detail, setDetail] = useState<LeadDetail>({ lead: initial, notes: [], history: [] });
+  const [detail, setDetail] = useState<LeadDetail>({
+    lead: initial,
+    notes: [],
+    history: [],
+    meta: [],
+  });
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -284,6 +302,33 @@ export default function LeadSheet({
             {detail.notes.length === 0 ? (
               <li className="text-xs" style={{ color: "var(--faint)" }}>
                 No notes yet.
+              </li>
+            ) : null}
+          </ul>
+        </section>
+
+        <section className="mt-6">
+          <h3 className="text-xs uppercase tracking-wider mb-2" style={{ color: "var(--accent)" }}>
+            Reported to Meta
+          </h3>
+          <ul className="space-y-1.5">
+            {detail.meta.map((m) => (
+              <li key={m.eventName} className="text-xs" style={{ color: "var(--muted)" }}>
+                <span style={{ color: "var(--text)" }}>
+                  {META_EVENT_LABELS[m.eventName] ?? m.eventName}
+                </span>{" "}
+                {m.ok ? "sent" : "failed"}
+                <span style={{ color: "var(--faint)" }}> · {when(m.sentAt)}</span>
+                {m.ok ? null : (
+                  <span className="block" style={{ color: "var(--faint)" }}>
+                    {m.detail ?? "No reason given."}
+                  </span>
+                )}
+              </li>
+            ))}
+            {detail.meta.length === 0 ? (
+              <li className="text-xs" style={{ color: "var(--faint)" }}>
+                Nothing reported yet — stages are sent as this lead moves past New.
               </li>
             ) : null}
           </ul>

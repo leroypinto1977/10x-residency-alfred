@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // packages/db ships TypeScript source rather than a build step, so Next has
-  // to compile it the same way it compiles this app's own files.
-  transpilePackages: ["@founder10x/db"],
+  // packages/db and packages/meta ship TypeScript source rather than a build
+  // step, so Next has to compile them the way it compiles this app's own files.
+  transpilePackages: ["@founder10x/db", "@founder10x/meta"],
   images: {
     // next/image always puts the LARGEST deviceSize in the <img src> fallback.
     // Clients that don't evaluate srcset/sizes (crawlers, scrapers, preview
