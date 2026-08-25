@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Search, X } from "lucide-react";
 import {
   RATINGS,
   RATING_LABELS,
@@ -12,33 +13,75 @@ import {
   type Lead,
   type LeadFilters,
 } from "@founder10x/db/vocab";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import LeadSheet from "./lead-sheet";
+import { formatDate, formatDay, InvestPill, isDue, RatingPill, StatusPill } from "./ui";
 
-const RATING_COLOR: Record<string, string> = {
-  hot: "var(--hot)",
-  warm: "var(--warm)",
-  cold: "var(--cold)",
-};
-const STATUS_COLOR: Record<string, string> = {
-  new: "var(--accent)",
-  contacted: "var(--warm)",
-  call_done: "var(--cold)",
-  won: "var(--won)",
-  lost: "var(--lost)",
-};
+/**
+ * The board.
+ *
+ * Filters and the open lead both live in the URL. A filtered view is
+ * therefore a link — "every hot lead who said yes" can be sent to whoever
+ * should be calling them — and the open sheet survives a refresh and answers
+ * to the back button, which a piece of component state would not.
+ */
 
-function when(iso: string) {
-  return new Date(iso).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "tap rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+        active
+          ? "border-foreground bg-foreground text-background"
+          : "border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground",
+      )}
+    >
+      {children}
+    </button>
+  );
 }
 
-/** Today in IST, so "due" means the same thing here as it does in the query. */
-function todayIST() {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="w-24 shrink-0 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+function Stat({ label, value, accent }: { label: string; value: number; accent?: string }) {
+  return (
+    <div className="rounded-xl border bg-card px-4 py-3">
+      <p className={cn("tabular text-2xl font-semibold tracking-tight", accent)}>{value}</p>
+      <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
+    </div>
+  );
 }
 
 export default function LeadsBoard({
@@ -55,325 +98,311 @@ export default function LeadsBoard({
   filters: LeadFilters;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const params = useSearchParams();
-  const [pending, startTransition] = useTransition();
-  const [openId, setOpenId] = useState<number | null>(null);
   const [search, setSearch] = useState(filters.q ?? "");
 
   const editable = canEdit(me.role);
-  const today = todayIST();
 
-  /** One writer for the query string, so filters compose instead of clobber. */
-  const setParam = useCallback(
+  /** Set or clear one param, keeping the rest. */
+  const put = useCallback(
     (key: string, value: string | null) => {
       const next = new URLSearchParams(params.toString());
-      if (!value || value === "all") next.delete(key);
+      if (value === null) next.delete(key);
       else next.set(key, value);
-      startTransition(() => router.push(`/?${next.toString()}`));
+      // a filter change with a sheet open would leave the sheet showing a lead
+      // that the new filter may not even include
+      if (key !== "lead") next.delete("lead");
+      const qs = next.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [params, router]
+    [params, pathname, router],
   );
 
-  const open = leads.find((l) => l.id === openId) ?? null;
-  const filtered = ["status", "rating", "invest", "owner", "due", "q"].some((k) => params.get(k));
+  const get = (k: string) => params.get(k);
+  const openId = get("lead");
+  const open = openId ? (leads.find((l) => l.id === Number(openId)) ?? null) : null;
+  const filtered = ["status", "rating", "invest", "owner", "due", "q"].some((k) => get(k));
 
   return (
-    <main className="mx-auto max-w-[1400px] px-5 py-6">
-      <header className="flex flex-wrap items-center gap-3 justify-between mb-5">
-        <div>
-          <p className="text-xs tracking-[0.18em] uppercase" style={{ color: "var(--accent)" }}>
-            Founder 10X
-          </p>
-          <h1 className="text-lg font-semibold">Leads</h1>
-        </div>
-        <div className="flex items-center gap-3 text-xs" style={{ color: "var(--muted)" }}>
-          <span>
-            {me.name} · {me.role}
-          </span>
-          {me.role === "owner" ? (
-            <a href="/team" className="tap underline underline-offset-2">
-              Team
-            </a>
-          ) : null}
-          <a
-            href={`/api/export?${params.toString()}`}
-            className="tap underline underline-offset-2"
-          >
-            Export CSV
-          </a>
-          <form action="/api/logout" method="post">
-            <button type="submit" className="tap underline underline-offset-2">
-              Sign out
-            </button>
-          </form>
-        </div>
-      </header>
-
-      {/* Counts are of the whole table, never of the filtered view — a summary
-          that moves with the filter cannot tell you what is going on. */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {[
-          ["Total", counts.total, null] as const,
-          ...STATUSES.map((s) => [STATUS_LABELS[s], counts[s] ?? 0, s] as const),
-          ["Due", counts.due ?? 0, "due"] as const,
-        ].map(([label, n, key]) => (
-          <button
-            key={label}
-            onClick={() =>
-              key === "due"
-                ? setParam("due", params.get("due") === "1" ? null : "1")
-                : setParam("status", key)
-            }
-            className="rounded-md border px-3 py-1.5 text-left"
-            style={{
-              background: "var(--surface)",
-              borderColor:
-                (key === "due" && params.get("due") === "1") || (key && params.get("status") === key)
-                  ? "var(--accent)"
-                  : "var(--border)",
-            }}
-          >
-            <span className="block text-[11px]" style={{ color: "var(--muted)" }}>
-              {label}
-            </span>
-            <span className="block text-base font-semibold">{n}</span>
-          </button>
-        ))}
+    <>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+        <Stat label="Total" value={counts.total ?? 0} />
+        <Stat label="New" value={counts.new ?? 0} />
+        <Stat label="Contacted" value={counts.contacted ?? 0} />
+        <Stat label="Call done" value={counts.call_done ?? 0} />
+        <Stat label="Won" value={counts.won ?? 0} accent="text-emerald-600" />
+        <Stat label="Hot" value={counts.hot ?? 0} accent="text-red-600" />
+        <Stat label="Due" value={counts.due ?? 0} accent="text-amber-600" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mb-4">
+      <div className="mt-6 space-y-2.5 rounded-xl border bg-card p-4">
+        <FilterRow label="Status">
+          <Chip active={!get("status")} onClick={() => put("status", null)}>
+            All
+          </Chip>
+          {STATUSES.map((s) => (
+            <Chip key={s} active={get("status") === s} onClick={() => put("status", s)}>
+              {STATUS_LABELS[s]}
+              <span className="ml-1.5 opacity-60">{counts[s] ?? 0}</span>
+            </Chip>
+          ))}
+        </FilterRow>
+
+        <FilterRow label="Rating">
+          <Chip active={!get("rating")} onClick={() => put("rating", null)}>
+            All
+          </Chip>
+          {RATINGS.map((r) => (
+            <Chip key={r} active={get("rating") === r} onClick={() => put("rating", r)}>
+              {RATING_LABELS[r]}
+              <span className="ml-1.5 opacity-60">{counts[r] ?? 0}</span>
+            </Chip>
+          ))}
+          <Chip active={get("rating") === "unrated"} onClick={() => put("rating", "unrated")}>
+            Unrated
+          </Chip>
+        </FilterRow>
+
+        {/* the qualifying question, and the reason most of this exists */}
+        <FilterRow label="Ready 1.5L">
+          <Chip active={!get("invest")} onClick={() => put("invest", null)}>
+            All
+          </Chip>
+          <Chip active={get("invest") === "yes"} onClick={() => put("invest", "yes")}>
+            Yes<span className="ml-1.5 opacity-60">{counts.invest_yes ?? 0}</span>
+          </Chip>
+          <Chip active={get("invest") === "no"} onClick={() => put("invest", "no")}>
+            No<span className="ml-1.5 opacity-60">{counts.invest_no ?? 0}</span>
+          </Chip>
+          <Chip active={get("invest") === "unanswered"} onClick={() => put("invest", "unanswered")}>
+            Unanswered
+          </Chip>
+        </FilterRow>
+
+        <FilterRow label="Owner">
+          <Chip active={!get("owner")} onClick={() => put("owner", null)}>
+            Anyone
+          </Chip>
+          <Chip active={get("owner") === String(me.id)} onClick={() => put("owner", String(me.id))}>
+            Mine
+          </Chip>
+          <Chip active={get("owner") === "unassigned"} onClick={() => put("owner", "unassigned")}>
+            Unassigned
+          </Chip>
+          {users
+            .filter((u) => u.id !== me.id)
+            .map((u) => (
+              <Chip
+                key={u.id}
+                active={get("owner") === String(u.id)}
+                onClick={() => put("owner", String(u.id))}
+              >
+                {u.name}
+              </Chip>
+            ))}
+        </FilterRow>
+
+        <FilterRow label="Follow-up">
+          <Chip active={!get("due")} onClick={() => put("due", null)}>
+            Any
+          </Chip>
+          <Chip active={get("due") === "1"} onClick={() => put("due", "1")}>
+            Due now<span className="ml-1.5 opacity-60">{counts.due ?? 0}</span>
+          </Chip>
+        </FilterRow>
+
         <form
+          className="flex flex-wrap items-center gap-1.5 pt-1"
           onSubmit={(e) => {
             e.preventDefault();
-            setParam("q", search.trim() || null);
+            put("q", search.trim() || null);
           }}
         >
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, email, phone, business"
-            className="rounded-md border px-3 py-1.5 w-64"
-            style={{ background: "var(--surface)" }}
-          />
+          <span className="w-24 shrink-0 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            Search
+          </span>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Name, email, phone or business"
+              className="h-8 w-72 pl-8 text-sm"
+            />
+          </div>
+          <Button type="submit" size="sm" variant="outline" className="tap h-8">
+            Search
+          </Button>
+          {filtered && (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="tap h-8 text-muted-foreground"
+              onClick={() => {
+                setSearch("");
+                router.replace(pathname, { scroll: false });
+              }}
+            >
+              <X className="size-3.5" />
+              Clear
+            </Button>
+          )}
         </form>
-
-        <select
-          value={(filters.rating as string) ?? "all"}
-          onChange={(e) => setParam("rating", e.target.value)}
-          className="rounded-md border px-2 py-1.5"
-          style={{ background: "var(--surface)" }}
-        >
-          <option value="all">Any rating</option>
-          {RATINGS.map((r) => (
-            <option key={r} value={r}>
-              {RATING_LABELS[r]}
-            </option>
-          ))}
-          <option value="unrated">Unrated</option>
-        </select>
-
-        <select
-          value={String(filters.ownerId ?? "all")}
-          onChange={(e) => setParam("owner", e.target.value)}
-          className="rounded-md border px-2 py-1.5"
-          style={{ background: "var(--surface)" }}
-        >
-          <option value="all">Anyone</option>
-          <option value="unassigned">Unassigned</option>
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={(filters.investReady as string) ?? "all"}
-          onChange={(e) => setParam("invest", e.target.value)}
-          className="rounded-md border px-2 py-1.5"
-          style={{ background: "var(--surface)" }}
-        >
-          <option value="all">Investment: any</option>
-          <option value="yes">Ready</option>
-          <option value="no">Not ready</option>
-          <option value="unanswered">Unanswered</option>
-        </select>
-
-        {filtered ? (
-          <button
-            onClick={() => startTransition(() => router.push("/"))}
-            className="text-xs underline underline-offset-2"
-            style={{ color: "var(--muted)" }}
-          >
-            Clear filters
-          </button>
-        ) : null}
-
-        <span className="ml-auto text-xs" style={{ color: "var(--muted)" }}>
-          {pending ? "Loading…" : `${leads.length} shown`}
-        </span>
       </div>
 
-      {/* A nine-column table on a 375px screen shows Name and Contact and
-          hides everything the board exists for — status, rating, owner, what
-          is due — behind a sideways scroll nobody discovers. The table is for
-          screens that can hold it; a phone gets the cards below, which carry
-          the same fields and the same click target. */}
-      <div
-        className="hidden md:block rounded-lg border overflow-x-auto"
-        style={{ background: "var(--surface)" }}
-      >
-        <table className="w-full text-left border-collapse min-w-[900px]">
-          <thead>
-            <tr style={{ color: "var(--muted)" }} className="text-xs">
-              {["Name", "Contact", "Business", "Income", "Status", "Rating", "Owner", "Follow-up", "Received"].map(
-                (h) => (
-                  <th key={h} className="font-medium px-3 py-2 border-b whitespace-nowrap">
-                    {h}
-                  </th>
-                )
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {leads.map((l) => {
-              const due = l.followUpOn && l.followUpOn <= today;
-              return (
-                <tr
-                  key={l.id}
-                  onClick={() => setOpenId(l.id)}
-                  className="cursor-pointer border-b last:border-0 hover:brightness-125"
+      <p className="mt-5 text-sm text-muted-foreground">
+        Showing <span className="font-medium text-foreground">{leads.length}</span>
+        {filtered ? ` of ${counts.total ?? 0}` : ""} {leads.length === 1 ? "lead" : "leads"}
+      </p>
+
+      {leads.length === 0 ? (
+        <div className="mt-4 rounded-xl border border-dashed p-12 text-center">
+          <p className="text-sm text-muted-foreground">
+            {filtered
+              ? "No leads match these filters."
+              : "No applications yet. They will appear here as soon as someone applies."}
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* A nine-column table on a 375px screen shows Name and Contact and
+              hides everything the board exists for — status, rating, owner,
+              what is due — behind a sideways scroll nobody discovers. The
+              table is for screens that can hold it; a phone gets the cards
+              below, which carry the same fields and the same click target. */}
+          <div className="mt-4 hidden overflow-hidden rounded-xl border bg-card md:block">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="w-[150px]">Received</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="hidden lg:table-cell">Contact</TableHead>
+                    <TableHead className="hidden xl:table-cell">Business</TableHead>
+                    <TableHead className="hidden xl:table-cell">Income now</TableHead>
+                    <TableHead>Ready 1.5L</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Rating</TableHead>
+                    <TableHead className="hidden lg:table-cell">Owner</TableHead>
+                    <TableHead className="hidden lg:table-cell">Follow-up</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {leads.map((l) => (
+                    <TableRow
+                      key={l.id}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Open ${l.name}`}
+                      onClick={() => put("lead", String(l.id))}
+                      onKeyDown={(ev) => {
+                        if (ev.key === "Enter" || ev.key === " ") {
+                          ev.preventDefault();
+                          put("lead", String(l.id));
+                        }
+                      }}
+                      className={cn(
+                        "cursor-pointer",
+                        openId === String(l.id) && "bg-muted/70 hover:bg-muted/70",
+                      )}
+                    >
+                      <TableCell className="tabular whitespace-nowrap text-xs text-muted-foreground">
+                        {formatDate(l.createdAt)}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {l.name}
+                        {l.noteCount > 0 && (
+                          <Badge variant="secondary" className="ml-2 px-1.5 py-0 text-[10px]">
+                            {l.noteCount}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden text-xs lg:table-cell">
+                        <span className="block max-w-[200px] truncate">{l.email}</span>
+                        <span className="tabular block text-muted-foreground">{l.phone}</span>
+                      </TableCell>
+                      <TableCell className="hidden max-w-[200px] truncate text-sm xl:table-cell">
+                        {l.businessType}
+                      </TableCell>
+                      <TableCell className="hidden whitespace-nowrap text-sm text-muted-foreground xl:table-cell">
+                        {l.incomeLevel || "—"}
+                      </TableCell>
+                      <TableCell>
+                        <InvestPill value={l.investmentReady} />
+                      </TableCell>
+                      <TableCell>
+                        <StatusPill status={l.status} />
+                      </TableCell>
+                      <TableCell>
+                        <RatingPill rating={l.rating} />
+                      </TableCell>
+                      <TableCell className="hidden whitespace-nowrap text-sm lg:table-cell">
+                        {l.ownerName ?? <span className="text-muted-foreground">—</span>}
+                      </TableCell>
+                      <TableCell className="hidden whitespace-nowrap text-sm lg:table-cell">
+                        {l.followUpOn ? (
+                          <span className={isDue(l.followUpOn) ? "font-medium text-red-600" : ""}>
+                            {formatDay(l.followUpOn)}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          <ul className="mt-4 space-y-2 md:hidden">
+            {leads.map((l) => (
+              <li key={l.id}>
+                <button
+                  onClick={() => put("lead", String(l.id))}
+                  className="w-full rounded-xl border bg-card p-3.5 text-left"
                 >
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    <span className="font-medium">{l.name}</span>
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="font-medium leading-tight">{l.name}</span>
+                    <StatusPill status={l.status} className="shrink-0" />
+                  </div>
+
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    <div className="break-all">{l.email}</div>
+                    <div className="tabular">{l.phone}</div>
+                  </div>
+
+                  {l.businessType ? (
+                    <p className="mt-1.5 line-clamp-2 text-xs text-muted-foreground">
+                      {l.businessType}
+                    </p>
+                  ) : null}
+
+                  {/* Only the facts that are actually set, so a new lead is two
+                      lines rather than a column of dashes. */}
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                    {l.rating ? <RatingPill rating={l.rating} /> : null}
+                    {l.ownerName ? <span>{l.ownerName}</span> : null}
+                    {l.followUpOn ? (
+                      <span className={isDue(l.followUpOn) ? "font-medium text-red-600" : ""}>
+                        due {formatDay(l.followUpOn)}
+                      </span>
+                    ) : null}
                     {l.noteCount > 0 ? (
-                      <span className="ml-2 text-[11px]" style={{ color: "var(--faint)" }}>
+                      <span>
                         {l.noteCount} note{l.noteCount === 1 ? "" : "s"}
                       </span>
                     ) : null}
-                  </td>
-                  <td className="px-3 py-2 text-xs" style={{ color: "var(--muted)" }}>
-                    <div>{l.email}</div>
-                    <div>{l.phone}</div>
-                  </td>
-                  <td className="px-3 py-2 text-xs" style={{ color: "var(--muted)" }}>
-                    {l.businessType}
-                  </td>
-                  <td className="px-3 py-2 text-xs" style={{ color: "var(--muted)" }}>
-                    {l.incomeLevel}
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    <span
-                      className="rounded px-2 py-0.5 text-[11px]"
-                      style={{ border: `1px solid ${STATUS_COLOR[l.status]}`, color: STATUS_COLOR[l.status] }}
-                    >
-                      {STATUS_LABELS[l.status]}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2">
-                    {l.rating ? (
-                      <span style={{ color: RATING_COLOR[l.rating] }} className="text-[11px]">
-                        ● {RATING_LABELS[l.rating]}
-                      </span>
-                    ) : (
-                      <span style={{ color: "var(--faint)" }} className="text-[11px]">
-                        —
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2 text-xs" style={{ color: "var(--muted)" }}>
-                    {l.ownerName ?? "—"}
-                  </td>
-                  <td className="px-3 py-2 text-xs whitespace-nowrap" style={{ color: due ? "var(--hot)" : "var(--muted)" }}>
-                    {l.followUpOn ?? "—"}
-                  </td>
-                  <td className="px-3 py-2 text-xs whitespace-nowrap" style={{ color: "var(--faint)" }}>
-                    {when(l.createdAt)}
-                  </td>
-                </tr>
-              );
-            })}
-            {leads.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="px-3 py-10 text-center" style={{ color: "var(--muted)" }}>
-                  {filtered ? "Nothing matches those filters." : "No leads yet."}
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
-      </div>
-
-      <ul className="md:hidden space-y-2">
-        {leads.map((l) => {
-          const due = l.followUpOn && l.followUpOn <= today;
-          return (
-            <li key={l.id}>
-              <button
-                onClick={() => setOpenId(l.id)}
-                className="w-full text-left rounded-lg border p-3.5"
-                style={{ background: "var(--surface)" }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <span className="font-medium leading-tight">{l.name}</span>
-                  <span
-                    className="shrink-0 rounded px-2 py-0.5 text-[11px]"
-                    style={{
-                      border: `1px solid ${STATUS_COLOR[l.status]}`,
-                      color: STATUS_COLOR[l.status],
-                    }}
-                  >
-                    {STATUS_LABELS[l.status]}
-                  </span>
-                </div>
-
-                <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
-                  <div className="break-all">{l.email}</div>
-                  <div>{l.phone}</div>
-                </div>
-
-                {l.businessType ? (
-                  <p className="mt-1.5 text-xs line-clamp-2" style={{ color: "var(--muted)" }}>
-                    {l.businessType}
-                  </p>
-                ) : null}
-
-                {/* Only the facts that are actually set, so a new lead is two
-                    lines rather than a column of dashes. */}
-                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
-                  {l.rating ? (
-                    <span style={{ color: RATING_COLOR[l.rating] }}>● {RATING_LABELS[l.rating]}</span>
-                  ) : null}
-                  {l.ownerName ? (
-                    <span style={{ color: "var(--muted)" }}>{l.ownerName}</span>
-                  ) : null}
-                  {l.followUpOn ? (
-                    <span style={{ color: due ? "var(--hot)" : "var(--muted)" }}>
-                      due {l.followUpOn}
-                    </span>
-                  ) : null}
-                  {l.noteCount > 0 ? (
-                    <span style={{ color: "var(--faint)" }}>
-                      {l.noteCount} note{l.noteCount === 1 ? "" : "s"}
-                    </span>
-                  ) : null}
-                  <span className="ml-auto" style={{ color: "var(--faint)" }}>
-                    {when(l.createdAt)}
-                  </span>
-                </div>
-              </button>
-            </li>
-          );
-        })}
-        {leads.length === 0 ? (
-          <li
-            className="rounded-lg border p-8 text-center"
-            style={{ background: "var(--surface)", color: "var(--muted)" }}
-          >
-            {filtered ? "Nothing matches those filters." : "No leads yet."}
-          </li>
-        ) : null}
-      </ul>
+                    <span className="ml-auto">{formatDate(l.createdAt)}</span>
+                  </div>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {open ? (
         <LeadSheet
@@ -381,10 +410,10 @@ export default function LeadsBoard({
           lead={open}
           users={users}
           editable={editable}
-          onClose={() => setOpenId(null)}
+          onClose={() => put("lead", null)}
           onChanged={() => router.refresh()}
         />
       ) : null}
-    </main>
+    </>
   );
 }

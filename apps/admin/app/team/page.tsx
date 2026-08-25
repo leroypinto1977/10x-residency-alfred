@@ -1,73 +1,93 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { listUsers } from "@founder10x/db";
 import { requireOwner } from "@/lib/session";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "../ui";
 
 export const dynamic = "force-dynamic";
 
-function when(iso: string | null) {
-  return iso ? new Date(iso).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "—";
-}
-
 /**
- * Read-only on purpose.
+ * Who can sign in. Read-only on purpose.
  *
  * Accounts are created and changed from the CLI (`npm run admin:users`),
  * which means adding a colleague requires shell access to this repo rather
  * than a session in the panel. A stolen owner session can then read the board
- * but cannot mint itself a second way back in. This page exists so you can see
- * who has access and when they last used it.
+ * but cannot mint itself a second way back in. Handing out a password through
+ * a web page would also land it in a browser history, a screenshot or a
+ * scroll-back somewhere, and there is no version of that which is better than
+ * reading it off a terminal.
  */
 export default async function TeamPage() {
   await requireOwner();
-  const users = await listUsers();
+
+  const team = await listUsers();
+  const active = team.filter((t) => t.active).length;
 
   return (
-    <main className="mx-auto max-w-[900px] px-5 py-6">
-      <header className="flex items-center justify-between mb-5">
-        <h1 className="text-lg font-semibold">Team</h1>
-        <a href="/" className="tap text-xs underline underline-offset-2" style={{ color: "var(--muted)" }}>
-          Back to leads
-        </a>
+    <div className="min-h-screen">
+      <header className="border-b">
+        <div className="mx-auto flex max-w-3xl items-center gap-3 px-6 py-3.5">
+          <Button asChild variant="ghost" size="sm" className="tap -ml-2">
+            <Link href="/">
+              <ArrowLeft className="size-4" />
+              Leads
+            </Link>
+          </Button>
+          <h1 className="text-base font-semibold tracking-tight">Team</h1>
+        </div>
       </header>
 
-      <div className="rounded-lg border overflow-x-auto" style={{ background: "var(--surface)" }}>
-        <table className="w-full text-left border-collapse min-w-[640px]">
-          <thead>
-            <tr className="text-xs" style={{ color: "var(--muted)" }}>
-              {["Name", "Username", "Role", "Active", "Last login", "Added"].map((h) => (
-                <th key={h} className="font-medium px-3 py-2 border-b">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id} className="border-b last:border-0">
-                <td className="px-3 py-2">{u.name}</td>
-                <td className="px-3 py-2 text-xs" style={{ color: "var(--muted)" }}>
-                  {u.username}
-                </td>
-                <td className="px-3 py-2 text-xs">{u.role}</td>
-                <td className="px-3 py-2 text-xs" style={{ color: u.active ? "var(--won)" : "var(--faint)" }}>
-                  {u.active ? "yes" : "no"}
-                </td>
-                <td className="px-3 py-2 text-xs" style={{ color: "var(--muted)" }}>
-                  {when(u.lastLoginAt)}
-                </td>
-                <td className="px-3 py-2 text-xs" style={{ color: "var(--faint)" }}>
-                  {when(u.createdAt)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <main className="mx-auto max-w-3xl px-6 py-8">
+        <p className="text-sm text-muted-foreground">
+          {active} active {active === 1 ? "account" : "accounts"}.
+        </p>
 
-      <p className="mt-4 text-xs" style={{ color: "var(--muted)" }}>
-        Accounts are managed from the repo with <code>npm run admin:users</code> — add, passwd,
-        role, deactivate, delete. Deliberately not from this page: a stolen session should not be
-        able to create a second way in.
-      </p>
-    </main>
+        <ul className="mt-5 space-y-2">
+          {team.map((t) => (
+            <li
+              key={t.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3"
+            >
+              <div>
+                <p className="text-sm font-medium">
+                  {t.name}
+                  <span className="ml-2 font-normal text-muted-foreground">@{t.username}</span>
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {t.lastLoginAt ? `Last signed in ${formatDate(t.lastLoginAt)}` : "Never signed in"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {t.role === "owner" && <Badge variant="secondary">Owner</Badge>}
+                {t.role === "viewer" && <Badge variant="outline">Read only</Badge>}
+                {!t.active && <Badge variant="outline">Disabled</Badge>}
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <Card className="mt-8 bg-muted/30">
+          <CardHeader>
+            <CardTitle className="text-sm">Adding someone</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            <p>Run this from the repo, and give them what it prints:</p>
+            <pre className="overflow-x-auto rounded-lg border bg-background p-3 text-xs text-foreground">
+              npm run admin:users -- add priya &quot;Priya Nair&quot;
+            </pre>
+            <p>
+              <code className="text-foreground">list</code>,{" "}
+              <code className="text-foreground">passwd</code>,{" "}
+              <code className="text-foreground">role</code>,{" "}
+              <code className="text-foreground">disable</code> and{" "}
+              <code className="text-foreground">enable</code> take the same shape.
+            </p>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
   );
 }
