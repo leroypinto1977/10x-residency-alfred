@@ -147,9 +147,9 @@
   text-wrap: pretty;
 }
 
-/* ---------- refund promise ---------- */
+/* ---------- what the deposit is for ---------- */
 
-.refund {
+.deposit {
   margin-top: 1rem;
   display: flex;
   align-items: flex-start;
@@ -162,7 +162,7 @@
   padding: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
 }
 
-.refundIcon {
+.depositIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -175,11 +175,11 @@
   color: var(--accent-300);
 }
 
-.refundCopy {
+.depositCopy {
   min-width: 0;
 }
 
-.refundTitle {
+.depositTitle {
   margin: 0;
   font-family: var(--font-heading);
   font-size: var(--fs-h3);
@@ -187,7 +187,7 @@
   color: var(--text-primary);
 }
 
-.refundBody {
+.depositBody {
   margin: 0.5rem 0 0;
   font-size: var(--fs-sm);
   line-height: 1.6;
@@ -196,12 +196,12 @@
 }
 
 @media (max-width: 520px) {
-  .refund {
+  .deposit {
     gap: 0.875rem;
     padding: 1.35rem 1.15rem;
   }
 
-  .refundIcon {
+  .depositIcon {
     width: 2.125rem;
     height: 2.125rem;
   }

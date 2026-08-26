@@ -205,7 +205,7 @@ export default function BookCallForm() {
           <p className={styles.successNext}>
             Our team will review your details and reach out via{" "}
             <strong>{formData.email}</strong>. Taking you to the booking page to block your
-            seat with {EVENT.seatFeeLabel} now &mdash; {EVENT.seatFeeRefundNote}.
+            seat with {EVENT.seatFeeLabel} now.
           </p>
           <Button href={EVENT.ticketUrl} className={styles.resetBtn} showArrow>
             Block your seat &middot; {EVENT.seatFeeLabel}
@@ -389,8 +389,7 @@ export default function BookCallForm() {
             <ShieldCheck size={16} aria-hidden="true" />
             <span>
               Next: <strong>{EVENT.seatFeeLabel}</strong>{" "}
-              to block your seat &mdash;{" "}
-              {EVENT.seatFeeRefundNote}. Nothing else is charged until we&apos;ve spoken.
+              to block your seat. Nothing else is charged until we&apos;ve spoken.
             </span>
           </p>
 

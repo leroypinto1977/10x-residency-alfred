@@ -34,28 +34,22 @@ export const EVENT = {
    * post-submit success screen — which meant an applicant filled in a
    * fourteen-field form and then met a payment page they had never been told
    * about. That surprise is the single biggest thing the form drops people
-   * on, so the fee and its refund terms are now stated at every point where
-   * someone decides to start: under each CTA, in the modal header, above the
-   * submit button, and in a section of its own.
+   * on, so the fee is now stated at every point where someone decides to
+   * start: under each CTA, in the modal header, above the submit button, and
+   * in a section of its own.
    */
   seatFee: 499,
   seatFeeLabel: "₹499",
 
   /**
-   * The refund promise, confirmed by the team: the seat fee is returned on
-   * request, without conditions. Stated wherever the fee is, because the fee
-   * without it is a cost and the fee with it is a formality — and the whole
-   * reason to name the number early is that it reads as the latter.
-   */
-  seatFeeRefundLabel: "100% refundable",
-  seatFeeRefundNote: "100% refundable, no questions asked",
-
-  /**
    * The one-line version, for the note that sits under a CTA. Anywhere that
-   * needs the fee and its terms in a single breath reads this rather than
-   * assembling the sentence again.
+   * needs the fee in a single breath reads this rather than assembling the
+   * sentence again.
+   *
+   * The seat fee is not refundable. Nothing on this page may say or imply
+   * that it is.
    */
-  seatFeeNote: "₹499 blocks your seat — 100% refundable, no questions asked",
+  seatFeeNote: "₹499 blocks your seat",
 
   /**
    * Where applicants buy their seat. The application form sends people here

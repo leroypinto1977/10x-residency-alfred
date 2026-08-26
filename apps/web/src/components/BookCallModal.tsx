@@ -139,7 +139,7 @@ export default function BookCallModal() {
                 <ShieldCheck size={15} aria-hidden="true" />
                 <span>
                   Free to apply. After submitting, <strong>{EVENT.seatFeeLabel}</strong>{" "}
-                  blocks your seat &mdash; {EVENT.seatFeeRefundNote}.
+                  blocks your seat.
                 </span>
               </p>
             </div>

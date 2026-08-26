@@ -1,4 +1,4 @@
-import { FileText, Lock, PhoneCall, RotateCcw } from "lucide-react";
+import { FileText, Lock, PhoneCall } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import BookCallButton from "@/components/BookCallButton";
@@ -35,7 +35,7 @@ const STEPS = [
  * mention of money an applicant met was a checkout for a number they had
  * never seen. This section exists to make the payment page a confirmation
  * rather than an ambush: what it costs, what the money is actually doing,
- * and that it comes back on request.
+ * and what is not charged until later.
  *
  * It sits after Urgency and before the FAQ deliberately. Urgency argues that
  * the seats run out, which is precisely the moment "so what does it cost to
@@ -81,24 +81,23 @@ export default function SeatFee() {
           ))}
         </Reveal>
 
-        {/* The refund promise gets its own block rather than a clause inside
-            a paragraph. It is the sentence that decides whether ₹499 reads as
-            a cost or as a formality, and buried in body copy it reads as
-            neither. */}
+        {/* What the deposit is for gets its own block rather than a clause
+            inside a paragraph. It is the sentence that decides whether ₹499
+            reads as a charge or as a commitment, and buried in body copy it
+            reads as neither. */}
         <Reveal delay={0.08}>
-          <div className={styles.refund}>
-            <span className={styles.refundIcon}>
-              <RotateCcw size={20} aria-hidden="true" />
+          <div className={styles.deposit}>
+            <span className={styles.depositIcon}>
+              <Lock size={20} aria-hidden="true" />
             </span>
-            <div className={styles.refundCopy}>
-              <p className={styles.refundTitle}>
-                {EVENT.seatFeeRefundLabel}{" "}
-                &mdash; no questions asked.
+            <div className={styles.depositCopy}>
+              <p className={styles.depositTitle}>
+                What the {EVENT.seatFeeLabel} is for.
               </p>
-              <p className={styles.refundBody}>
-                Change your mind, can&apos;t make the dates, or decide the room isn&apos;t for you:
-                tell our team and the {EVENT.seatFeeLabel} goes back to you in full. The deposit is
-                there to keep the {EVENT.seats} seats honest, not to trap anyone.
+              <p className={styles.depositBody}>
+                It holds one of the {EVENT.seats} places while we read your application, so a room
+                this small stays filled by people who mean to be in it. Nothing else is charged
+                until someone from our team has walked you through the programme personally.
               </p>
             </div>
           </div>

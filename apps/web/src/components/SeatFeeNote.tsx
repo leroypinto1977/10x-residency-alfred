@@ -21,8 +21,7 @@ interface SeatFeeNoteProps {
  * redirect to the payment page. Naming the number here — rather than leaving
  * it to the FAQ — is the difference between the payment page confirming
  * something the visitor already agreed to and the payment page being the
- * first they hear of it. The refund half is not decoration: it is what makes
- * the number small enough to say out loud this early.
+ * first they hear of it.
  */
 export default function SeatFeeNote({
   className = "",
@@ -42,7 +41,7 @@ export default function SeatFeeNote({
       <ShieldCheck size={15} className={styles.icon} aria-hidden="true" />
       Free to apply&nbsp;&middot;{" "}
       <strong className={styles.fee}>{EVENT.seatFeeLabel}</strong>{" "}
-      blocks your seat&nbsp;&middot; {EVENT.seatFeeRefundNote}
+      blocks your seat
     </p>
   );
 }
