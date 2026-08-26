@@ -48,6 +48,12 @@ export const EVENT = {
    *
    * The seat fee is not refundable. Nothing on this page may say or imply
    * that it is.
+   *
+   * Nor may anything call applying free. The form takes no card, but the
+   * booking page it redirects to is the same step — "free to apply" and
+   * "applying is free" both read as "this costs nothing" to someone who has
+   * not got to the ₹499 yet, which is the surprise this fee copy exists to
+   * prevent. Lead with the number instead.
    */
   seatFeeNote: "₹499 blocks your seat",
 

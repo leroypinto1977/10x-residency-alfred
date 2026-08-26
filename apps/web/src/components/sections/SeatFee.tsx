@@ -9,9 +9,8 @@ import styles from "./SeatFee.module.css";
 const STEPS = [
   {
     Icon: FileText,
-    label: "Free",
     title: "You apply",
-    body: "A short application about what you are building and where it is stuck. Costs nothing, commits you to nothing.",
+    body: "A short application about what you are building and where it is stuck. It takes about a minute, and the booking page follows straight after it.",
   },
   {
     Icon: Lock,
@@ -49,12 +48,13 @@ export default function SeatFee() {
         <Reveal className={styles.header}>
           <p className={`kicker ${styles.eyebrow}`}>What it costs to start</p>
           <h2 className={`displayLg ${styles.headline}`}>
-            Applying is free. <span className={styles.highlight}>{EVENT.seatFeeLabel}</span> blocks
-            your seat.
+            It costs <span className={styles.highlight}>{EVENT.seatFeeLabel}</span> to block your
+            seat.
           </h2>
           <p className={styles.lede}>
-            There is no payment to apply and no card at the form. The only thing you pay up front is
-            a {EVENT.seatFeeLabel} seat deposit — and you can have it back whenever you ask.
+            You fill in a short application, then block your seat with {EVENT.seatFeeLabel} on the
+            booking page straight after. That seat deposit is the only thing you pay up front —
+            nothing further is charged until our team has spoken to you.
           </p>
         </Reveal>
 

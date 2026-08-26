@@ -41,11 +41,11 @@ const FAQS: QA[] = [
   },
   {
     q: "How does the application work?",
-    a: `${EVENT.admission}, and applying is free. You fill in the application, block your seat with ${EVENT.seatFeeLabel} on the booking page straight after, and places are offered on fit rather than first-come. ${EVENT.seats} seats total.`,
+    a: `${EVENT.admission}. You fill in the application, block your seat with ${EVENT.seatFeeLabel} on the booking page straight after, and places are offered on fit rather than first-come. ${EVENT.seats} seats total.`,
   },
   {
     q: "When are the dates, and what does it cost?",
-    a: `${EVENT.dateLabel}, in ${EVENT.venue}. The application itself is free. Blocking a seat costs ${EVENT.seatFeeLabel}, paid on the booking page right after you apply. That holds your place while we review the application; nothing further is charged until our team has walked you through the programme personally.`,
+    a: `${EVENT.dateLabel}, in ${EVENT.venue}. Blocking a seat costs ${EVENT.seatFeeLabel}, paid on the booking page right after you apply. That holds your place while we review the application; nothing further is charged until our team has walked you through the programme personally.`,
   },
   {
     q: "I'm early. Is it too soon for me?",
