@@ -39,7 +39,6 @@ export default function SeatFeeNote({
           at the far left of a centred two-line note on a phone. In the text
           flow it stays next to the first word at every width. */}
       <ShieldCheck size={15} className={styles.icon} aria-hidden="true" />
-      Free to apply&nbsp;&middot;{" "}
       <strong className={styles.fee}>{EVENT.seatFeeLabel}</strong>{" "}
       blocks your seat
     </p>

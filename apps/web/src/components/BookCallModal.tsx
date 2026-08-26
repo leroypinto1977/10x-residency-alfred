@@ -138,7 +138,7 @@ export default function BookCallModal() {
               <p className={styles.feeStrip}>
                 <ShieldCheck size={15} aria-hidden="true" />
                 <span>
-                  Free to apply. After submitting, <strong>{EVENT.seatFeeLabel}</strong>{" "}
+                  After submitting, <strong>{EVENT.seatFeeLabel}</strong>{" "}
                   blocks your seat.
                 </span>
               </p>
