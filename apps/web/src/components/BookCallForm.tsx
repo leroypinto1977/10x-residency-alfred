@@ -46,7 +46,7 @@ const FOUND_US_OPTIONS = [
 
 // How long the confirmation stays up before the applicant is handed to the
 // ticket page.
-const REDIRECT_DELAY_MS = 2200;
+const REDIRECT_DELAY_MS = 3000;
 
 const INITIAL_FORM = {
   name: "",
@@ -119,10 +119,13 @@ export default function BookCallForm() {
     if (formError) setFormError("");
   };
 
-  // Long enough for the applicant to register that the form went through,
-  // short enough that it still feels like one continuous step into booking.
-  // The Lead event has already been sent by the time this runs, so leaving
-  // the page cannot cost us the conversion.
+  // Long enough for the applicant to read what happens next, so the ticket
+  // page arrives as the step just described rather than a redirect out of
+  // nowhere. The Lead event has already been sent by the time this runs, so
+  // the wait cannot cost us the conversion.
+  //
+  // The sibling Become an Authority site holds for the same three seconds; if
+  // one changes, change both.
   useEffect(() => {
     if (!formSubmitted) return;
     const timer = setTimeout(() => {
