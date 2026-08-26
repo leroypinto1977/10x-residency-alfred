@@ -43,16 +43,3 @@ export async function saveClientIntake(data: {
     },
   });
 }
-
-/**
- * One row per email, newest submission wins — someone re-submitting the
- * form (e.g. to correct an earlier answer) shouldn't show up twice in the
- * admin table. `distinct` keeps the first row it sees per key, so the
- * newest-first ordering has to happen before it, not after.
- */
-export async function getAllClientIntakes() {
-  return prisma.clientIntake.findMany({
-    orderBy: { createdAt: "desc" },
-    distinct: ["email"],
-  });
-}
