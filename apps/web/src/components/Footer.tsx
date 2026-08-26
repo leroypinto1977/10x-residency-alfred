@@ -51,7 +51,9 @@ export default function Footer() {
           <RevealItem className={styles.ctaCol}>
             <BookCallButton showArrow>Book a Call</BookCallButton>
             <p className={styles.ctaNote}>
-              {EVENT.seatFeeLabel} blocks your seat. We personally contact everyone who applies.
+              Free to apply. {EVENT.seatFeeLabel} blocks your seat and is{" "}
+              {EVENT.seatFeeRefundLabel.toLowerCase()}{" "}
+              &mdash; no questions asked. We personally contact everyone who applies.
             </p>
           </RevealItem>
         </Reveal>

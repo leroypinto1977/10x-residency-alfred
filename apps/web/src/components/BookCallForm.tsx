@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import { isValidPhoneNumber, parsePhoneNumberFromString } from "libphonenumber-js/min";
 import type { CountryCode } from "libphonenumber-js/min";
 import Button from "@/components/ui/Button";
@@ -202,7 +202,7 @@ export default function BookCallForm() {
           <p className={styles.successNext}>
             Our team will review your details and reach out via{" "}
             <strong>{formData.email}</strong>. Taking you to the booking page to block your
-            seat with {EVENT.seatFeeLabel} now…
+            seat with {EVENT.seatFeeLabel} now &mdash; {EVENT.seatFeeRefundNote}.
           </p>
           <Button href={EVENT.ticketUrl} className={styles.resetBtn} showArrow>
             Block your seat &middot; {EVENT.seatFeeLabel}
@@ -378,8 +378,21 @@ export default function BookCallForm() {
             />
           )}
 
+          {/* The submit button is one tap from a payment page. Stating what
+              happens next here, at the point of the tap, is the difference
+              between the redirect being expected and it being the reason
+              someone abandons at checkout. */}
+          <p className={styles.feeCallout}>
+            <ShieldCheck size={16} aria-hidden="true" />
+            <span>
+              Next: <strong>{EVENT.seatFeeLabel}</strong>{" "}
+              to block your seat &mdash;{" "}
+              {EVENT.seatFeeRefundNote}. Nothing else is charged until we&apos;ve spoken.
+            </span>
+          </p>
+
           <Button type="submit" variant="primary" className={styles.submitBtn}>
-            Submit Application
+            Submit &amp; block your seat &middot; {EVENT.seatFeeLabel}
           </Button>
           <p className={styles.formNotice}>By application only. Limited slots accepted each month.</p>
         </motion.form>

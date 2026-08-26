@@ -71,6 +71,34 @@
   line-height: 1.5;
 }
 
+/* The fee, said before the first field. Given a bordered bed rather than
+   another line of muted body copy, because the whole failure this fixes was
+   people not registering the number until the payment page — and a fourth
+   grey sentence under the subhead is exactly the thing they'd skip. */
+.header .feeStrip {
+  display: flex;
+  color: var(--text-secondary);
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: rgba(var(--accent-rgb), 0.07);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+}
+
+.header .feeStrip svg {
+  flex-shrink: 0;
+  color: var(--accent-400);
+}
+
+.header .feeStrip strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
 @media (max-width: 767px) {
   .root {
     align-items: flex-end;

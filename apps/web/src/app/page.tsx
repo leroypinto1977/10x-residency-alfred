@@ -12,6 +12,7 @@ import Outcomes from "@/components/sections/Outcomes";
 import GroupChat from "@/components/sections/GroupChat";
 import FAQ from "@/components/sections/FAQ";
 import FinalCTA from "@/components/sections/FinalCTA";
+import SeatFee from "@/components/sections/SeatFee";
 import UrgencySection from "@/components/sections/urgency";
 import alfredPortrait from "../../public/alfred.jpg";
 
@@ -43,6 +44,12 @@ export default function Home() {
         <GroupChat />
         <Features />
         <UrgencySection />
+        {/* Urgency argues the seats run out, which is the exact moment
+            "so what does it take to hold one?" becomes the live question.
+            Answering it here means the FAQ and the closing ask are read by
+            someone who already knows the number, instead of meeting it for
+            the first time on the payment page. */}
+        <SeatFee />
         <FAQ />
         <FinalCTA />
       </main>

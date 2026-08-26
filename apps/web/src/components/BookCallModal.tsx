@@ -3,11 +3,12 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SOFT } from "@/lib/motion-variants";
-import { X } from "lucide-react";
+import { ShieldCheck, X } from "lucide-react";
 import { useBookCallModal } from "@/components/BookCallModalContext";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import { useIsMobile } from "@/lib/useIsMobile";
 import BookCallForm from "@/components/BookCallForm";
+import { EVENT } from "@/lib/event";
 import styles from "./BookCallModal.module.css";
 
 const FOCUSABLE_SELECTOR =
@@ -128,6 +129,19 @@ export default function BookCallModal() {
             <div className={styles.header}>
               <h2 id="book-call-title">Tell Us About Your Business.</h2>
               <p>A few quick questions so our team can prepare before reaching out.</p>
+
+              {/* This form ends in a redirect to the payment page. Naming the
+                  fee here — before the first field rather than after the
+                  fourteenth — is what stops the checkout reading as a
+                  bait-and-switch to someone who has just spent five minutes
+                  answering questions. */}
+              <p className={styles.feeStrip}>
+                <ShieldCheck size={15} aria-hidden="true" />
+                <span>
+                  Free to apply. After submitting, <strong>{EVENT.seatFeeLabel}</strong>{" "}
+                  blocks your seat &mdash; {EVENT.seatFeeRefundNote}.
+                </span>
+              </p>
             </div>
 
             <BookCallForm />

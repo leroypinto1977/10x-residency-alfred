@@ -541,3 +541,16 @@
     pointer-events: none;
   }
 }
+
+/* The seat-fee line under the hero buttons. The hero is the one section on
+   the page whose height is fixed to the viewport, so this pays for its line
+   out of the gap above the detail strip rather than out of the composition. */
+.seatNote {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 640px) and (max-height: 700px) {
+  .seatNote {
+    margin-top: 0.5rem;
+  }
+}

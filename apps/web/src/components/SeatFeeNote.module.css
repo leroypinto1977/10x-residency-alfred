@@ -1,0 +1,51 @@
+/* Fine print, but not throwaway fine print: it carries the one number the
+   page was previously hiding until the payment page. Sized at --fs-xs so it
+   reads as the button's own terms, and given the accent only on the figure
+   itself so the eye lands on 499 and not on the whole line. */
+.note {
+  margin: 0.875rem 0 0;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.start {
+  text-align: left;
+}
+
+/* Sits in the text flow, so a wrapped note keeps the icon beside its first
+   word instead of against the left edge of the whole block. */
+.icon {
+  display: inline;
+  vertical-align: -0.18em;
+  margin-right: 0.4rem;
+  color: var(--accent-400);
+}
+
+.fee {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* On the cream sections. */
+.light {
+  color: var(--on-light-muted);
+}
+
+.light .icon {
+  color: var(--accent-on-light);
+}
+
+.light .fee {
+  color: var(--on-light);
+}
+
+/* Under 380px the icon and the sentence stop sharing a line comfortably;
+   dropping the icon out is cheaper than letting the text set at 11px. */
+@media (max-width: 380px) {
+  .icon {
+    display: none;
+  }
+}

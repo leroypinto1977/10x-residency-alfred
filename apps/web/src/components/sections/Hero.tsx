@@ -6,6 +6,7 @@ import Image from "next/image";
 import { MapPin, CalendarDays, Clock, Users } from "lucide-react";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
+import SeatFeeNote from "@/components/SeatFeeNote";
 import { EVENT } from "@/lib/event";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import sessionImg from "../../../public/founders-session.jpg";
@@ -181,6 +182,15 @@ export default function Hero() {
               Watch the Testimonials
             </Button>
           </div>
+
+          {/* The button opens an application that ends on a payment page, so
+              the fee belongs here, on the first screen, and not four sections
+              down in the FAQ. It rides in with the buttons rather than on a
+              beat of its own — it is their fine print, not a claim. */}
+          <SeatFeeNote
+            align="start"
+            className={`${styles.seatNote} ${styles.rise} ${styles.riseActions}`}
+          />
         </div>
 
         {/* Spans the full frame so its rule reads as the base of the

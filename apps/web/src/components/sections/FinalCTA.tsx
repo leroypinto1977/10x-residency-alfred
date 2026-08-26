@@ -1,5 +1,6 @@
 import Image from "next/image";
 import BookCallButton from "@/components/BookCallButton";
+import SeatFeeNote from "@/components/SeatFeeNote";
 import Reveal from "@/components/Reveal";
 import cohortImg from "../../../public/cohort-group.jpg";
 import styles from "./FinalCTA.module.css";
@@ -36,6 +37,12 @@ export default function FinalCTA() {
         <BookCallButton variant="primary" className={styles.cta} showArrow>
           Book a Call
         </BookCallButton>
+
+        {/* The last button on the page is also the last chance to say what
+            happens after it. Everything above has already named the fee; this
+            repeats it so nobody arrives at the payment page having scrolled
+            past the one section that explained it. */}
+        <SeatFeeNote />
 
         {/* <div className={styles.badges}>
           {TRUST_BADGES.map((badge) => (

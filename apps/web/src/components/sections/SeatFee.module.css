@@ -1,0 +1,217 @@
+.section {
+  max-width: var(--section-max);
+  margin: 0 auto;
+  padding-block: var(--section-py);
+  padding-inline: var(--section-px);
+  position: relative;
+  z-index: 1;
+}
+
+.container {
+  max-width: 62rem;
+  margin: 0 auto;
+}
+
+/* ---------- header ---------- */
+
+.header {
+  text-align: center;
+}
+
+/* The shared .kicker is inline-flex, which auto margins can't centre. */
+.eyebrow {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.headline {
+  max-width: 34rem;
+  margin: 1.25rem auto 0;
+  text-wrap: balance;
+}
+
+/* The number is the whole point of the section, so it carries the same gold
+   the page uses for the one word it wants read first in every headline. */
+.highlight {
+  background: linear-gradient(135deg, #8a6c38 0%, #ba9a63 25%, #e6cb95 45%, #c2a36b 55%, #a6844d 75%, #664d24 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.lede {
+  max-width: 42rem;
+  margin: 1.25rem auto 0;
+  font-size: var(--fs-lede);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+/* ---------- the three steps ---------- */
+
+.steps {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 860px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  border-radius: 18px;
+  padding: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+}
+
+/* Step two is the one carrying the number, and the section fails if a
+   skim-reader misses it — so it gets the stronger border and a faint gold
+   bed rather than sitting flush with the two steps that cost nothing. */
+.stepAccent {
+  border-color: var(--border-strong);
+  background:
+    linear-gradient(180deg, rgba(var(--accent-rgb), 0.09) 0%, rgba(var(--accent-rgb), 0) 60%),
+    var(--bg-elevated);
+}
+
+.stepTop {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 9px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(var(--accent-rgb), 0.08);
+  color: var(--accent-400);
+}
+
+.stepNum {
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* Pushed to the far edge of the row so the three prices line up down the
+   right of the grid and can be read as a column on their own. */
+.stepPrice {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  white-space: nowrap;
+}
+
+.stepPriceAccent {
+  color: var(--accent-300);
+  border-color: var(--border-strong);
+  background: rgba(var(--accent-rgb), 0.12);
+}
+
+.stepTitle {
+  margin: 1.1rem 0 0;
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stepBody {
+  margin: 0.6rem 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+/* ---------- refund promise ---------- */
+
+.refund {
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background:
+    linear-gradient(120deg, rgba(var(--accent-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0) 55%),
+    var(--bg-surface);
+  padding: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+}
+
+.refundIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent-300);
+}
+
+.refundCopy {
+  min-width: 0;
+}
+
+.refundTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.refundBody {
+  margin: 0.5rem 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+@media (max-width: 520px) {
+  .refund {
+    gap: 0.875rem;
+    padding: 1.35rem 1.15rem;
+  }
+
+  .refundIcon {
+    width: 2.125rem;
+    height: 2.125rem;
+  }
+}
+
+/* ---------- closing ask ---------- */
+
+.cta {
+  margin-top: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

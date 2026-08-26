@@ -29,9 +29,33 @@ export const EVENT = {
    * What it costs to block a seat once an application goes through. This is
    * the only number the page states about money, so every mention of the fee
    * reads it from here rather than writing it out again.
+   *
+   * The fee used to be stated only in the FAQ, the footer small print and the
+   * post-submit success screen — which meant an applicant filled in a
+   * fourteen-field form and then met a payment page they had never been told
+   * about. That surprise is the single biggest thing the form drops people
+   * on, so the fee and its refund terms are now stated at every point where
+   * someone decides to start: under each CTA, in the modal header, above the
+   * submit button, and in a section of its own.
    */
   seatFee: 499,
   seatFeeLabel: "₹499",
+
+  /**
+   * The refund promise, confirmed by the team: the seat fee is returned on
+   * request, without conditions. Stated wherever the fee is, because the fee
+   * without it is a cost and the fee with it is a formality — and the whole
+   * reason to name the number early is that it reads as the latter.
+   */
+  seatFeeRefundLabel: "100% refundable",
+  seatFeeRefundNote: "100% refundable, no questions asked",
+
+  /**
+   * The one-line version, for the note that sits under a CTA. Anywhere that
+   * needs the fee and its terms in a single breath reads this rather than
+   * assembling the sentence again.
+   */
+  seatFeeNote: "₹499 blocks your seat — 100% refundable, no questions asked",
 
   /**
    * Where applicants buy their seat. The application form sends people here

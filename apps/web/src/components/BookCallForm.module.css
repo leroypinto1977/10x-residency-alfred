@@ -12,6 +12,37 @@
   letter-spacing: 0.01em;
 }
 
+/* Sits directly above the submit button, sharing its full width, so it
+   cannot be read as belonging to the field above it. Same bordered-bed
+   treatment as the modal header's strip — the two are the same promise,
+   made at the two moments someone is deciding whether to continue. */
+.feeCallout {
+  display: flex;
+  /* Three lines of text on a narrow modal, so the icon aligns to the first
+     line rather than floating at the vertical middle of the block. */
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: rgba(var(--accent-rgb), 0.07);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.feeCallout svg {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: var(--accent-400);
+}
+
+.feeCallout strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
 .formNotice {
   font-size: var(--fs-xs);
   color: var(--text-muted);
@@ -84,7 +115,8 @@
 
   .formNotice,
   .errorAlert,
-  .successNext {
+  .successNext,
+  .feeCallout {
     font-size: var(--fs-sm);
   }
 }

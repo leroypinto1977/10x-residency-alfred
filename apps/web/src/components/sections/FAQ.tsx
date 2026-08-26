@@ -14,10 +14,14 @@ interface QA {
 
 // Every answer here restates something the page already commits to
 // elsewhere (format, cohort size, who it's for, what you leave with) so
-// the FAQ can't drift out of sync with the rest of the copy. The dates come
-// from EVENT so they cannot contradict the hero; the fee is the one thing we
-// genuinely can't answer yet, and says so plainly rather than inventing a
-// number.
+// the FAQ can't drift out of sync with the rest of the copy. The dates and
+// the seat fee both come from EVENT so they cannot contradict the hero, the
+// SeatFee section or the form.
+//
+// The fee used to be stated here and almost nowhere else, which made a
+// collapsed accordion the only warning before a payment page. It now has a
+// section of its own upstream — these answers exist to confirm it for
+// someone who scrolled past that, not to break the news.
 const FAQS: QA[] = [
   {
     q: "Who is this actually for?",
@@ -37,11 +41,11 @@ const FAQS: QA[] = [
   },
   {
     q: "How does the application work?",
-    a: `${EVENT.admission}. You fill in the application, block your seat with ${EVENT.seatFeeLabel} on the booking page, and places are offered on fit rather than first-come. ${EVENT.seats} seats total.`,
+    a: `${EVENT.admission}, and applying is free. You fill in the application, block your seat with ${EVENT.seatFeeLabel} on the booking page straight after, and places are offered on fit rather than first-come. ${EVENT.seats} seats total. The ${EVENT.seatFeeLabel} is ${EVENT.seatFeeRefundNote} — ask our team and it comes back in full.`,
   },
   {
     q: "When are the dates, and what does it cost?",
-    a: `${EVENT.dateLabel}, in ${EVENT.venue}. Blocking a seat costs ${EVENT.seatFeeLabel}, paid on the booking page right after you apply. That holds your place while we review the application, and our team walks you through the rest personally.`,
+    a: `${EVENT.dateLabel}, in ${EVENT.venue}. The application itself is free. Blocking a seat costs ${EVENT.seatFeeLabel}, paid on the booking page right after you apply, and it is ${EVENT.seatFeeRefundNote}. That holds your place while we review the application; nothing further is charged until our team has walked you through the programme personally.`,
   },
   {
     q: "I'm early. Is it too soon for me?",

@@ -4,6 +4,7 @@ import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
+import SeatFeeNote from "@/components/SeatFeeNote";
 import styles from "./Mentor.module.css";
 
 interface MentorProps {
@@ -94,6 +95,9 @@ export default function Mentor({
               </Button>
             )}
           </div>
+
+          {/* Light tone: this section runs on the cream surface. */}
+          <SeatFeeNote tone="light" align="start" />
         </Reveal>
       </div>
     </section>
