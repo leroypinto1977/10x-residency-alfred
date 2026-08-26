@@ -53,8 +53,8 @@ export default function SeatFee() {
           </h2>
           <p className={styles.lede}>
             You fill in a short application, then block your seat with {EVENT.seatFeeLabel} on the
-            booking page straight after. That seat deposit is the only thing you pay up front —
-            nothing further is charged until our team has spoken to you.
+            booking page straight after. That is the only thing you pay up front — nothing further
+            is charged until our team has spoken to you.
           </p>
         </Reveal>
 
@@ -81,10 +81,14 @@ export default function SeatFee() {
           ))}
         </Reveal>
 
-        {/* What the deposit is for gets its own block rather than a clause
+        {/* What the fee is for gets its own block rather than a clause
             inside a paragraph. It is the sentence that decides whether ₹499
             reads as a charge or as a commitment, and buried in body copy it
-            reads as neither. */}
+            reads as neither.
+
+            "Deposit" is not available to it: the fee is not refundable, and a
+            deposit is money people expect back. It buys a held seat, which is
+            what this block says instead. */}
         <Reveal delay={0.08}>
           <div className={styles.deposit}>
             <span className={styles.depositIcon}>
