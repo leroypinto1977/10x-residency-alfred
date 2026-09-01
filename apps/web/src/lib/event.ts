@@ -68,11 +68,11 @@ export const EVENT = {
    * The residency dates, ISO `YYYY-MM-DD`. Confirmed by the team, published
    * in the hero and stated in the FAQ.
    */
-  startDate: "2026-10-02" as string | null,
-  endDate: "2026-10-05" as string | null,
+  startDate: "2026-12-04" as string | null,
+  endDate: "2026-12-07" as string | null,
 
   /** How the dates are written wherever they appear on the page. */
-  dateLabel: "Oct 2 to 5, 2026",
+  dateLabel: "Dec 4 to 7, 2026",
 
   /**
    * When applications close, ISO `YYYY-MM-DD`. Drives the countdown in the
