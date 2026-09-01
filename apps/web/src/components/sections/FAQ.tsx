@@ -29,11 +29,11 @@ const FAQS: QA[] = [
   },
   {
     q: `What happens across the ${EVENT.durationDays} days?`,
-    a: "You work through four things in order: the Founder Operating System (how you think and decide), the Founder Identity (the habits behind founders who compound), the Founder Engine (a business that attracts customers and talent on its own), and Financial Clarity (your real margins, cash flow and the numbers that drive the business).",
+    a: "You work through seven build-blocks in order: your social media and content engine, your A-team and hiring plan, your org structure, the processes that let you expand, the systems that carry the operational load, productising your offer, and scaling your brand beyond your own name. Each one ends with something written down, not just discussed.",
   },
   {
     q: "What do I leave with?",
-    a: "A 3-5 year vision written down, a 12-month strategic roadmap, and a 90-day execution plan you start on the Monday you get back, each of them reviewed line by line with Alfred and pressure-tested by the room.",
+    a: "A team structure, a systems stack and a productised offer — plus a 12-month strategic roadmap and a 90-day execution plan you start on the Monday you get back, each of them reviewed line by line with Alfred and pressure-tested by the room.",
   },
   {
     q: "Where is it held, and is stay included?",

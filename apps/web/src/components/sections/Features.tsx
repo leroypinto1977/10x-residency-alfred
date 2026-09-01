@@ -7,8 +7,16 @@ import styles from "./Features.module.css";
 // Outcomes items reworded, and a third listed logistics already covered by
 // the hero, Location and Mentor. Its headline promises what you *leave
 // with*, so it now shows exactly that: the three documents you walk out
-// holding. Copy comes from the "What do I leave with?" FAQ answer, so the
-// two can't drift apart.
+// holding.
+//
+// NOTE(content): the first row no longer matches the FAQ. The 2.0 rewrite
+// moved the programme from vision-and-clarity to team-and-systems, and the
+// "What do I leave with?" answer now reads "a team structure, a systems
+// stack and a productised offer — plus a 12-month strategic roadmap and a
+// 90-day execution plan". The brief kept this section as-is, so the 3-5
+// year vision stayed; it is the one artefact the rest of the page no longer
+// promises anywhere. Swap it for the productised offer if the two should
+// agree.
 //
 // The three artefacts telescope inward, 5 years to 90 days, and the layout
 // leans on that: the horizon is the thing set large.

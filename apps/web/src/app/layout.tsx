@@ -25,9 +25,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: `${EVENT.name} — a ${EVENT.durationDays}-Day Founder Residency | ${EVENT.venue}`,
   description:
-    "Founder 10X: the 3-day residential intensive in Athirapalli, Kerala for founders and creators already running something real. Build the operating system, identity and engine to take your company past a million dollars.",
+    "Founder 10X: the 3-day residential intensive in Athirapalli, Kerala for founders already running a business they can't step away from. Build the team, the org structure and the systems that run it without you.",
   openGraph: {
-    title: `${EVENT.name} — Build Your Million Dollar Company`,
+    title: `${EVENT.name} — Build a Business That Runs Without You`,
     description: `A ${EVENT.durationDays}-day founder residency in ${EVENT.venue}, ${EVENT.dateLabel}, hosted by ${EVENT.host}. ${EVENT.seats} seats, by application.`,
     type: "website",
   },

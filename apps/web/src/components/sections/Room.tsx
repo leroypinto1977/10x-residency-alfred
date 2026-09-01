@@ -9,9 +9,22 @@ import styles from "./Room.module.css";
 // which pushed the hero past four text elements and buried the CTA. They
 // do more work here, directly under the fold, as the first thing a founder
 // reads after the promise.
+//
+// "Age: no limit" used to hold the middle slot, which qualified nobody out
+// and answered a question the page was not being asked. Stage replaces it:
+// the residency is for a business that has revenue and has stopped growing,
+// and saying so is what makes the room feel specific rather than open.
 const CRITERIA = [
-  { k: "Who", v: "Founders and creators", note: "Already running something real" },
-  { k: "Age", v: "No limit", note: "Judged on the company, not the birthday" },
+  {
+    k: "Who",
+    v: "Already running a business",
+    note: "And still doing every part of it yourself",
+  },
+  {
+    k: "Stage",
+    v: "Revenue is coming in",
+    note: "But it isn't growing, or every sale still comes through you",
+  },
   { k: "Room", v: "80% founders, 20% creators", note: `Capped at ${EVENT.seats}` },
 ];
 
@@ -22,9 +35,9 @@ export default function Room() {
         <Reveal className={styles.head}>
           <p className="kicker">Who it&apos;s for</p>
           <h2 className="displayLg">
-            Build clarity. Lead the company.
+            Build the team. Build the system.
             <br />
-            <span className={styles.accent}>Become the founder.</span>
+            <span className={styles.accent}>Become the founder who can leave the room.</span>
           </h2>
         </Reveal>
 

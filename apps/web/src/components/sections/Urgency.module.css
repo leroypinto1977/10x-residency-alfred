@@ -30,95 +30,12 @@
   text-align: center;
 }
 
-/* Comparison panel */
-.panel {
-  width: 100%;
-  margin: clamp(2.5rem, 2rem + 2vw, 3.5rem) auto 0;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
-  border-radius: 20px;
-  padding: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
-}
-
-.panelTitle {
-  text-align: center;
-  font-size: var(--fs-h3);
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.comparisonGrid {
-  margin-top: 2rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-@media (min-width: 640px) {
-  .comparisonGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.columnTitle1 {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #ba240a;
-  margin: 0;
-}
-
-.columnTitle2 {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #8a6c38 0%, #ba9a63 25%, #e6cb95 45%, #c2a36b 55%, #a6844d 75%, #664d24 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  margin: 0;
-}
-
-.list {
-  list-style: none;
-  margin: 1rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.listItem {
-  display: flex;
-  gap: 0.75rem;
-  font-size: var(--fs-sm);
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-.dash1 {
-  color: #ba240a;
-  flex-shrink: 0;
-}
-
-.dash2 {
-  color: var(--accent-400);
-  flex-shrink: 0;
-}
-
-@media (max-width: 480px) {
-  .panel {
-    padding: 1.75rem 1.25rem;
-  }
-}
-
 /* ---------- photograph ---------- */
 
-/* Between the headline and the panel. Radius matches .panel so the two
-   read as the same family of blocks rather than a picture that happened to
-   land above a card. */
+/* Closes the section, directly under the headline. The 20px radius is the
+   page's panel radius — it was picked to match the comparison card that
+   used to sit below it, and it still holds the block to the same family as
+   every other rounded surface on the page. */
 .band {
   width: 100%;
   margin: clamp(2.5rem, 2rem + 2vw, 3.5rem) auto 0;
@@ -132,8 +49,8 @@
   border-radius: 20px;
 }
 
-/* Centred because this section is centred throughout — the eyebrow,
-   headline and panel title all are. */
+/* Centred because this section is centred throughout — the eyebrow and the
+   headline both are. */
 .band figcaption {
   margin-top: 0.9rem;
   text-align: center;

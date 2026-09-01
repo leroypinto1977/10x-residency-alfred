@@ -1,53 +1,40 @@
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import RoomPhoto from "@/components/RoomPhoto";
-import { EVENT } from "@/lib/event";
 import styles from "./Outcomes.module.css";
 
-// Ten items is too many for a card grid — ten identical boxes read as a
-// wall and nothing inside them gets weight. Set as a numbered ledger
-// instead: the numeral carries the rhythm, the title carries the scan,
-// and the line underneath is there for whoever slows down.
-const OUTCOMES = [
+// One artefact per core function, in the same order Transformation names
+// them — that section says what changes, this one says what you carry out
+// of the room having changed it. Seven rows, so the ledger and the oversized
+// numeral in the header agree on the count.
+const SYSTEMS = [
   {
-    title: "The business diagnostic",
-    desc: "Map exactly where your business stands today: revenue, margin, and the bottlenecks only you can see.",
+    title: "Your content and social engine",
+    desc: "The specific plan for your next 90 days of content and audience-building.",
   },
   {
-    title: "The 3-5 year vision lock",
-    desc: "Define the specific company you are building towards, written down, not an aspiration.",
+    title: "Your org chart",
+    desc: "The roles you need next, and who owns what.",
   },
   {
-    title: "Decision frameworks for pricing and hiring",
-    desc: "The specific models that stop decisions from taking days.",
+    title: "Your hiring plan",
+    desc: "How to find and structure your next three to five key hires.",
   },
   {
-    title: "Predictable growth systems",
-    desc: "A sales and marketing engine that does not depend on your personal hustle.",
+    title: "Your core process map",
+    desc: "The three to five processes that unlock the most delegation right now.",
   },
   {
-    title: "An AI framework for founders",
-    desc: "The tools and workflows that compress work founders usually take years to learn.",
+    title: "Your systems stack",
+    desc: "The tools and SOPs that replace you as the bottleneck.",
   },
   {
-    title: "The 12-month strategic roadmap",
-    desc: "Milestone by milestone, reviewed by Alfred and the room before you leave.",
+    title: "Your productised offer",
+    desc: "Your service or product repackaged into something scalable.",
   },
   {
-    title: "The 90-day execution plan",
-    desc: "The roadmap converted into specific, dated actions for your first quarter.",
-  },
-  {
-    title: "Team and leadership systems",
-    desc: "What to hire for, when, and how to lead people who are not you.",
-  },
-  {
-    title: "Founder habits and operating rhythm",
-    desc: "The daily principles that compound, built around your business rather than generic advice.",
-  },
-  {
-    title: "The commitment round",
-    desc: `Say your 90-day plan out loud to the room. ${EVENT.seats} founders now know what you said you would do.`,
+    title: "Your brand positioning",
+    desc: "How you scale beyond your own name and face.",
   },
 ];
 
@@ -57,9 +44,9 @@ export default function Outcomes() {
       <div className={styles.inner}>
         <Reveal className={styles.header}>
           <p className={`kicker kickerOnLight ${styles.kicker}`}>What you build</p>
-          <p className={styles.count}>10</p>
+          <p className={styles.count}>7</p>
           <h2 className={`displayLg ${styles.headline}`}>
-            things every founder
+            systems every founder
             <br />
             builds in the room.
           </h2>
@@ -68,11 +55,11 @@ export default function Outcomes() {
           </p>
         </Reveal>
 
-        {/* The ledger is ten rows that all look alike by design, and at
-            860px it becomes two columns of five — so a photograph cannot go
-            inside it without breaking the flow. It sits here instead, where
-            it separates the promise from the list and shows the material
-            the list is describing actually in founders' hands. */}
+        {/* The ledger is seven rows that all look alike by design, and at
+            860px it becomes two columns — so a photograph cannot go inside
+            it without breaking the flow. It sits here instead, where it
+            separates the promise from the list and shows the material the
+            list is describing actually in founders' hands. */}
         <Reveal>
           <RoomPhoto
             className={styles.band}
@@ -85,7 +72,7 @@ export default function Outcomes() {
         </Reveal>
 
         <Reveal stagger className={styles.ledger}>
-          {OUTCOMES.map((item, idx) => (
+          {SYSTEMS.map((item, idx) => (
             <RevealItem className={styles.row} key={item.title}>
               <span className={styles.num} aria-hidden="true">
                 {String(idx + 1).padStart(2, "0")}

@@ -33,30 +33,31 @@
   line-height: 1.7;
 }
 
+/* Seven steps, not four, so this is a wrapping row rather than a fixed
+   grid: four across and then three, and the second row centres itself under
+   the first instead of leaving a hole on the right. A grid cannot centre a
+   short final row; flex-wrap does it for free. The column count is a custom
+   property so the breakpoints below only have to restate one number. */
 .timeline {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(1.25rem, 0.8rem + 2vw, 2rem);
+  --cols: 4;
+  --col-gap: clamp(1.25rem, 0.8rem + 2vw, 2rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.75rem, 1rem + 2.5vw, 3rem) var(--col-gap);
 }
 
+/* Hidden except on the stacked layout — see the note in Transformation.tsx.
+   A single horizontal rule can only reach the first of two wrapped rows. */
 .line {
-  position: absolute;
-  top: 32px;
-  left: 6%;
-  right: 6%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--border-on-light) 10%,
-    var(--border-on-light) 90%,
-    transparent
-  );
+  display: none;
 }
 
 .step {
   position: relative;
+  flex: 0 1 calc((100% - (var(--cols) - 1) * var(--col-gap)) / var(--cols));
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,15 +112,13 @@
   max-width: 240px;
 }
 
-/* Tablet: keep the four-step row horizontal, but shrink circles/type/gaps
-   so the row doesn't overflow before there's room to stack vertically. */
+/* Tablet: three across rather than four, and smaller circles and type, so
+   the row doesn't overflow before there's room to stack vertically. Seven
+   items land as 3 + 3 + 1, with the last one centred under the rest. */
 @media (max-width: 1023px) and (min-width: 768px) {
   .timeline {
-    gap: clamp(0.75rem, 0.4rem + 1.5vw, 1.25rem);
-  }
-
-  .line {
-    top: 26px;
+    --cols: 3;
+    --col-gap: clamp(0.75rem, 0.4rem + 1.5vw, 1.25rem);
   }
 
   .node {
@@ -140,19 +139,21 @@
 
 @media (max-width: 767px) {
   .timeline {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 2.5rem;
     max-width: 380px;
     margin: 0 auto;
   }
 
+  /* The one layout where a connector still means something: a single
+     column, read top to bottom, in the order the three days run. */
   .line {
+    display: block;
+    position: absolute;
     top: 0;
     bottom: 0;
     left: 27px;
-    right: auto;
     width: 1px;
-    height: auto;
     background: linear-gradient(
       180deg,
       transparent,
@@ -163,6 +164,7 @@
   }
 
   .step {
+    flex: 0 0 auto;
     flex-direction: row;
     align-items: flex-start;
     text-align: left;

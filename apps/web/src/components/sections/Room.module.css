@@ -26,6 +26,13 @@
   gap: 1.25rem;
 }
 
+/* The headline is two sentences and then a third, and the natural wrap
+   orphans "Build" onto the first line's end. Balancing lets each of the
+   three segments break at its own even point. */
+.head h2 {
+  text-wrap: balance;
+}
+
 .accent {
   color: var(--accent);
 }

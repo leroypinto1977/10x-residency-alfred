@@ -1,14 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Play } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import RevealItem from "@/components/RevealItem";
 import BookCallButton from "@/components/BookCallButton";
 import { getEmbedUrl } from "@/lib/video";
 import { EVENT } from "@/lib/event";
-import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import alfredImg from "../../../public/alfred.jpg";
 import pavanImg from "../../../public/pavan_img.jpg";
 import pushpaImg from "../../../public/Pushpa_img.jpg";
@@ -74,254 +73,104 @@ const ALL_CHAPTERS: Chapter[] = FILM.host
     ]
   : CHAPTERS;
 
+/**
+ * The testimonials.
+ *
+ * This used to be a scroll-pinned horizontal rail: the section stood
+ * 100vh + 85vh tall, held its frame still with `position: sticky`, and
+ * turned vertical scroll into sideways travel for a track of cards, with a
+ * spring chasing the scroll position and a progress meter reading it back.
+ * It is a plain vertical list now — three rows, read top to bottom, in
+ * normal document flow.
+ *
+ * What went with the pin: the travel measurement and its ResizeObserver,
+ * the two motion values and their springs, the scroll handler, the
+ * active-card dimming (nothing is off-centre in a list, so nothing needs to
+ * sit back), and the meter and 01/03 counter, which existed only to report
+ * a position along the rail. The `Reveal` entrances every other section
+ * uses cover the rest.
+ */
 export default function Film() {
   const [playingIdx, setPlayingIdx] = useState<number | null>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  const reduceMotion = useSafeReducedMotion();
-  // Pinning is an enhancement, never the only way to reach a card: reduced
-  // motion still gets the plain swipeable rail, and so does any viewport
-  // where the travel measures zero.
-  //
-  // This used to require a laptop as well, on the reasoning that turning a
-  // vertical gesture sideways fights the one people already use on a phone.
-  // It runs on a phone now by request. The gesture argument was not wrong —
-  // it is the reason the rail is spring-damped rather than bound straight to
-  // scroll, so a flick lands somewhere rather than stopping dead — but the
-  // section reads as one continuous piece this way instead of a heading, a
-  // rail you might not notice is scrollable, and a footer.
-  const pinned = !reduceMotion;
-
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  // Horizontal distance the track has to move for its right edge to reach the
-  // right edge of the frame.
-  //
-  // This is read, never written back into layout. It used to be published as
-  // an inline `--travel` that the section's height was calculated from, which
-  // meant the section had one height before this measurement existed and a
-  // taller one after — a jump of the entire travel, landing partway down the
-  // page and pushing every later section down with it. The pin's length is a
-  // CSS constant now (--pin-distance); this only decides how far the rail
-  // slides across it, so a late or changed measurement moves cards and never
-  // the page.
-  const [travel, setTravel] = useState(0);
-
-  useEffect(() => {
-    if (!pinned) {
-      setTravel(0);
-      return;
-    }
-    const measure = () => {
-      const track = trackRef.current;
-      const frame = track?.parentElement;
-      if (!track || !frame) return;
-      // Against the frame, not the track's own clientWidth: the track is
-      // `width: max-content`, so it is never its own scroll container and
-      // scrollWidth - clientWidth is always 0.
-      setTravel(Math.max(0, track.scrollWidth - frame.clientWidth));
-    };
-    measure();
-    // Both are needed and neither is enough alone: the track's own width
-    // settles late (fonts, image layout), and the viewport it is measured
-    // against changes independently. Observing documentElement rather than
-    // listening for `resize` also catches viewport changes that never fire
-    // a resize event.
-    const observer = new ResizeObserver(measure);
-    if (trackRef.current) observer.observe(trackRef.current);
-    observer.observe(document.documentElement);
-    return () => observer.disconnect();
-  }, [pinned]);
-
-  // Two values, deliberately. `xRaw` is the exact scroll-derived position;
-  // `x` is a spring that chases it. Binding the rail straight to scroll is
-  // technically correct and feels like dragging furniture — the spring adds
-  // the fractional lag and settle that reads as weight. Overdamped on
-  // purpose (damping > 2*sqrt(stiffness*mass)) so it never overshoots past
-  // the last card and reveals the empty end of the track.
-  const xRaw = useMotionValue(0);
-  const x = useSpring(xRaw, { stiffness: 110, damping: 34, mass: 1, restDelta: 0.05 });
-  const progress = useMotionValue(0);
-  const progressSpring = useSpring(progress, { stiffness: 110, damping: 34, mass: 1 });
-
-  useEffect(() => {
-    if (!pinned || travel <= 0) {
-      xRaw.set(0);
-      progress.set(0);
-      setActiveIdx(0);
-      return;
-    }
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const el = sectionRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      // The pinned frame's own height, not window.innerHeight. The section is
-      // `calc(100svh + --pin-distance)` and the frame is `100svh`, so this
-      // difference is exactly --pin-distance by construction and the CSS and
-      // this calculation cannot disagree. window.innerHeight is the address
-      // bar's number: on an iPad it grows as the bar retracts, which
-      // shortened `distance` mid-scroll and snapped the rail sideways.
-      const distance = rect.height - (pinRef.current?.offsetHeight ?? 0);
-      if (distance <= 0) return;
-      const p = Math.min(1, Math.max(0, -rect.top / distance));
-      xRaw.set(-travel * p);
-      progress.set(p);
-      setActiveIdx(Math.round(p * (ALL_CHAPTERS.length - 1)));
-    };
-    const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [pinned, travel, xRaw, progress]);
 
   // One player at a time: two open iframes means two soundtracks.
   const play = useCallback((idx: number) => setPlayingIdx(idx), []);
 
-  const cards = ALL_CHAPTERS.map((chapter, idx) => {
-    const embedUrl = getEmbedUrl(chapter.url);
-    const isPlaying = playingIdx === idx;
-    // Only the card at the centre of the rail is fully lit. The rest sit
-    // back a step so the eye is told where to look — the single cheapest
-    // thing that separates a gallery from a carousel.
-    const isActive = !pinned || idx === activeIdx;
-
-    return (
-      <article
-        key={chapter.name}
-        className={`${styles.card} ${isActive ? styles.cardActive : ""}`}
-      >
-        <div className={styles.stage}>
-          {isPlaying && embedUrl ? (
-            <iframe
-              src={embedUrl}
-              title={`${chapter.name} on ${EVENT.name}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className={styles.player}
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={() => play(idx)}
-              className={styles.poster}
-              aria-label={`Play ${chapter.name}'s story`}
-            >
-              <Image
-                src={chapter.poster}
-                alt=""
-                fill
-                sizes="(max-width: 1024px) 82vw, 460px"
-                className={styles.posterImg}
-              />
-              <span className={styles.posterScrim} aria-hidden="true" />
-              <span className={styles.playBtn}>
-                <Play size={18} fill="currentColor" aria-hidden="true" />
-              </span>
-            </button>
-          )}
-        </div>
-
-        <div className={styles.cardBody}>
-          <span className={styles.cardIndex} aria-hidden="true">
-            {String(idx + 1).padStart(2, "0")}
-          </span>
-          <blockquote className={styles.quote}>{chapter.quote}</blockquote>
-          <footer className={styles.attribution}>
-            <span className={styles.cardName}>{chapter.name}</span>
-            <span className={styles.cardRole}>{chapter.role}</span>
-          </footer>
-        </div>
-      </article>
-    );
-  });
-
-  const header = (
-    <div className={styles.header}>
-      <div className={styles.headText}>
-        <p className="kicker">The Testimonials</p>
-        <h2 className={`displayLg ${styles.heading}`}>
-          Not our words.
-          <br />
-          <span className={styles.accent}>Theirs.</span>
-        </h2>
-      </div>
-      <p className={styles.lede}>
-        Founders who have already done the work with Alfred — on the record, in
-        their own words. {EVENT.durationDays} days in the Kerala rainforest, one
-        company rebuilt in the room.
-      </p>
-    </div>
-  );
-
-  const rail = (
-    <div className={styles.railFrame}>
-      {pinned ? (
-        <motion.div ref={trackRef} className={styles.track} style={{ x }}>
-          {cards}
-        </motion.div>
-      ) : (
-        <div ref={trackRef} className={`${styles.track} ${styles.trackSwipe}`}>
-          {cards}
-        </div>
-      )}
-    </div>
-  );
-
-  const footer = (
-    <div className={styles.footer}>
-      <div className={styles.meter} aria-hidden="true">
-        <motion.span
-          className={styles.meterFill}
-          style={pinned ? { scaleX: progressSpring } : undefined}
-        />
-      </div>
-      <p className={styles.counter} aria-hidden="true">
-        <span className={styles.counterNow}>
-          {String(activeIdx + 1).padStart(2, "0")}
-        </span>
-        <span className={styles.counterOf}>
-          / {String(ALL_CHAPTERS.length).padStart(2, "0")}
-        </span>
-      </p>
-      <BookCallButton showArrow>Book a Call</BookCallButton>
-    </div>
-  );
-
-  // The whole section pins, not just the rail: the heading, the meter and
-  // the CTA hold their place while only the cards move. Pinning the rail
-  // alone left the heading scrolling away above it, which broke the frame
-  // the cards were supposed to be travelling inside.
   return (
-    <section
-      ref={sectionRef}
-      id="film"
-      className={`${styles.section} ${pinned ? styles.pinnedSection : ""}`}
-    >
-      <div ref={pinRef} className={pinned ? styles.pinned : styles.static}>
-        {pinned ? (
-          <>
-            {header}
-            {rail}
-            {footer}
-          </>
-        ) : (
-          <>
-            <Reveal>{header}</Reveal>
-            {rail}
-            <Reveal delay={0.1}>{footer}</Reveal>
-          </>
-        )}
+    <section id="film" className={styles.section}>
+      <div className={styles.inner}>
+        <Reveal className={styles.header}>
+          <div className={styles.headText}>
+            <p className="kicker">The Testimonials</p>
+            <h2 className={`displayLg ${styles.heading}`}>
+              Not our words.
+              <br />
+              <span className={styles.accent}>Theirs.</span>
+            </h2>
+          </div>
+          <p className={styles.lede}>
+            Founders who have already done the work with Alfred — on the record, in
+            their own words. {EVENT.durationDays} days in the Kerala rainforest, one
+            company rebuilt in the room.
+          </p>
+        </Reveal>
+
+        <Reveal stagger className={styles.list}>
+          {ALL_CHAPTERS.map((chapter, idx) => {
+            const embedUrl = getEmbedUrl(chapter.url);
+            const isPlaying = playingIdx === idx;
+
+            return (
+              <RevealItem key={chapter.name} className={styles.card}>
+                <div className={styles.stage}>
+                  {isPlaying && embedUrl ? (
+                    <iframe
+                      src={embedUrl}
+                      title={`${chapter.name} on ${EVENT.name}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className={styles.player}
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => play(idx)}
+                      className={styles.poster}
+                      aria-label={`Play ${chapter.name}'s story`}
+                    >
+                      <Image
+                        src={chapter.poster}
+                        alt=""
+                        fill
+                        sizes="(max-width: 860px) 92vw, 620px"
+                        className={styles.posterImg}
+                      />
+                      <span className={styles.posterScrim} aria-hidden="true" />
+                      <span className={styles.playBtn}>
+                        <Play size={18} fill="currentColor" aria-hidden="true" />
+                      </span>
+                    </button>
+                  )}
+                </div>
+
+                <div className={styles.cardBody}>
+                  <span className={styles.cardIndex} aria-hidden="true">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <blockquote className={styles.quote}>{chapter.quote}</blockquote>
+                  <footer className={styles.attribution}>
+                    <span className={styles.cardName}>{chapter.name}</span>
+                    <span className={styles.cardRole}>{chapter.role}</span>
+                  </footer>
+                </div>
+              </RevealItem>
+            );
+          })}
+        </Reveal>
+
+        <Reveal delay={0.1} className={styles.footer}>
+          <BookCallButton showArrow>Book a Call</BookCallButton>
+        </Reveal>
       </div>
     </section>
   );

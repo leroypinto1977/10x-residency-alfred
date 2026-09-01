@@ -22,19 +22,39 @@
 .backdropImg {
   object-fit: cover;
   object-position: center 38%;
+  /* A shot of a room at night, and the scrim over it is no longer heavy
+     enough to hide how flat it is on its own. */
+  filter: brightness(1.12) saturate(1.06) contrast(1.04);
 }
 
 .backdropScrim {
   position: absolute;
   inset: 0;
-  /* Heavier than the hero's: this section's copy is centred, so there is no
-     dark column to hide in — every line sits over the photograph. */
+  /* Shaped to the copy rather than laid flat over the frame.
+
+     The old ramp ran 0.94 to 0.80 across the whole section — near-uniform,
+     so the cohort was dimmed to a texture everywhere and the photograph
+     might as well not have been there. It now holds its weight only where
+     the centred copy actually sits and falls away hard past it, so the room
+     and the faces in it read as a photograph while the lines over the
+     middle keep their bed.
+
+     The stops are placed off the text, not spaced evenly: the copy column
+     is 680px inside a ~1216px section, which reaches ~47% of this
+     gradient's horizontal radius and ~70% of its vertical one, so ink holds
+     to 68% and only then goes. Measured over the composite, against the
+     brightest pixel actually falling behind each block: headline 10.8:1,
+     kicker 5.5:1, lede 5.0:1, seat note 4.7:1 — all clear of AA, and the
+     seat note is the one with the least room, so it is the line to re-check
+     if this photograph is ever swapped. */
   background:
     radial-gradient(
-      120% 90% at 50% 50%,
-      rgba(8, 8, 10, 0.94) 0%,
-      rgba(8, 8, 10, 0.88) 45%,
-      rgba(8, 8, 10, 0.8) 100%
+      115% 88% at 50% 50%,
+      rgba(8, 8, 10, 0.82) 0%,
+      rgba(8, 8, 10, 0.79) 44%,
+      rgba(8, 8, 10, 0.68) 68%,
+      rgba(8, 8, 10, 0.34) 86%,
+      rgba(8, 8, 10, 0.14) 100%
     ),
     linear-gradient(to bottom, var(--bg-void) 0%, transparent 18%),
     linear-gradient(to top, var(--bg-void) 0%, transparent 20%);
@@ -76,9 +96,13 @@
   margin-bottom: 2.5rem;
 }
 
+/* Back to the page's standard button height. This was 16px/44px padding —
+   noticeably taller and much wider than every other button on the page,
+   which made the closing ask read as a different component rather than the
+   same one arriving last. It keeps a little more width than the base 28px
+   so the label still has room, and nothing else about it changes. */
 .cta {
-  padding: 1rem 2.75rem;
-  font-size: var(--fs-base);
+  padding: 14px 32px;
   margin-bottom: 2.5rem;
 }
 

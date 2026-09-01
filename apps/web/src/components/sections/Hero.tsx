@@ -3,29 +3,48 @@
 import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { MapPin, CalendarDays, Clock, Users } from "lucide-react";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
 import SeatFeeNote from "@/components/SeatFeeNote";
-import { EVENT } from "@/lib/event";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 import sessionImg from "../../../public/founders-session.jpg";
 import styles from "./Hero.module.css";
 
-const META = [
-  { Icon: MapPin, label: EVENT.venue },
-  { Icon: CalendarDays, label: EVENT.dateLabel },
-  { Icon: Clock, label: EVENT.format },
-  { Icon: Users, label: `${EVENT.seats} founders, ${EVENT.admission.toLowerCase()}` },
-];
-
 // The headline is set as explicit lines because each one is masked and
 // rises independently. Automatic wrapping can't be masked per line — the
 // browser gives you no handle on a line box.
+//
+// The question opens it and the promise lands it, and all four lines are
+// set at one size. The question used to run at 0.4em as a sort of built-in
+// kicker, which made the block read as a label plus a headline and left the
+// line doing the pain-matching as the smallest type in the hero. Same size
+// throughout, so the four lines break evenly — the longest is 29 characters
+// and the shortest 24, which is what lets the column fill without a ragged
+// edge.
+//
+// Gold marks the question, not the payoff: it separates the problem from
+// the promise, which is the one division in the headline worth colouring,
+// and it leaves the three lines of promise reading as one unbroken white
+// statement rather than trailing off into a second accent.
 const TITLE_LINES = [
-  { text: "Blueprint to build your", accent: false },
-  { text: "million dollar company", accent: false },
-  { text: "in 1 year", accent: true },
+  { text: "Unable to scale your business?", accent: true },
+  { text: "Build a powerful machine", accent: false },
+  { text: "that runs without you, and", accent: false },
+  { text: "10x your profits in 90 days.", accent: false },
+];
+
+// The three guaranteed transformations, name and meaning both. Named here
+// because the rest of the page is organised around them: Room qualifies you
+// for them, Transformation breaks them into seven functions, Outcomes lists
+// what you build.
+//
+// Both halves show at every width. The descriptions used to be dropped
+// below 768px to keep the hero inside one viewport; removing the venue and
+// dates strip from the foot of the section paid for them.
+const PROMISES = [
+  { title: "Founder freedom", line: "Remove yourself from day-to-day operations." },
+  { title: "Build your A-Team", line: "Second-line leaders who run the business." },
+  { title: "10x profitability", line: "Grow your revenue, reduce your expenses." },
 ];
 
 /**
@@ -149,7 +168,11 @@ export default function Hero() {
           desktop, where the two viewports are the same height. */}
       <div className={styles.foot} aria-hidden="true" />
 
-      {/* Three bands: brand, message, detail. */}
+      {/* Three bands: brand, message, and the three transformations closing
+          it out. The strip that used to hold that last slot — venue, dates,
+          format, cohort size — is gone; those facts are all still stated
+          where they are actually being asked for (Location, the Room
+          criteria, the FAQ). */}
       <div ref={innerRef} className={styles.inner}>
         <header className={`${styles.brandBar} ${styles.rise} ${styles.riseBrand}`}>
           <p className={styles.wordmark}>
@@ -172,8 +195,8 @@ export default function Hero() {
           </h1>
 
           <p className={`${styles.subtitle} ${styles.rise} ${styles.riseSubtitle}`}>
-            Most founders work harder than anyone in the room, and still can&apos;t tell if
-            they are building the right thing.
+            You are not stuck for lack of effort. You are stuck because there is no team, no
+            process and no system holding the business up when you step away.
           </p>
 
           <div className={`${styles.actions} ${styles.rise} ${styles.riseActions}`}>
@@ -193,16 +216,22 @@ export default function Hero() {
           />
         </div>
 
-        {/* Spans the full frame so its rule reads as the base of the
-            composition rather than a line that stops halfway. */}
-        <ul className={`${styles.metaRow} ${styles.rise} ${styles.riseMeta}`}>
-          {META.map(({ Icon, label }) => (
-            <li className={styles.metaItem} key={label}>
-              <Icon size={18} className={styles.metaIcon} aria-hidden="true" />
-              {label}
-            </li>
-          ))}
-        </ul>
+        {/* The foot of the composition, where the venue-and-dates strip used
+            to sit — same job, better material. The headline claims an
+            outcome; these three say which things have to change for it to
+            happen, and spanning the full frame their rule reads as the base
+            of the hero rather than a line that stops halfway. */}
+        <div className={`${styles.promises} ${styles.rise} ${styles.risePromises}`}>
+          <p className={styles.promisesLabel}>3 transformations guaranteed</p>
+          <ul className={styles.promiseList}>
+            {PROMISES.map((item) => (
+              <li className={styles.promise} key={item.title}>
+                <span className={styles.promiseTitle}>{item.title}</span>
+                <span className={styles.promiseLine}>{item.line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
