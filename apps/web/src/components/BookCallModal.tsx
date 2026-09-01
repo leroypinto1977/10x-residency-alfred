@@ -20,13 +20,23 @@ export default function BookCallModal() {
   const isMobile = useIsMobile();
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Lock body scroll while open
+  // Lock body scroll while open.
+  //
+  // The padding compensates for the page scrollbar the lock removes:
+  // without it every fixed and centred thing on the page — the hero, this
+  // dialog — jumps ~10px right at the moment the modal opens, which reads
+  // as the overlay landing crookedly.
   useEffect(() => {
     if (!isOpen) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const { body } = document;
+    const originalOverflow = body.style.overflow;
+    const originalPadding = body.style.paddingRight;
+    const gutter = window.innerWidth - document.documentElement.clientWidth;
+    body.style.overflow = "hidden";
+    if (gutter > 0) body.style.paddingRight = `${gutter}px`;
     return () => {
-      document.body.style.overflow = original;
+      body.style.overflow = originalOverflow;
+      body.style.paddingRight = originalPadding;
     };
   }, [isOpen]);
 
@@ -126,6 +136,12 @@ export default function BookCallModal() {
               <X size={18} aria-hidden="true" />
             </button>
 
+            {/* Header and body are separate panes: the dialog itself no
+                longer scrolls, only the form does. Fourteen fields have to
+                scroll somewhere, but when the whole dialog was the scroll
+                container the close button — absolutely positioned inside it
+                — travelled with the content and was gone by the third
+                field, and so was the fee strip. */}
             <div className={styles.header}>
               <h2 id="book-call-title">Tell Us About Your Business.</h2>
               <p>A few quick questions so our team can prepare before reaching out.</p>
@@ -134,7 +150,8 @@ export default function BookCallModal() {
                   fee here — before the first field rather than after the
                   fourteenth — is what stops the checkout reading as a
                   bait-and-switch to someone who has just spent five minutes
-                  answering questions. */}
+                  answering questions. Pinned, so it is still there at the
+                  fourteenth field too. */}
               <p className={styles.feeStrip}>
                 <ShieldCheck size={15} aria-hidden="true" />
                 <span>
@@ -144,7 +161,9 @@ export default function BookCallModal() {
               </p>
             </div>
 
-            <BookCallForm />
+            <div className={styles.body}>
+              <BookCallForm />
+            </div>
           </motion.div>
         </div>
       )}

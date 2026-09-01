@@ -16,19 +16,70 @@
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* A column of two panes, and the dialog itself never scrolls. That is what
+   keeps the close button and the fee strip in place — both used to sit
+   inside the scroll container and were gone by the third field — and it is
+   what lets `overflow: hidden` clip the body against the 24px corner
+   radius instead of a scrollbar running straight through it. */
 .dialog {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
+  /* The ceiling, not the height: a short form sizes to its content. Capped
+     in px as well as vh so the dialog does not stretch to 1200px on a tall
+     monitor and put the submit button somewhere the eye has to travel to. */
+  max-height: min(90vh, 820px);
+  overflow: hidden;
   background: rgba(10, 10, 10, 0.98);
   border: 1px solid var(--border);
   border-radius: 24px;
-  padding: 2rem;
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+/* The scrolling pane.
+
+   min-height: 0 is the load-bearing line. A flex child's default
+   min-height is auto, which refuses to shrink below its content — so
+   without it this box grows to all 2062px of the form, the dialog's
+   max-height clips it, and nothing scrolls at all. */
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Stops a flick at the end of the form chaining through to the page
+     behind the overlay. */
+  overscroll-behavior: contain;
+  padding: 1.5rem 2rem 2rem;
+}
+
+/* The page's own scrollbar is 10px with a 2px border against --bg, which
+   is right for a full-height document and much too heavy inside a 480px
+   dialog. Firefox gets the same treatment through the standard property. */
+.body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 243, 238, 0.22) transparent;
+}
+
+.body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.body::-webkit-scrollbar-thumb {
+  background: rgba(245, 243, 238, 0.22);
+  border: 0;
+  border-radius: 3px;
+}
+
+.body::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--accent-rgb), 0.7);
 }
 
 .closeBtn {
@@ -55,8 +106,11 @@
 }
 
 .header {
-  margin-bottom: 1.5rem;
-  padding-right: 2rem;
+  flex: 0 0 auto;
+  /* Right padding clears the close button, which is positioned against the
+     dialog rather than this pane. */
+  padding: 2rem 4rem 1.25rem 2rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .header h2 {
@@ -108,9 +162,39 @@
   .dialogMobile {
     max-width: none;
     width: 100%;
+    /* dvh, not vh. Body scroll is locked while this is open so the address
+       bar cannot move, which makes dvh stable here — and unlike vh it is
+       the height actually on screen, so a 92% sheet is 92% of what the
+       viewer can see rather than 92% of a taller notional viewport with
+       its foot behind the browser chrome. vh first for anything without
+       the unit. */
     max-height: 92vh;
+    max-height: 92dvh;
     border-radius: 24px 24px 0 0;
-    padding: 1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1.5rem;
+  }
+
+  /* 4.25rem clears the close button rather than nearly clearing it: at
+     44px wide and 1.25rem from the edge it occupies the first 64px, and
+     the old 3.75rem ran the title's box 4px underneath it. */
+  .dialogMobile .header {
+    padding: 1.5rem 4.25rem 1.125rem 1.5rem;
+  }
+
+  /* The header is fixed chrome, so on the sheet it is worth what it costs
+     and no more. At 24px the title wrapped to two lines against the close
+     button's inset and the header took 225px of a 614px sheet on an SE —
+     over a third of it, to say something the reader has already read. */
+  .dialogMobile .header h2 {
+    font-size: 1.3125rem;
+  }
+
+  .dialogMobile .feeStrip {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .dialogMobile .body {
+    padding: 1.25rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
   }
 
   .closeBtn {
@@ -120,7 +204,11 @@
 }
 
 @media (max-width: 380px) {
-  .dialog {
-    padding: 1.5rem 1rem;
+  .dialogMobile .header {
+    padding: 1.5rem 4.25rem 1rem 1rem;
+  }
+
+  .dialogMobile .body {
+    padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
   }
 }
