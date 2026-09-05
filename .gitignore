@@ -51,4 +51,10 @@ exports/
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# agent tooling runtime state (session logs, neural stats, adopted policy —
+# per-machine and regenerated, not project config)
+.claude-flow/
+.claude/proven-config.json
+.claude/.proven-config-version
 .env.backup-*
