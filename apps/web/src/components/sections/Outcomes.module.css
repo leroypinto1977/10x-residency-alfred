@@ -1,12 +1,44 @@
-/* The page's one light block. Everything above and below it is near-black,
-   so this section is where the eye gets a rest and the substance lands. */
+/* Back to the page's dark rhythm — this section used to be the one light
+   break in the middle of the page; the reference design puts it back on
+   black with a scalloped top and bottom edge instead of a hard line.
+   Two WaveDivider instances (see Footer, which uses the same component for
+   its own top edge) replace the raster wave1.png/wave3.png this used to
+   carry: those stretched `100% 100%` to keep baked-in corner marks pinned
+   to the section's actual corners, which is exactly what distorted the
+   wave itself into a zigzag on any viewport the image's own aspect ratio
+   didn't match. WaveDivider tiles at a fixed pixel size instead, so it
+   can't stretch, and — being a section reused between two light
+   neighbours rather than one — needs a wave on both edges. The bottom one
+   is the same component with `top`/`bottom` swapped rather than flipped:
+   the swap alone reproduces the mirror image (cream becomes the strip's
+   majority fill, black the minority fingers reaching up into it) without
+   a CSS transform. */
 .section {
+  position: relative;
+  overflow: hidden;
   padding: var(--section-py) var(--section-px);
-  background: var(--surface-light);
-  color: var(--on-light);
+  background: var(--bg-void);
+  color: var(--text-primary);
+}
+
+.waveTop,
+.waveBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.waveTop {
+  top: 0;
+}
+
+.waveBottom {
+  bottom: 0;
 }
 
 .inner {
+  position: relative;
+  z-index: 1;
   max-width: var(--section-max);
   margin: 0 auto;
 }
@@ -14,133 +46,117 @@
 /* ---------- header ---------- */
 
 .header {
-  display: grid;
-  gap: 0.5rem 2.5rem;
-  align-items: start;
-  padding-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
-}
-
-@media (min-width: 900px) {
-  .header {
-    grid-template-columns: auto 1fr;
-  }
-
-  .kicker {
-    grid-column: 1 / -1;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: 42rem;
+  margin: 0 auto clamp(3rem, 2.25rem + 3vw, 5rem);
+  text-align: center;
 }
 
 .kicker {
-  margin-bottom: 0.75rem;
-}
-
-/* Oversized numeral doing the job an eyebrow would otherwise do. */
-.count {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 1.9rem + 4.7vw, 8rem);
+  font-family: var(--font-body);
+  font-size: 1.1rem;
   font-weight: 700;
-  line-height: 0.8;
-  letter-spacing: -0.05em;
-  color: var(--accent-on-light);
-  grid-row: span 2;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .headline {
-  align-self: end;
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
 .lede {
-  max-width: 44ch;
-  font-size: var(--fs-base);
+  max-width: 60ch;
+  font-size: 1.00rem;
   line-height: 1.65;
-  color: var(--on-light-muted);
+  color: var(--text-secondary);
 }
 
-/* ---------- ledger ---------- */
+/* ---------- system grid ---------- */
 
-.ledger {
-  display: grid;
-  gap: 0;
-  border-top: 1px solid var(--border-on-light);
+/* Flex-wrap + justify-content:center rather than CSS grid: with a fixed
+   item width and a container sized for exactly four per row, the leftover
+   three-item row centers itself automatically — a grid needs extra rules to
+   center a ragged last row. */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem 1.75rem;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-@media (min-width: 860px) {
-  .ledger {
-    grid-template-columns: 1fr 1fr;
-    column-gap: 4rem;
-  }
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 220px;
+  text-align: center;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1.25rem;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--border-on-light);
+.iconBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.85rem;
+  background: linear-gradient(150deg, #8a6a2e 0%, #4f3a15 100%);
+  color: #f6e9c9;
+  box-shadow: 0 10px 22px -12px rgba(0, 0, 0, 0.6);
 }
 
 .num {
+  margin-top: 0.15rem;
   font-family: var(--font-display);
-  font-size: var(--fs-xs);
+  font-size: 1.5rem;
   font-weight: 700;
-  line-height: 1.7;
-  letter-spacing: 0.06em;
-  color: var(--accent-on-light);
+  letter-spacing: -0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1.25px var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
-.rowText {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.rowTitle {
-  font-family: var(--font-display);
-  font-size: var(--fs-lede);
-  font-weight: 700;
-  line-height: 1.35;
-  letter-spacing: -0.015em;
-  color: var(--on-light);
-}
-
-.rowDesc {
-  font-size: var(--fs-sm);
-  line-height: 1.6;
-  color: var(--on-light-muted);
-}
-
-@media (max-width: 640px) {
-  .count {
-    grid-row: auto;
+@supports not ((-webkit-text-stroke: 1px currentColor) or (text-stroke: 1px currentColor)) {
+  .num {
+    color: var(--accent);
+    -webkit-text-stroke: 0;
   }
 }
 
-/* ---------- photograph ---------- */
-
-/* Sits between the header and the ledger. Letterboxed to 2:1 rather than
-   given the frame's own 3:2, because at the full 1120px column a 3:2 is
-   747px tall and stops being a supporting image — this has to read as a
-   band the eye crosses, not a second hero. */
-.band {
-  margin: 0 0 clamp(2.5rem, 2rem + 2vw, 4rem);
+.itemTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
 }
 
-.band img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-  /* The one light section on the page, so the photograph needs its own
-     edge — against near-black it would have the section border doing that
-     job for it. */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 18px 40px rgba(0, 0, 0, 0.13);
-}
-
-.band figcaption {
-  margin-top: 0.85rem;
+.itemDesc {
   font-size: var(--fs-xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--on-light-muted);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 760px) {
+  .item {
+    width: calc(50% - 0.875rem);
+  }
+}
+
+@media (max-width: 460px) {
+  .item {
+    width: 100%;
+  }
 }

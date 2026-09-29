@@ -1,13 +1,28 @@
 /* Light block. Long-form reading is the one place the bone surface earns
    its keep twice over: it breaks the dark run and it is easier to read. */
 .section {
+  position: relative;
+  overflow: hidden;
   padding: var(--section-py) var(--section-px);
   background: var(--surface-light);
   color: var(--on-light);
 }
 
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    55% 55% at 92% 0%,
+    rgba(184, 138, 59, 0.16) 0%,
+    rgba(242, 238, 229, 0) 65%
+  );
+}
+
 .container {
-  max-width: 48rem;
+  position: relative;
+  max-width: 67rem;
   margin: 0 auto;
 }
 
@@ -20,17 +35,48 @@
   align-items: center;
 }
 
+/* .displayLg (shared, used site-wide) sets font-weight: 700. Overridden
+   here rather than there, since this is the only heading that wants it
+   lighter — `h2.headline` (element + class) outranks `.displayLg` (a
+   single class) regardless of which stylesheet loads last. */
+h2.headline {
+  font-weight: 500;
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b88a3b;
+}
+
+/* ---------- the list ---------- */
+
+/* Individual rounded cards rather than divided rows — each question is its
+   own bordered pill, with the open one lifted onto a warm gold-tinted bed
+   instead of just sitting in the same flat row as the rest. */
 .list {
   display: flex;
   flex-direction: column;
+  gap: 0.85rem;
 }
 
 .item {
-  border-top: 1px solid var(--border-on-light);
+  border: 1px solid var(--border-on-light);
+  border-radius: 1.25rem;
+  background: #ece4d3;
+  padding: 0 1.5rem;
+  transition:
+    background-color var(--dur-base) var(--ease-soft),
+    border-color var(--dur-base) var(--ease-soft);
 }
 
-.item:last-child {
-  border-bottom: 1px solid var(--border-on-light);
+.itemOpen {
+  border-color: rgba(184, 138, 59, 0.55);
+  background: linear-gradient(160deg, #f0e2bd 0%, #e8d6a9 100%);
 }
 
 .questionHeading {
@@ -60,13 +106,34 @@
   transition: color var(--dur-quick) var(--ease-soft);
 }
 
+.itemOpen .question {
+  color: var(--accent-on-light);
+}
+
 .question:hover {
   color: var(--accent-on-light);
 }
 
-.icon {
+/* Filled circle rather than a bare icon — black while closed, gold once
+   open, echoing the badge treatment used elsewhere on the page. */
+.iconCircle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  color: var(--accent-on-light);
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: 50%;
+  background: #171717;
+  transition: background-color var(--dur-quick) var(--ease-soft);
+}
+
+.iconCircleOpen {
+  background: #b88a3b;
+}
+
+.icon {
+  color: #f5f3ee;
   transition: transform 0.4s var(--ease-entrance);
 }
 
@@ -97,6 +164,10 @@
 }
 
 @media (max-width: 640px) {
+  .item {
+    padding: 0 1.15rem;
+  }
+
   .question {
     font-size: var(--fs-base);
   }

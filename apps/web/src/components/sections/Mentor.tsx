@@ -1,5 +1,5 @@
 import Image, { type StaticImageData } from "next/image";
-import { User, PenLine } from "lucide-react";
+import { User } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import Button from "@/components/ui/Button";
@@ -44,27 +44,28 @@ export default function Mentor({
     <section id="mentor" className={`onLight ${styles.section}`}>
       <div className={styles.grid}>
         <Reveal className={styles.portraitCol}>
-          <div className={styles.portraitCard}>
-            <div className={styles.frame}>
-              <div className={styles.frameGlow} />
-              {portraitSrc ? (
-                <Image
-                  src={portraitSrc}
-                  alt={portraitAlt}
-                  fill
-                  sizes="(max-width: 1023px) 280px, 22vw"
-                  className={styles.portraitImg}
-                />
-              ) : (
-                <div className={styles.portraitPlaceholder}>
-                  <User size={64} aria-hidden="true" />
-                </div>
-              )}
-              <div className={styles.signatureBadge}>
-                <PenLine size={14} aria-hidden="true" />
-                {/* <span className={styles.founder}>{badgeLabel}</span> */}
+          <div className={styles.portraitStage}>
+            {/* The hand-built SVG splash + mix-blend-mode "fake cutout" this
+                held (see git history) is gone: alfred_joshua.png is already
+                a finished composite — the person cut out, a matching splash
+                painted in behind them, on the same cream this section sits
+                on — so there's nothing left for either trick to do. Sharing
+                one asset means the splash and the section background can
+                never drift out of sync the way a separately maintained SVG
+                gradient could. */}
+            {portraitSrc ? (
+              <Image
+                src={portraitSrc}
+                alt={portraitAlt}
+                fill
+                sizes="(max-width: 1023px) 320px, 26vw"
+                className={styles.portraitImg}
+              />
+            ) : (
+              <div className={styles.portraitPlaceholder}>
+                <User size={64} aria-hidden="true" />
               </div>
-            </div>
+            )}
           </div>
         </Reveal>
 
@@ -73,8 +74,8 @@ export default function Mentor({
               carries the same kicker as every other section header, and the
               stray empty <h2> that wrapped the subhead is gone: it emitted a
               headless heading whenever `subhead` was undefined. */}
-          <p className="kicker kickerOnLight">{eyebrow}</p>
-          <h2 className={`displayLg ${styles.greeting}`}>
+          <p className={styles.kicker}>{eyebrow}</p>
+          <h2 className={styles.greeting}>
             Hosted By <span className={styles.name}>{name}</span>
           </h2>
           {subhead && <p className={styles.subhead}>{subhead}</p>}
@@ -94,10 +95,8 @@ export default function Mentor({
                 {secondaryCtaLabel}
               </Button>
             )}
+            <SeatFeeNote tone="light" align="start" className={styles.seatNote} />
           </div>
-
-          {/* Light tone: this section runs on the cream surface. */}
-          <SeatFeeNote tone="light" align="start" />
         </Reveal>
       </div>
     </section>

@@ -1,13 +1,26 @@
+/* Cream, matching the Hero/Room/Features/Outcomes/Mentor/Film run rather
+   than the dark rhythm this section used to keep. */
 .section {
-  padding: var(--section-py) var(--section-px);
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(1000px 500px at 85% 0%, rgba(var(--accent-rgb), 0.1), transparent 62%),
-    var(--bg-void);
+  padding: var(--section-py) var(--section-px);
+  background: #f5f1e8;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    1000px 500px at 85% 0%,
+    rgba(184, 138, 59, 0.16),
+    rgba(245, 241, 232, 0) 62%
+  );
 }
 
 .inner {
+  position: relative;
   max-width: var(--section-max);
   margin: 0 auto;
 }
@@ -15,59 +28,96 @@
 .head {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: 1.25rem;
   max-width: 52rem;
+  margin-inline: auto;
 }
 
+.kicker {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #b88a3b;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 2.3rem;
+  font-weight: 590;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #171717;
+}
+
+/* Was a gold accent on the second line; the reference runs both lines in
+   the same ink, so this now just matches .heading. */
 .accent {
-  color: var(--accent);
+  color: #171717;
 }
 
 .lede {
   max-width: 46ch;
   font-size: var(--fs-lede);
   line-height: 1.7;
-  color: var(--text-secondary);
+  color: #68645c;
+}
+
+/* ---------- layout: gallery + rail ---------- */
+
+.layout {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: stretch;
+    gap: 1.75rem;
+  }
 }
 
 /* ---------- gallery ---------- */
 
-/* One lead frame with two stacked beside it. Asymmetric on purpose: an even
-   three-up reads as a stock grid, and the river shot is the one carrying the
-   "off the grid" claim, so it gets the area. */
+/* One lead frame on top, full width, with the other two side by side
+   beneath it — the river shot is the one carrying the "off the grid"
+   claim, so it gets the wide banner treatment instead of sharing a row. */
 .gallery {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 0.875rem;
-  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
 }
 
-@media (min-width: 860px) {
+@media (min-width: 560px) {
   .gallery {
-    grid-template-columns: 1.75fr 1fr;
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
 
   .shotLead {
-    grid-row: span 2;
+    grid-column: 1 / -1;
   }
 }
 
 .shot {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(184, 138, 59, 0.3);
   border-radius: var(--radius-panel);
-  background: var(--bg-elevated);
+  background: #111113;
 }
 
 /* The ratio lives on the figure, not the image. The image is absolutely
-   positioned so it can fill a frame whose height comes from the grid (the
-   lead frame is two rows tall), and an absolutely positioned child gives
-   its parent no height at all — so the frame has to state its own. */
+   positioned so it can fill a frame whose height comes from its own
+   aspect-ratio, and an absolutely positioned child gives its parent no
+   height at all — so the frame has to state its own. */
 .shotLead {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 21 / 9;
 }
 
 .shotNight,
@@ -88,14 +138,6 @@
   transform: scale(1.04);
 }
 
-@media (min-width: 860px) {
-  /* Spanning both rows, the lead frame takes its height from the pair
-     beside it rather than from a ratio of its own. */
-  .shotLead {
-    aspect-ratio: auto;
-  }
-}
-
 .shotCaption {
   position: absolute;
   left: 1rem;
@@ -107,7 +149,7 @@
   font-size: var(--fs-2xs);
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--text-primary);
+  color: #f5f3ee;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -116,43 +158,56 @@
   }
 }
 
-/* Three practical details as columns under a rule, not as boxes. */
-.grid {
-  display: grid;
-  gap: 2rem;
-  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
-  padding-top: 2.25rem;
-  border-top: 1px solid var(--border);
-}
+/* ---------- rail: the three practical details, connected ---------- */
 
-@media (min-width: 760px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
-  }
-}
-
-.item {
+.rail {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
+  height: 100%;
 }
 
-.icon {
-  color: var(--accent);
+.card {
+  padding: 1.5rem 1.5rem 1.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(184, 138, 59, 0.3);
+  background: linear-gradient(165deg, #f3e8ce 0%, #e9d9b3 100%);
+  box-shadow: 0 16px 32px -22px rgba(23, 23, 23, 0.3);
 }
 
-.label {
+/* A short gold peg bridging the gap between cards — the motif that reads
+   as a connected sequence rather than three separate boxes. */
+.connector {
+  display: block;
+  width: 3px;
+  height: 1.5rem;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #b88a3b, #8a6a2e);
+}
+
+.iconBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(184, 138, 59, 0.5);
+  background: radial-gradient(circle at 32% 28%, #f6e9c9 0%, #f5f1e8 55%, #ece0c4 100%);
+  color: #8a6a2e;
+}
+
+.cardLabel {
   font-family: var(--font-display);
-  font-size: var(--fs-base);
+  font-size: var(--fs-h3);
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--text-primary);
+  color: #171717;
+  margin-bottom: 0.5rem;
 }
 
-.body {
-  font-size: var(--fs-md);
-  line-height: 1.65;
-  color: var(--text-secondary);
+.cardBody {
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: #68645c;
 }

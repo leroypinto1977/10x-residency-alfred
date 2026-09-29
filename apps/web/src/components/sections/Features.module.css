@@ -1,16 +1,27 @@
-/* Sits directly after Outcomes, which is one of the three light blocks, so
-   this one stays dark to keep the light/dark rhythm alternating. */
+/* Cream, matching the Hero/Room opening rather than the dark rhythm this
+   section used to keep with Outcomes — the warm ambient wash is the same
+   motif carried through both. */
 .section {
-  padding: var(--section-py) var(--section-px);
   position: relative;
-  z-index: 1;
   overflow: hidden;
-  background:
-    radial-gradient(900px 480px at 12% 0%, rgba(var(--accent-rgb), 0.08), transparent 60%),
-    var(--bg-void);
+  padding: var(--section-py) var(--section-px);
+  background: #f5f1e8;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    55% 60% at 92% 0%,
+    rgba(184, 138, 59, 0.2) 0%,
+    rgba(245, 241, 232, 0) 65%
+  );
 }
 
 .inner {
+  position: relative;
   max-width: var(--section-max);
   margin: 0 auto;
 }
@@ -20,39 +31,77 @@
 .header {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1.25rem;
+  align-items: center;
+  gap: 1.1rem;
   max-width: 46rem;
-  margin-bottom: clamp(3rem, 2.25rem + 3vw, 5rem);
+  margin: 0 auto clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  text-align: center;
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 1000;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b88a3b;
+}
+
+/* The shared .displayLg class this used to carry sets color: var(--text),
+   which is near-white — correct on the dark background this section had,
+   invisible on this one. */
+.heading {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 550;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #171717;
 }
 
 .lede {
-  max-width: 46ch;
-  font-size: var(--fs-lede);
+  max-width: 86ch;
+  font-size: 1.1rem;
   line-height: 1.7;
-  color: var(--text-secondary);
+  color: #68645c;
 }
 
-/* ---------- artefacts ---------- */
+/* ---------- artefact deck ---------- */
 
-.list {
-  display: grid;
-  border-top: 1px solid var(--border);
-}
-
-.row {
-  display: grid;
-  gap: 1rem 2.5rem;
+/* Below the fan breakpoint: a plain stacked column. Overlapping rotated
+   cards read fine as a wide "hand of cards"; squeezed into a phone-width
+   column they'd just clip each other. */
+.deck {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding-block: clamp(1.75rem, 1.4rem + 1.4vw, 2.75rem);
-  border-bottom: 1px solid var(--border);
+  gap: 1.5rem;
 }
 
-@media (min-width: 760px) {
-  .row {
-    grid-template-columns: minmax(9rem, 12rem) 1fr;
-    gap: 3.5rem;
-  }
+.cardSlot {
+  width: 100%;
+  max-width: 360px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 2.5rem 2.25rem 2.5rem;
+  border-radius: 1.75rem;
+  background: linear-gradient(165deg, #14100c 0%, #1c150c 40%, #6e4a17 145%);
+  box-shadow: 0 30px 55px -28px rgba(23, 23, 23, 0.5);
+  transition: filter 0.25s var(--ease-soft);
+}
+
+.cardIcon {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  color: var(--accent-400);
+  opacity: 0.6;
 }
 
 .horizonWrap {
@@ -67,7 +116,7 @@
    slabs of solid gold competing with the headline. */
 .horizon {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 1.9rem + 2.6vw, 5.5rem);
+  font-size: clamp(2.75rem, 2.3rem + 2vw, 4.25rem);
   font-weight: 700;
   line-height: 0.85;
   letter-spacing: -0.05em;
@@ -92,13 +141,7 @@
   color: var(--accent);
 }
 
-.rowText {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.rowTitle {
+.cardTitle {
   font-family: var(--font-display);
   font-size: var(--fs-h3);
   font-weight: 700;
@@ -107,52 +150,77 @@
   color: var(--text-primary);
 }
 
-.rowDesc {
-  max-width: 54ch;
+.cardDesc {
   font-size: var(--fs-md);
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--text-secondary);
 }
 
-/* ---------- footnote ---------- */
+/* Fanned hand-of-cards: the middle card sits forward and level, the outer
+   two rotate away and drop slightly behind it. The rotation lives on
+   .cardSlot (a plain div) rather than .card (the RevealItem/motion.div)
+   because Framer sets its own inline `transform` for the fade-up entrance —
+   on the same element that would silently replace this one every render. */
+@media (min-width: 860px) {
+  .deck {
+    position: relative;
+    display: block;
+    /* Just past the tallest card's actual rendered height (~300px, fairly
+       stable across this breakpoint range) plus the outer cards' rotation
+       and translateY(2.5rem) offset — not the ~660px this carried before,
+       which was reserving room for the closing photo+footnote block, now
+       commented out, and left a few hundred px of dead space beneath the
+       cards with nothing to fill it. */
+    min-height: 340px;
+  }
 
-.footnote {
-  margin-top: clamp(2rem, 1.75rem + 1vw, 3rem);
-  max-width: 44ch;
-  padding-left: 1.25rem;
-  border-left: 2px solid var(--accent);
-  font-size: var(--fs-md);
-  line-height: 1.7;
-  color: var(--text-secondary);
+  .cardSlot {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    /* .cardSlot's base rule (above) sets max-width: 360px for the mobile
+       stacked layout — left unset here, it silently capped every width
+       increase attempted at this breakpoint back down to 360px, no matter
+       how large `width` was set to. */
+    max-width: none;
+    width: min(560px, 42vw);
+  }
+
+  .cardSlot[data-index="0"] {
+    transform: translateX(calc(-100% - 1.75rem)) translateY(2.5rem) rotate(-5deg);
+    z-index: 1;
+  }
+
+  .cardSlot[data-index="0"] .card {
+    filter: brightness(0.82);
+  }
+
+  .cardSlot[data-index="1"] {
+    transform: translateX(-50%);
+    z-index: 3;
+  }
+
+  .cardSlot[data-index="2"] {
+    transform: translateX(1.75rem) translateY(2.5rem) rotate(5deg);
+    z-index: 1;
+  }
+
+  .cardSlot[data-index="2"] .card {
+    filter: brightness(0.82);
+  }
+
+  .cardSlot:hover {
+    z-index: 4;
+  }
+
+  .cardSlot:hover .card {
+    filter: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .row {
+  .cardSlot {
     transition: none;
-  }
-}
-
-/* Wide screens split the title and the description into their own columns
-   so each row spans the full measure instead of trailing off into empty
-   space on the right. Declared last: `.rowText` sets `display: flex` above
-   at the same specificity, so this has to come after it to win. */
-@media (min-width: 1080px) {
-  .row {
-    grid-template-columns: minmax(9rem, 11rem) minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 3rem;
-    align-items: start;
-  }
-
-  .rowText {
-    display: contents;
-  }
-
-  .rowTitle {
-    padding-top: 0.2rem;
-  }
-
-  .rowDesc {
-    max-width: none;
   }
 }
 
@@ -163,7 +231,7 @@
    that spacing now, so it is zeroed here rather than removed — the rule
    still has to hold if the footnote is ever used on its own again. */
 .closing {
-  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  margin-top: clamp(3rem, 2.25rem + 2vw, 4.5rem);
   display: grid;
   gap: clamp(1.5rem, 1rem + 2vw, 2.75rem);
   align-items: center;
@@ -175,8 +243,13 @@
   }
 }
 
-.closing .footnote {
-  margin-top: 0;
+.footnote {
+  max-width: 44ch;
+  padding-left: 1.25rem;
+  border-left: 2px solid #b88a3b;
+  font-size: var(--fs-md);
+  line-height: 1.7;
+  color: #68645c;
 }
 
 .closingPhoto {

@@ -62,8 +62,11 @@
   /* Fonts — shared with the "Become an Authority" residency site so both
      GOAT Mastermind programmes read as one family. `--font-display` and
      `--font-body` are the names both codebases use; `--font-heading` stays
-     as an alias because existing modules already reference it. */
-  --font-display: var(--font-outfit), -apple-system,
+     as an alias because existing modules already reference it. Points at
+     `--font-poppins` (layout.tsx no longer loads Outfit — `--font-outfit`
+     was left over from before that swap and resolved to nothing, silently
+     falling every heading back to the system sans-serif fallback). */
+  --font-display: var(--font-poppins), -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-body: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -160,6 +163,19 @@ select {
   font-family: inherit;
 }
 
+/* This block (and the `h1..h6` color/`*` margin-padding rules above) is
+   plain author CSS, not inside a Tailwind `@layer`. Under Tailwind v4's
+   cascade layers, unlayered CSS always beats any layered rule regardless of
+   specificity — so these silently override every Tailwind margin/padding
+   utility (`mt-*`, `px-*`, ...) and every `text-*` color utility on a
+   heading, site-wide. Wrapping this block in `@layer base` is the textbook
+   fix, but this project's Turbopack/Lightning CSS pipeline does not honour
+   a user-authored `@layer base {}` block here (verified empirically — the
+   rules still compiled out unlayered). Until that's resolved, any component
+   built with Tailwind utilities must reach for the `!` important-modifier
+   suffix (e.g. `mt-6!`, `text-[#171717]!`) on utilities that touch margin,
+   padding, or heading color, rather than relying on plain specificity. */
+
 /* Premium custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
@@ -218,7 +234,7 @@ select {
 
 :root {
   --section-py: clamp(4.5rem, 9vw, 7.5rem);
-  --section-max: 1120px;
+  --section-max: 1270px;
   --section-px: clamp(1.25rem, 4vw, 2.5rem);
   --radius-panel: 1.75rem;
 }

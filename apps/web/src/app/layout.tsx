@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { BookCallModalProvider } from "@/components/BookCallModalContext";
 import BookCallModal from "@/components/BookCallModal";
@@ -7,12 +7,18 @@ import MetaPixel from "@/components/MetaPixel";
 import { EVENT } from "@/lib/event";
 import "./globals.css";
 
-// Shared with the "Become an Authority" residency site — both programmes
-// run under GOAT Mastermind, so they read as siblings rather than as two
-// unrelated brands. Outfit carries the headlines, Plus Jakarta Sans the body.
-const outfit = Outfit({
-  variable: "--font-outfit",
+// Poppins carries the headlines. Weights below 700 were added after several
+// section headings needed a genuinely lighter look and setting font-weight
+// on --font-display had no visible effect: with only 700/800 loaded, the
+// browser silently substitutes the nearest loaded weight for anything else
+// requested, so `font-weight: 500` (or 200, or anything but 700/800)
+// rendered as regular bold no matter what the CSS said.
+// Plus Jakarta Sans carries the body text.
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -44,22 +50,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${outfit.variable} ${plusJakarta.variable}`}>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${plusJakarta.variable}`}
+    >
       <body>
         <BookCallModalProvider>
           {children}
           <BookCallModal />
         </BookCallModalProvider>
+
         {process.env.NODE_ENV === "production" &&
           process.env.NEXT_PUBLIC_FB_PIXEL_ID && (
             <MetaPixel pixelId={process.env.NEXT_PUBLIC_FB_PIXEL_ID} />
           )}
       </body>
-      {/* Only on the deployed site — keeps local dev traffic out of the
-          property and the pixel. Both IDs live in Vercel production env vars. */}
-      {process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      )}
+
+      {process.env.NODE_ENV === "production" &&
+        process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
     </html>
   );
 }

@@ -1,30 +1,14 @@
-/* The testimonials run on the page's deepest surface, not --bg-2. The cards
-   are video stills — cinema frames — and they gain contrast from a darker
-   room. The light block on this page is the mentor section instead.
-
-   This section used to be scroll-pinned: `height: calc(100svh +
-   --pin-distance)` on the section, `position: sticky` on an inner frame,
-   and a horizontal track inside it driven sideways by vertical scroll. All
-   of that is gone — the three testimonials are a vertical list in normal
-   flow now, so the section is the same shape as every other one on the
-   page and its height is just its content. */
+/* Cream, matching the Hero/Room/Features/Outcomes run rather than the dark
+   rhythm this section used to keep — testimonials sit in the same
+   light-themed opening stretch of the page now. */
+/* film-bg.png bakes in its own soft curved light streaks, replacing the
+   CSS-generated diagonal hatch + radial glow this used to carry as a
+   `::before` layer. */
 .section {
   position: relative;
-  background: var(--bg-void);
+  overflow: hidden;
+  background: url("/film-bg.png") center / cover no-repeat, #f5f1e8;
   padding-block: var(--section-py);
-  overflow: clip;
-}
-
-.section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    120% 70% at 12% 0%,
-    rgba(var(--accent-rgb), 0.09),
-    transparent 60%
-  );
-  pointer-events: none;
 }
 
 .inner {
@@ -32,83 +16,143 @@
   max-width: var(--section-max);
   margin: 0 auto;
   padding-inline: var(--section-px);
-}
-
-/* ---------- header ---------- */
-
-.header {
   display: grid;
-  gap: 1.25rem 3rem;
-  align-items: end;
+  gap: clamp(2.5rem, 2rem + 3vw, 4rem);
 }
 
-@media (min-width: 900px) {
-  .header {
-    grid-template-columns: 1fr auto;
+@media (min-width: 980px) {
+  .inner {
+    grid-template-columns: minmax(240px, 320px) 1fr;
+    align-items: start;
   }
 }
 
-.headText {
+/* ---------- intro column ---------- */
+
+.intro {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b88a3b;
+  margin-bottom: 0.75rem;
 }
 
 .heading {
-  text-wrap: balance;
-}
-
-.accent {
-  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #171717;
 }
 
 .lede {
-  max-width: 34ch;
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
-  line-height: 1.7;
+  margin-top: 1rem;
+  max-width: 42ch;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #68645c;
 }
 
-/* ---------- the list ---------- */
-
-.list {
-  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+.ctaButton {
+  margin-top: 1.75rem;
+  /* Overrides Button's shared `.primary` gold fill — this CTA is the one
+     dark pill on an otherwise gold-accented page, so `!important` guards
+     against CSS-module bundling order rather than leaving it to chance. */
+  background: #171717 !important;
+  color: #f5f3ee !important;
 }
 
-/* One testimonial per row: the still on the left, the line it carries on
-   the right. A rule between rows rather than three cards — the section is
-   a list of three people, and boxing each one would put more weight on the
-   container than on the faces inside it. */
-.card {
-  display: grid;
-  gap: 1.25rem;
+.ctaButton:hover {
+  background: #2c2c2c !important;
+  color: #f5f3ee !important;
+}
+
+.navRow {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+/* Targets the lucide <svg> directly: SeatFeeNote's own `.icon` class comes
+   out of CSS Modules hashed, so there's no literal selector to hook here. */
+.seatNote :global(svg) {
+  color: #3f7d52 !important;
+}
+
+.navBtn {
+  display: flex;
   align-items: center;
+  justify-content: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 50%;
+  border: 1px solid rgba(184, 138, 59, 0.55);
+  background: transparent;
+  color: #b88a3b;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-quick) var(--ease-soft),
+    color var(--dur-quick) var(--ease-soft),
+    transform var(--dur-quick) var(--ease-soft);
 }
 
-.card + .card {
-  margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
-  padding-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
-  border-top: 1px solid var(--border);
+.navBtn:hover {
+  transform: translateY(-2px);
 }
 
-@media (min-width: 860px) {
-  .card {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    gap: clamp(2rem, 3.5vw, 4rem);
+.navBtnActive {
+  border-color: transparent;
+  background: linear-gradient(155deg, #b88a3b 0%, #6e4a17 100%);
+  color: #f5f3ee;
+}
+
+/* ---------- testimonial cards ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+}
+
+@media (max-width: 760px) {
+  .cards {
+    grid-template-columns: 1fr;
   }
 }
 
+/* Translucent rather than solid white: a flat white card read as a sticker
+   pasted over film-bg.png's own warm tone — letting that tone bleed through
+   is what makes the mat merge with the section instead of sitting on it. */
+.card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(184, 138, 59, 0.25);
+  box-shadow: 0 24px 55px -30px rgba(23, 23, 23, 0.35);
+}
+
+/* Inset with the card's own cream showing as a mat around it, rather than
+   flush with the card edge — the margin is what reads as a frame. */
 .stage {
   position: relative;
+  aspect-ratio: 1 / 1;
+  margin: 14px 14px 0;
+  border-radius: 1.25rem;
   overflow: hidden;
-  border-radius: var(--radius-panel);
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  /* A ratio rather than a viewport-derived height: nothing has to fit
-     inside a pinned frame any more, so the frame can simply be a frame. */
-  aspect-ratio: 16 / 10;
-  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.9);
+  background: #111113;
 }
 
 .player,
@@ -123,7 +167,7 @@
   position: relative;
   padding: 0;
   cursor: pointer;
-  background: var(--bg-void);
+  background: #111113;
 }
 
 .posterImg {
@@ -138,126 +182,74 @@
   transform: scale(1.045);
 }
 
-.posterScrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(8, 8, 10, 0.72) 0%,
-    rgba(8, 8, 10, 0.1) 55%,
-    rgba(8, 8, 10, 0.3) 100%
-  );
-}
-
-/* A thin ring rather than the old pulsing gold disc: at this card size the
-   solid button was the loudest thing in the section. */
 .playBtn {
   position: absolute;
-  left: 1.25rem;
-  bottom: 1.25rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
-  border: 1px solid rgba(245, 243, 238, 0.35);
-  background: rgba(8, 8, 10, 0.4);
-  backdrop-filter: blur(10px);
-  color: var(--text-primary);
-  padding-left: 2px; /* optically centres the triangle */
+  border: 1px solid rgba(245, 243, 238, 0.4);
+  background: rgba(8, 8, 10, 0.35);
+  backdrop-filter: blur(8px);
+  color: #f5f3ee;
+  padding-left: 3px; /* optically centres the triangle */
   transition:
     background-color var(--dur-base) var(--ease-soft),
-    border-color var(--dur-base) var(--ease-soft),
-    color var(--dur-base) var(--ease-soft),
     transform var(--dur-base) var(--ease-soft);
 }
 
 .card:hover .playBtn {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--bg-void);
-  transform: scale(1.08);
+  transform: translate(-50%, -50%) scale(1.08);
+  background: rgba(184, 138, 59, 0.85);
 }
 
 .cardBody {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1.5rem 1.5rem 1.75rem;
 }
 
-.cardIndex {
-  font-family: var(--font-display);
-  font-size: var(--fs-2xs);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: var(--accent);
-}
-
-/* Set larger than it was on the rail: a card 34rem wide had to keep its
-   quote at h3, and half a full-width row has room for the line to lead. */
 .quote {
   font-family: var(--font-display);
-  font-size: clamp(1.125rem, 0.95rem + 0.75vw, 1.625rem);
+  font-style: italic;
+  font-size: 1rem;
   font-weight: 500;
-  line-height: 1.35;
-  letter-spacing: -0.015em;
-  color: var(--text-primary);
-  text-wrap: pretty;
+  line-height: 1.4;
+  color: #8a6a2e;
 }
 
 .attribution {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .cardName {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
   font-weight: 700;
-  color: var(--text-primary);
+  color: #171717;
 }
 
 .cardRole {
   font-size: var(--fs-xs);
-  color: var(--text-faint);
-}
-
-/* ---------- closing cta ---------- */
-
-/* The meter and the 01/03 counter that used to sit here reported a position
-   along the rail; with a list there is no position to report. The button is
-   all that is left of the footer. */
-.footer {
-  display: flex;
-  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
-  padding-top: clamp(2rem, 1.5rem + 2vw, 3rem);
-  border-top: 1px solid var(--border);
-}
-
-@media (max-width: 640px) {
-  .footer :global(a),
-  .footer :global(button) {
-    width: 100%;
-  }
-
-  .playBtn {
-    left: 1rem;
-    bottom: 1rem;
-    width: 2.75rem;
-    height: 2.75rem;
-  }
+  color: #68645c;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .posterImg,
-  .playBtn {
+  .playBtn,
+  .navBtn {
     transition: none;
   }
 
-  .card:hover .posterImg {
+  .card:hover .posterImg,
+  .card:hover .playBtn {
     transform: none;
   }
 }

@@ -22,6 +22,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Reveal from "@/components/Reveal";
+import WaveDivider from "@/components/WaveDivider";
 import { CHROME_SETTLE_MS, createMarqueeEngine, rescale } from "@/lib/marquee-motion";
 import { reachedBy } from "@/lib/reached-by";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
@@ -198,7 +199,8 @@ function Row({
   );
 }
 
-export default function GroupChat() {
+export default function 
+GroupChat() {
   const reduceMotion = useSafeReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -207,19 +209,16 @@ export default function GroupChat() {
   useEffect(() => reachedBy(sectionRef.current, 600, setArmed), []);
   useVelocityMarquee(sectionRef, rowRefs, !reduceMotion);
 
-  // The second row runs the set backwards, so the two are not the same
-  // sequence of screenshots a few hundred pixels apart.
   const rows = [SHOTS, [...SHOTS].reverse()];
 
   return (
     <section ref={sectionRef} id="group-chat" className={styles.section}>
+      <WaveDivider className={styles.wave} top="#f2eee5" bottom="#08080a" />
       <div className={styles.inner}>
         <Reveal className={styles.head}>
           <p className="kicker">After the room</p>
           <h2 className="displayLg">
-            Three days end.
-            <br />
-            <span className={styles.accent}>The group chat doesn&apos;t.</span>
+            Three days end. <span className={styles.accent}>The group chat doesn&apos;t.</span>
           </h2>
           <p className={styles.lede}>
             Unedited from the cohort thread — the work founders shipped, the numbers they
@@ -228,10 +227,6 @@ export default function GroupChat() {
         </Reveal>
       </div>
 
-      {/* Full-bleed, and faded at the edges rather than cut, so the loop point
-          never announces itself. Marked decorative: at this size the
-          screenshots are texture, and the claim they support is in the copy
-          above rather than in text nobody can read. */}
       <div
         className={`${styles.strips} ${reduceMotion ? styles.still : ""}`}
         aria-hidden="true"

@@ -60,15 +60,18 @@ export default function FAQ() {
     <section id="faq" className={`${styles.section} onLight`}>
       <div className={styles.container}>
         <Reveal className={styles.header}>
-          <p className="kicker kickerOnLight">Before you apply</p>
-          <h2 className="displayLg">Questions founders ask us.</h2>
+          <p className={styles.kicker}>Before you apply</p>
+          <h2 className={`displayLg ${styles.headline}`}>Questions founders ask us.</h2>
         </Reveal>
 
         <Reveal stagger className={styles.list}>
           {FAQS.map((item, idx) => {
             const isOpen = openIdx === idx;
             return (
-              <RevealItem key={item.q} className={styles.item}>
+              <RevealItem
+                key={item.q}
+                className={`${styles.item} ${isOpen ? styles.itemOpen : ""}`}
+              >
                 <h3 className={styles.questionHeading}>
                   <button
                     type="button"
@@ -79,11 +82,13 @@ export default function FAQ() {
                     id={`faq-question-${idx}`}
                   >
                     <span>{item.q}</span>
-                    <Plus
-                      size={18}
-                      aria-hidden="true"
-                      className={`${styles.icon} ${isOpen ? styles.iconOpen : ""}`}
-                    />
+                    <span className={`${styles.iconCircle} ${isOpen ? styles.iconCircleOpen : ""}`}>
+                      <Plus
+                        size={16}
+                        aria-hidden="true"
+                        className={`${styles.icon} ${isOpen ? styles.iconOpen : ""}`}
+                      />
+                    </span>
                   </button>
                 </h3>
 

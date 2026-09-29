@@ -58,10 +58,17 @@
   color: var(--bg-void);
 }
 
-/* On the bone sections a white fill has nothing to stand against, so it
-   keeps a visible ink edge and drops the glow — which on a light surface
-   reads as a smudge rather than as light. */
-:global(.onLight) .primary:hover,
+/* On the bone sections `--text-primary` is itself a near-white, so the
+   shared hover recipe turns the button almost the same colour as the page
+   behind it. Light sections invert instead: hover goes dark, the same
+   direction the gold-on-cream button already reads as "pressed". */
+:global(.onLight) .primary:hover {
+  background: linear-gradient(135deg, #7a5220 0%, #2a1a0a 100%);
+  color: var(--text-primary);
+  border-color: transparent;
+  box-shadow: 0 10px 28px -12px rgba(23, 20, 15, 0.4);
+}
+
 :global(.onLight) .secondary:hover {
   border-color: rgba(23, 20, 15, 0.45);
   box-shadow: 0 10px 28px -12px rgba(23, 20, 15, 0.3);

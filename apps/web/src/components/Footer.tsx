@@ -1,6 +1,7 @@
 import BookCallButton from "@/components/BookCallButton";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
+import WaveDivider from "@/components/WaveDivider";
 import { EVENT } from "@/lib/event";
 import styles from "./Footer.module.css";
 
@@ -8,33 +9,36 @@ import styles from "./Footer.module.css";
 // set oversized as a sign-off, then a three-column row, then a thin
 // bottom bar. Keeps the two residency sites ending the same way.
 const LINKS: [string, string][] = [
-  ["The Testimonials", "#film"],
-  ["What changes", "#transformation"],
-  ["The location", "#location"],
-  ["Your host", "#mentor"],
-  ["What you build", "#outcomes"],
-  ["FAQ", "#faq"],
+  ["Testimonials", "#film"],
+  ["Your Mentor", "#mentor"],
+  ["The Location", "#location"],
+  ["What It Costs", "#seat-fee"],
+  ["What You Build", "#outcomes"],
+  ["Questions", "#faq"],
 ];
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
+      <WaveDivider className={styles.wave} top="#f2eee5" bottom="#08080a" />
       <div className={styles.inner}>
-        <Reveal>
+        <Reveal className={styles.masthead}>
           <p className={styles.wordmark}>
-            Founder{" "}
-            <span className={styles.accent}>10X.</span>
+            Founder <span className={styles.accent}>10X</span>
+          </p>
+          <p className={styles.tagline}>
+            This is your opportunity to join India&apos;s most exclusive founder residency.
           </p>
         </Reveal>
 
         <Reveal stagger className={styles.row}>
           <RevealItem className={styles.brandCol}>
             <p className={styles.brand}>
-              GOAT<span className={styles.accent}>.</span>Media
+              GOAT<span className={styles.accent}>.</span>Mastermind
             </p>
             <p className={styles.blurb}>
               A {EVENT.durationDays}-day founder residency in {EVENT.venue}, hosted by Alfred
-              Joshua and {EVENT.host}.
+              Joshua and Mastermind.
             </p>
           </RevealItem>
 
@@ -49,7 +53,9 @@ export default function Footer() {
           </RevealItem>
 
           <RevealItem className={styles.ctaCol}>
-            <BookCallButton showArrow>Book a Call</BookCallButton>
+            <BookCallButton className={styles.ctaButton} showArrow>
+              Apply for Edition I
+            </BookCallButton>
             <p className={styles.ctaNote}>
               {EVENT.seatFeeLabel} blocks your seat. We personally contact
               everyone who applies.
@@ -58,7 +64,7 @@ export default function Footer() {
         </Reveal>
 
         <div className={styles.bottom}>
-          <p>&copy; {new Date().getFullYear()} {EVENT.host}. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} GOAT Mastermind. All rights reserved.</p>
           <p>
             {EVENT.name} · {EVENT.venue}
           </p>

@@ -1,30 +1,75 @@
+/* The scalloped top edge is now WaveDivider, an SVG pattern component
+   rendered as the footer's first child rather than baked into a raster
+   background image — a fixed-px tile can't drift out of sync with the
+   section colors on either side the way a separately-authored PNG could,
+   and it can't stretch into zigzags at narrow widths either. No
+   `border-top`: a flat rule line drawn across the wave's cream area read
+   as a seam of its own, which is exactly what the wave exists to avoid. */
 .footer {
   position: relative;
   z-index: 1;
-  border-top: 1px solid var(--border);
   background: var(--bg-void);
   padding-inline: var(--section-px);
   padding-block: clamp(3.5rem, 3rem + 2vw, 5rem) 0;
   overflow: hidden;
 }
 
+/* Absolute rather than in the normal flow: `.footer`'s own padding-block
+   would otherwise push the wave down below a strip of flat black first. */
+.wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 .inner {
+  position: relative;
   max-width: var(--section-max);
   margin: 0 auto;
+}
+
+.masthead {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .masthead {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
 }
 
 /* Oversized sign-off. The programme name gets the last word. */
 .wordmark {
   font-family: var(--font-display);
+  font-style: italic;
   font-size: clamp(2rem, 1.1rem + 4.6vw, 6.5rem);
-  font-weight: 700;
+  font-weight: 609;
   line-height: 0.95;
   letter-spacing: -0.04em;
   color: var(--text-primary);
 }
 
+.tagline {
+  max-width: 26rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+@media (min-width: 768px) {
+  .tagline {
+    padding-bottom: 0.5rem;
+  }
+}
+
 .accent {
-  color: var(--accent);
+  color: #c19655;
 }
 
 .row {
@@ -53,13 +98,13 @@
 .brand {
   font-family: var(--font-display);
   font-size: var(--fs-h3);
-  font-weight: 700;
+  font-weight: 550;
   color: var(--text-primary);
 }
 
 .blurb {
   margin-top: 0.75rem;
-  font-size: var(--fs-sm);
+  font-size: 1rem;
   line-height: 1.65;
   color: var(--text-secondary);
 }
@@ -123,10 +168,18 @@
   white-space: nowrap;
 }
 
+/* At rest this is just Button's shared `.primary` flat gold fill —
+   unchanged. The warm dark-to-amber diagonal only shows up on hover;
+   `!important` guards against CSS-module bundling order, same as Film's
+   `.ctaButton`. */
+.ctaButton:hover {
+  background: linear-gradient(45deg, #2a1a0a 0%, #7a5220 100%) !important;
+}
+
 .ctaNote {
-  font-size: var(--fs-2xs);
+  font-size: 0.9rem;
   line-height: 1.5;
-  color: var(--text-faint);
+  color: #f5f3ee;
   max-width: 20rem;
 }
 

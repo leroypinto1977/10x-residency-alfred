@@ -1,31 +1,31 @@
 import Image from "next/image";
+import { Box, Briefcase, TrendingUp } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import { EVENT } from "@/lib/event";
 import roomImg from "../../../public/room-workshop.jpg";
+import RoomPlayButton from "./RoomPlayButton";
 import styles from "./Room.module.css";
 
-// The qualification criteria used to sit inside the hero as a glass card,
-// which pushed the hero past four text elements and buried the CTA. They
-// do more work here, directly under the fold, as the first thing a founder
-// reads after the promise.
-//
-// "Age: no limit" used to hold the middle slot, which qualified nobody out
-// and answered a question the page was not being asked. Stage replaces it:
-// the residency is for a business that has revenue and has stopped growing,
-// and saying so is what makes the room feel specific rather than open.
 const CRITERIA = [
   {
     k: "Who",
     v: "Already running a business",
     note: "And still doing every part of it yourself",
+    Icon: Briefcase,
   },
   {
     k: "Stage",
     v: "Revenue is coming in",
     note: "But it isn't growing, or every sale still comes through you",
+    Icon: TrendingUp,
   },
-  { k: "Room", v: "80% founders, 20% creators", note: `Capped at ${EVENT.seats}` },
+  {
+    k: "Room",
+    v: "80% founders, 20% creators",
+    note: `Capped at just ${EVENT.seats} participants`,
+    Icon: Box,
+  },
 ];
 
 export default function Room() {
@@ -33,38 +33,44 @@ export default function Room() {
     <section className={styles.section}>
       <div className={styles.inner}>
         <Reveal className={styles.head}>
-          <p className="kicker">Who it&apos;s for</p>
-          <h2 className="displayLg">
+          <p className={styles.kicker}>Who is it for?</p>
+          <h2>
             Build the team. Build the system.
             <br />
-            <span className={styles.accent}>Become the founder who can leave the room.</span>
+            Become the founder who can leave the room.
           </h2>
         </Reveal>
 
         <Reveal stagger className={styles.list}>
-          {CRITERIA.map((item) => (
-            <RevealItem className={styles.item} key={item.k}>
-              <span className={styles.key}>{item.k}</span>
-              <p className={styles.value}>{item.v}</p>
-              <p className={styles.note}>{item.note}</p>
+          {CRITERIA.map(({ k, v, note, Icon }) => (
+            <RevealItem className={styles.item} key={k}>
+              <span className={styles.iconBadge} aria-hidden="true">
+                <Icon size={32} strokeWidth={1.75} />
+              </span>
+              <span className={styles.key}>{k}</span>
+              <p className={styles.value}>{v}</p>
+              <p className={styles.note}>{note}</p>
             </RevealItem>
           ))}
         </Reveal>
 
-        {/* "Who it's for" is an abstract claim until you can see the room it
-            describes — a working table, not an audience. Spans both columns
-            so it reads as the floor of the section rather than a sidebar. */}
         <Reveal delay={0.2} className={styles.shotWrap}>
-          <div className={styles.offsetFrame} aria-hidden="true" />
           <figure className={styles.shot}>
             <Image
               src={roomImg}
               alt="A founder making his point across the table while the group hears him out"
-              sizes="(max-width: 900px) 100vw, 1120px"
+              sizes="(max-width: 900px) 100vw, 780px"
               className={styles.shotImg}
               placeholder="blur"
             />
+            {/* <RoomPlayButton /> */}
           </figure>
+          <span className={styles.cornerArcTL} aria-hidden="true" />
+          <span className={styles.cornerBarTopTL} aria-hidden="true" />
+          <span className={styles.cornerBarLeftTL} aria-hidden="true" />
+          <span className={styles.cornerArcBR} aria-hidden="true" />
+          <span className={styles.cornerBarBottomBR} aria-hidden="true" />
+          <span className={styles.cornerBarRightBR} aria-hidden="true" />
         </Reveal>
       </div>
     </section>

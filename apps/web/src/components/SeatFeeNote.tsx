@@ -38,7 +38,7 @@ export default function SeatFeeNote({
           out against the full width of the wrapped text block, which parks it
           at the far left of a centred two-line note on a phone. In the text
           flow it stays next to the first word at every width. */}
-      <ShieldCheck size={15} className={styles.icon} aria-hidden="true" />
+      <ShieldCheck size={20} className={styles.icon} aria-hidden="true" />
       <strong className={styles.fee}>{EVENT.seatFeeLabel}</strong>{" "}
       blocks your seat
     </p>

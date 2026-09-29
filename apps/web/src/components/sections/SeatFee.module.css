@@ -1,13 +1,51 @@
+/* Cream, matching the rest of the redesigned run rather than the dark
+   rhythm this section used to keep. */
 .section {
-  max-width: var(--section-max);
-  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  max-width: none;
+  margin: 0;
   padding-block: var(--section-py);
   padding-inline: var(--section-px);
-  position: relative;
+  background: #f5f1e8;
   z-index: 1;
 }
 
+/* A soft woven-thread texture in two opposite corners — a stylised
+   approximation of a fine wave pattern (diagonal hatching, radially
+   masked) rather than a literal traced line, since this is decorative
+   background noise, not a shape worth hand-plotting a wave path for. */
+.section::before,
+.section::after {
+  content: "";
+  position: absolute;
+  width: 26rem;
+  height: 26rem;
+  pointer-events: none;
+  opacity: 0.6;
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(184, 138, 59, 0.35) 0px,
+    rgba(184, 138, 59, 0.35) 1px,
+    transparent 1px,
+    transparent 11px
+  );
+  -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+  mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+}
+
+.section::before {
+  top: -8rem;
+  right: -8rem;
+}
+
+.section::after {
+  bottom: -8rem;
+  left: -8rem;
+}
+
 .container {
+  position: relative;
   max-width: 62rem;
   margin: 0 auto;
 }
@@ -18,17 +56,35 @@
   text-align: center;
 }
 
-/* The shared .kicker is inline-flex, which auto margins can't centre. */
 .eyebrow {
-  display: flex;
-  width: fit-content;
-  margin: 0 auto;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b88a3b;
 }
 
+/* The old 34rem cap was the actual reason this wrapped onto two lines —
+   at the shared --fs-h2 scale the text itself fits comfortably inside the
+   992px .container (measured: ~820px at the current computed size), so
+   widening this to the container is enough on its own. */
 .headline {
-  max-width: 34rem;
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: none;
   margin: 1.25rem auto 0;
-  text-wrap: balance;
+  color: #171717;
+}
+
+@media (min-width: 760px) {
+  .headline {
+    white-space: nowrap;
+  }
 }
 
 /* The number is the whole point of the section, so it carries the same gold
@@ -46,7 +102,7 @@
   margin: 1.25rem auto 0;
   font-size: var(--fs-lede);
   line-height: 1.6;
-  color: var(--text-secondary);
+  color: #68645c;
   text-wrap: pretty;
 }
 
@@ -67,144 +123,72 @@
 }
 
 .step {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
   border-radius: 18px;
-  padding: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
+  background: linear-gradient(165deg, #14100c 0%, #1c150c 40%, #6e4a17 145%);
+  padding: clamp(1.5rem, 1.2rem + 1vw, 2rem);
 }
 
-/* Step two is the one carrying the number, and the section fails if a
-   skim-reader misses it — so it gets the stronger border and a faint gold
-   bed rather than sitting flush with the two steps that cost nothing. */
-.stepAccent {
-  border-color: var(--border-strong);
-  background:
-    linear-gradient(180deg, rgba(var(--accent-rgb), 0.09) 0%, rgba(var(--accent-rgb), 0) 60%),
-    var(--bg-elevated);
+/* A larger, faint echo of the step's own icon, bleeding off the top-right
+   corner — the same motif the fanned artefact cards use. */
+.stepIconGhost {
+  position: absolute;
+  top: -0.75rem;
+  right: -0.75rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  color: #f6e9c9;
+  opacity: 0.16;
+  pointer-events: none;
 }
 
 .stepTop {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.75rem;
 }
 
 .stepIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  flex-shrink: 0;
-  border-radius: 9px;
-  border: 1px solid var(--border-subtle);
-  background: rgba(var(--accent-rgb), 0.08);
-  color: var(--accent-400);
-}
-
-.stepNum {
-  font-size: var(--fs-2xs);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-}
-
-/* Pushed to the far edge of the row so the three prices line up down the
-   right of the grid and can be read as a column on their own. */
-.stepPrice {
-  margin-left: auto;
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
-  border-radius: 999px;
-  padding: 0.25rem 0.6rem;
-  white-space: nowrap;
-}
-
-.stepPriceAccent {
-  color: var(--accent-300);
-  border-color: var(--border-strong);
-  background: rgba(var(--accent-rgb), 0.12);
-}
-
-.stepTitle {
-  margin: 1.1rem 0 0;
-  font-size: var(--fs-h3);
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.stepBody {
-  margin: 0.6rem 0 0;
-  font-size: var(--fs-sm);
-  line-height: 1.6;
-  color: var(--text-secondary);
-  text-wrap: pretty;
-}
-
-/* ---------- what the deposit is for ---------- */
-
-.deposit {
-  margin-top: 1rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  border: 1px solid var(--border-strong);
-  border-radius: 18px;
-  background:
-    linear-gradient(120deg, rgba(var(--accent-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0) 55%),
-    var(--bg-surface);
-  padding: clamp(1.35rem, 1.1rem + 0.9vw, 1.75rem);
-}
-
-.depositIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
   flex-shrink: 0;
-  border-radius: 12px;
-  border: 1px solid var(--border-strong);
-  background: rgba(var(--accent-rgb), 0.12);
-  color: var(--accent-300);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(184, 138, 59, 0.5);
+  background: radial-gradient(circle at 32% 28%, #f6e9c9 0%, #f5f1e8 55%, #ece0c4 100%);
+  color: #8a6a2e;
 }
 
-.depositCopy {
-  min-width: 0;
+.stepNum {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #f6e9c9;
 }
 
-.depositTitle {
-  margin: 0;
-  font-family: var(--font-heading);
+.stepTitle {
+  position: relative;
+  margin: 1.1rem 0 0;
+  font-family: var(--font-display);
   font-size: var(--fs-h3);
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
-.depositBody {
-  margin: 0.5rem 0 0;
+.stepBody {
+  position: relative;
+  margin: 0.6rem 0 0;
   font-size: var(--fs-sm);
   line-height: 1.6;
-  color: var(--text-secondary);
+  color: #e4d9c4;
   text-wrap: pretty;
-}
-
-@media (max-width: 520px) {
-  .deposit {
-    gap: 0.875rem;
-    padding: 1.35rem 1.15rem;
-  }
-
-  .depositIcon {
-    width: 2.125rem;
-    height: 2.125rem;
-  }
 }
 
 /* ---------- closing ask ---------- */
@@ -214,4 +198,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.ctaButton {
+  /* Overrides Button's shared `.primary` gold fill, matching the one dark
+     CTA already used on the Testimonials section. `!important` guards
+     against CSS-module bundling order rather than leaving it to chance. */
+  background: #171717 !important;
+  color: #f5f3ee !important;
+}
+
+.ctaButton:hover {
+  background: #2c2c2c !important;
+  color: #f5f3ee !important;
 }

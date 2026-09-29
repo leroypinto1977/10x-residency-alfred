@@ -1,11 +1,24 @@
 /* The screenshots are dark-mode chat windows, so they sit on the void rather
    than on the bone surface — on light they read as ten pasted black
-   rectangles. It also breaks up the two light sections either side of it. */
+   rectangles. It also breaks up the two light sections either side of it.
+   WaveDivider (see Footer, same component) reads as the cream section
+   above dripping into this one, in place of a hard seam or a raster image
+   that can drift out of color-sync or stretch at odd widths. Top only:
+   PhotoWall below is already dark, so a matching wave on the bottom edge
+   too would cut a stray cream sliver into a seam that doesn't need one. */
 .section {
+  position: relative;
   padding: var(--section-py) 0;
   background: var(--bg-void);
   border-bottom: 1px solid var(--border);
   overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .inner {
@@ -17,16 +30,48 @@
 .head {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 1.25rem;
-  max-width: 44ch;
+  max-width: 56rem;
+  margin: 0 auto;
+  text-align: center;
 }
 
+/* Overrides the shared .kicker class's line-before motif for this
+   centred layout — a line reads as pointing at something to its right,
+   which stops making sense once the label is centred over the headline. */
+.head :global(.kicker) {
+  display: inline;
+}
+
+.head :global(.kicker::before) {
+  content: none;
+}
+
+/* The shared --fs-h2 scale (up to ~5.5rem) wraps "Three days end. The
+   group chat doesn't." well before the .head column's 896px max-width —
+   measured against the actual rendered Poppins Bold width, not guessed:
+   44px needs ~858px, comfortably under 896px. Held to one line from
+   1024px up, where that width is reliably available; below that the
+   column narrows enough that forcing it would risk overflowing instead. */
+.head h2 {
+  font-size: clamp(1.75rem, 0.5rem + 2vw, 2.75rem);
+}
+
+@media (min-width: 1024px) {
+  .head h2 {
+    white-space: nowrap;
+  }
+}
+
+/* Was the gold accent; the reference runs the whole headline in one ink. */
 .accent {
-  color: var(--accent);
+  color: #f5f3ee;
 }
 
 .lede {
+  max-width: 46ch;
+  margin: 0 auto;
   font-size: var(--fs-lede);
   line-height: 1.65;
   color: var(--text-secondary);

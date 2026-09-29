@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { Play } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play } from "lucide-react";
 import Reveal from "@/components/Reveal";
-import RevealItem from "@/components/RevealItem";
 import BookCallButton from "@/components/BookCallButton";
+import SeatFeeNote from "@/components/SeatFeeNote";
 import { getEmbedUrl } from "@/lib/video";
 import { EVENT } from "@/lib/event";
 import alfredImg from "../../../public/alfred.jpg";
@@ -73,55 +73,73 @@ const ALL_CHAPTERS: Chapter[] = FILM.host
     ]
   : CHAPTERS;
 
-/**
- * The testimonials.
- *
- * This used to be a scroll-pinned horizontal rail: the section stood
- * 100vh + 85vh tall, held its frame still with `position: sticky`, and
- * turned vertical scroll into sideways travel for a track of cards, with a
- * spring chasing the scroll position and a progress meter reading it back.
- * It is a plain vertical list now — three rows, read top to bottom, in
- * normal document flow.
- *
- * What went with the pin: the travel measurement and its ResizeObserver,
- * the two motion values and their springs, the scroll handler, the
- * active-card dimming (nothing is off-centre in a list, so nothing needs to
- * sit back), and the meter and 01/03 counter, which existed only to report
- * a position along the rail. The `Reveal` entrances every other section
- * uses cover the rest.
- */
-export default function Film() {
-  const [playingIdx, setPlayingIdx] = useState<number | null>(null);
 
-  // One player at a time: two open iframes means two soundtracks.
-  const play = useCallback((idx: number) => setPlayingIdx(idx), []);
+export default function Film() {
+  const [start, setStart] = useState(0);
+  const [playingName, setPlayingName] = useState<string | null>(null);
+
+  const count = ALL_CHAPTERS.length;
+  const visible = useMemo(
+    () => [ALL_CHAPTERS[start % count], ALL_CHAPTERS[(start + 1) % count]],
+    [start, count]
+  );
+
+  const goPrev = useCallback(() => {
+    setStart((s) => (s - 1 + count) % count);
+  }, [count]);
+
+  const goNext = useCallback(() => {
+    setStart((s) => (s + 1) % count);
+  }, [count]);
 
   return (
     <section id="film" className={styles.section}>
       <div className={styles.inner}>
-        <Reveal className={styles.header}>
-          <div className={styles.headText}>
-            <p className="kicker">The Testimonials</p>
-            <h2 className={`displayLg ${styles.heading}`}>
-              Not our words.
-              <br />
-              <span className={styles.accent}>Theirs.</span>
-            </h2>
-          </div>
+        <Reveal className={styles.intro}>
+          <p className={styles.kicker}>Testimonials</p>
+          <h2 className={styles.heading}>
+            Not our words.
+            <br />
+            Theirs.
+          </h2>
           <p className={styles.lede}>
-            Founders who have already done the work with Alfred — on the record, in
-            their own words. {EVENT.durationDays} days in the Kerala rainforest, one
-            company rebuilt in the room.
+            Founders who have already done the work with Alfred — on the record, in their own
+            words. {EVENT.durationDays} days in the Kerala rainforest, one company rebuilt in the
+            room.
           </p>
+
+          <BookCallButton className={styles.ctaButton} showArrow>
+            Apply and Block your Seat
+          </BookCallButton>
+          <SeatFeeNote tone="light" align="start" className={styles.seatNote} />
+
+          <div className={styles.navRow}>
+            <button
+              type="button"
+              onClick={goPrev}
+              className={styles.navBtn}
+              aria-label="Show the previous testimonial"
+            >
+              <ArrowLeft size={20} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              className={`${styles.navBtn} ${styles.navBtnActive}`}
+              aria-label="Show the next testimonial"
+            >
+              <ArrowRight size={20} aria-hidden="true" />
+            </button>
+          </div>
         </Reveal>
 
-        <Reveal stagger className={styles.list}>
-          {ALL_CHAPTERS.map((chapter, idx) => {
+        <div className={styles.cards}>
+          {visible.map((chapter) => {
             const embedUrl = getEmbedUrl(chapter.url);
-            const isPlaying = playingIdx === idx;
+            const isPlaying = playingName === chapter.name;
 
             return (
-              <RevealItem key={chapter.name} className={styles.card}>
+              <div className={styles.card} key={chapter.name}>
                 <div className={styles.stage}>
                   {isPlaying && embedUrl ? (
                     <iframe
@@ -134,7 +152,7 @@ export default function Film() {
                   ) : (
                     <button
                       type="button"
-                      onClick={() => play(idx)}
+                      onClick={() => setPlayingName(chapter.name)}
                       className={styles.poster}
                       aria-label={`Play ${chapter.name}'s story`}
                     >
@@ -142,35 +160,27 @@ export default function Film() {
                         src={chapter.poster}
                         alt=""
                         fill
-                        sizes="(max-width: 860px) 92vw, 620px"
+                        sizes="(max-width: 860px) 92vw, 470px"
                         className={styles.posterImg}
                       />
-                      <span className={styles.posterScrim} aria-hidden="true" />
                       <span className={styles.playBtn}>
-                        <Play size={18} fill="currentColor" aria-hidden="true" />
+                        <Play size={20} fill="currentColor" aria-hidden="true" />
                       </span>
                     </button>
                   )}
                 </div>
 
                 <div className={styles.cardBody}>
-                  <span className={styles.cardIndex} aria-hidden="true">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
                   <blockquote className={styles.quote}>{chapter.quote}</blockquote>
                   <footer className={styles.attribution}>
                     <span className={styles.cardName}>{chapter.name}</span>
                     <span className={styles.cardRole}>{chapter.role}</span>
                   </footer>
                 </div>
-              </RevealItem>
+              </div>
             );
           })}
-        </Reveal>
-
-        <Reveal delay={0.1} className={styles.footer}>
-          <BookCallButton showArrow>Book a Call</BookCallButton>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
