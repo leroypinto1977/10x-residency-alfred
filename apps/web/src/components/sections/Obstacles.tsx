@@ -26,7 +26,7 @@ export default function Obstacles() {
     <section id="bottlenecks" className={styles.section}>
       <Reveal className={styles.sectionHeader}>
         <span className={styles.sectionTag}>WHY GROWTH STOPS</span>
-        <h2>What's Really Holding You Back</h2>
+        <h2>What&apos;s Really Holding You Back</h2>
         <p>After ₹10 Cr, growth slows because your business needs better systems—not more hard work.</p>
       </Reveal>
 

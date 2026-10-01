@@ -15,7 +15,7 @@
     "db:generate": "prisma generate --config packages/db/prisma.config.ts",
     "db:migrate": "prisma migrate deploy --config packages/db/prisma.config.ts",
     "admin:users": "node --env-file=.env scripts/admin-users.mjs",
-    "lint": "eslint apps/web"
+    "lint": "cd apps/web && eslint ."
   },
   "dependencies": {
     "@founder10x/db": "*",

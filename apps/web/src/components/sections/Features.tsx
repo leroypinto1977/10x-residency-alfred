@@ -1,7 +1,6 @@
 import { Flag, Route, Target } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
-import RoomPhoto from "@/components/RoomPhoto";
 import styles from "./Features.module.css";
 
 

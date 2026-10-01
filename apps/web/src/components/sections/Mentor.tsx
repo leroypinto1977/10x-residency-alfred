@@ -1,7 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
 import { User } from "lucide-react";
 import Reveal from "@/components/Reveal";
-import RevealItem from "@/components/RevealItem";
 import Button from "@/components/ui/Button";
 import BookCallButton from "@/components/BookCallButton";
 import SeatFeeNote from "@/components/SeatFeeNote";
@@ -12,7 +11,6 @@ interface MentorProps {
   name?: string;
   subhead?: string;
   bio?: string[];
-  badgeLabel?: string;
   portraitSrc?: string | StaticImageData;
   portraitAlt?: string;
   primaryCtaLabel?: string;
@@ -30,7 +28,6 @@ export default function Mentor({
   name = "Alfred Joshua",
   subhead = "CEO,The GOAT Media.",
   bio = DEFAULT_BIO,
-  badgeLabel = "Founder & Mentor",
   portraitSrc,
   portraitAlt = name,
   primaryCtaLabel = "Book a Call",

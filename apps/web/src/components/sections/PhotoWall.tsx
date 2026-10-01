@@ -95,8 +95,8 @@ function Tile({
   // Deliberately not next/image. See the note in lib/wall-photos.ts: these
   // are pre-sized static WebP so the optimizer has nothing to decide and
   // there is no large srcset fallback for a crawler to pull.
-  /* eslint-disable-next-line @next/next/no-img-element */
   const img = (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={`/wall/${photo.id}.webp`}
       alt={photo.alt}

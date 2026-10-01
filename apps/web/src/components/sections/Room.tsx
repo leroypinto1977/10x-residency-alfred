@@ -4,7 +4,6 @@ import Reveal from "@/components/Reveal";
 import RevealItem from "@/components/RevealItem";
 import { EVENT } from "@/lib/event";
 import roomImg from "../../../public/room-workshop.jpg";
-import RoomPlayButton from "./RoomPlayButton";
 import styles from "./Room.module.css";
 
 const CRITERIA = [
@@ -63,7 +62,6 @@ export default function Room() {
               className={styles.shotImg}
               placeholder="blur"
             />
-            {/* <RoomPlayButton /> */}
           </figure>
           <span className={styles.cornerArcTL} aria-hidden="true" />
           <span className={styles.cornerBarTopTL} aria-hidden="true" />

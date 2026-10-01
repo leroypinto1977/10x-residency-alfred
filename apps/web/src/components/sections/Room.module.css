@@ -259,27 +259,6 @@
   height: calc(55% - var(--radius-panel) - 20px);
 }
 
-/* Decorative only — there's no video behind this section to actually play,
-   so it's not a button and carries no aria-label. Same recipe as Film's
-   .playBtn (thin translucent ring, blurred dark disc), just centred rather
-   than corner-anchored. */
-.playButton {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 50%;
-  border: 1px solid rgba(245, 243, 238, 0.35);
-  background: rgba(8, 8, 10, 0.4);
-  backdrop-filter: blur(10px);
-  color: #f5f3ee;
-  padding-left: 2px; /* optically centres the triangle */
-}
-
 .shotImg {
   position: absolute;
   inset: 0;

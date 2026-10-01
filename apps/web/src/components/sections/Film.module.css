@@ -1,13 +1,13 @@
 /* Cream, matching the Hero/Room/Features/Outcomes run rather than the dark
    rhythm this section used to keep — testimonials sit in the same
    light-themed opening stretch of the page now. */
-/* film-bg.png bakes in its own soft curved light streaks, replacing the
+/* film-bg.webp bakes in its own soft curved light streaks, replacing the
    CSS-generated diagonal hatch + radial glow this used to carry as a
    `::before` layer. */
 .section {
   position: relative;
   overflow: hidden;
-  background: url("/film-bg.png") center / cover no-repeat, #f5f1e8;
+  background: url("/film-bg.webp") center / cover no-repeat, #f5f1e8;
   padding-block: var(--section-py);
 }
 
@@ -132,7 +132,7 @@
 }
 
 /* Translucent rather than solid white: a flat white card read as a sticker
-   pasted over film-bg.png's own warm tone — letting that tone bleed through
+   pasted over film-bg.webp's own warm tone — letting that tone bleed through
    is what makes the mat merge with the section instead of sitting on it. */
 .card {
   display: flex;
